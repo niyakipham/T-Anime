@@ -227,10 +227,16 @@
 
         /* Right Col (Episodes) */
         .episodes-box { height: calc(100% - 32px); min-height: 500px; display: flex; flex-direction: column; padding: 24px; }
-        .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+        .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
         .section-title { font-size: 1.25rem; font-weight: 800; color: white; display: flex; align-items: center; gap: 10px; }
         .section-title i { color: var(--accent-cyan); font-size: 1.5rem;}
-        .ep-count { font-size: 0.8rem; font-weight: 600; background: rgba(255,255,255,0.1); padding: 4px 12px; border-radius: 999px; color: white;}
+        
+        /* Dropdown Phân Trang */
+        .ep-chunk-select { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 8px; padding: 6px 12px; font-size: 0.85rem; font-weight: 600; outline: none; cursor: pointer; transition: var(--transition); backdrop-filter: blur(10px);}
+        .ep-chunk-select:hover { border-color: var(--accent-cyan); }
+        .ep-chunk-select option { background: var(--bg-main); color: white; font-weight: 500;}
+
+        .ep-count { font-size: 0.8rem; font-weight: 600; background: rgba(255,255,255,0.1); padding: 6px 12px; border-radius: 999px; color: white; white-space: nowrap;}
         
         .episodes-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; align-content: start; padding-right: 4px;}
         @media (max-width: 640px) { .episodes-grid { grid-template-columns: repeat(5, 1fr); } }
@@ -403,7 +409,10 @@
             <div class="glass-panel episodes-box">
                 <div class="section-header">
                     <h3 class="section-title"><i class="ph-fill ph-list-dashes"></i> Danh Sách Tập</h3>
-                    <span class="ep-count" id="ep-count">0 Tập</span>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <select id="ep-chunk-select" class="ep-chunk-select" style="display: none;" onchange="changeEpChunk(this.value)"></select>
+                        <span class="ep-count" id="ep-count">0 Tập</span>
+                    </div>
                 </div>
                 <div class="episodes-grid custom-scrollbar" id="episodes-grid"></div>
             </div>
@@ -463,6 +472,10 @@
         let currentMovieData = null;
         let currentEpisodesList = [];
         let activeEpisode = null;
+        
+        // Quản lý phân trang cho danh sách tập phim (Mỗi tab 100 tập)
+        let currentEpChunk = 0; 
+        const EP_CHUNK_SIZE = 100;
 
         let exploreState = { currentTabSlug: '', apiPage: 1, localData: [], renderCount: 0, isFetching: false, hasMoreData: true };
 
@@ -480,6 +493,7 @@
             movieInfo: document.getElementById('movie-info-container'),
             epGrid: document.getElementById('episodes-grid'),
             epCount: document.getElementById('ep-count'),
+            epChunkSelect: document.getElementById('ep-chunk-select'),
             
             genreTabs: document.getElementById('genre-tabs-container'),
             exploreGrid: document.getElementById('explore-grid'),
@@ -612,6 +626,8 @@
                 const data = await res.json();
 
                 if (data.status) {
+                    currentEpChunk = 0; // Reset lại phân trang tập khi đổi phim mới
+                    
                     currentMovieData = data.movie;
                     currentEpisodesList = data.episodes[0]?.server_data || [];
                     activeEpisode = currentEpisodesList.length > 0 ? currentEpisodesList[0] : null;
@@ -667,17 +683,48 @@
             }
         };
 
+        // --- HÀM RENDER TẬP PHIM CÓ PHÂN TRANG CHO PHIM > 100 TẬP ---
         function renderEpisodes() {
             ui.epCount.textContent = `${currentEpisodesList.length} Tập`;
-            ui.epGrid.innerHTML = currentEpisodesList.map((ep, idx) => {
+            
+            const totalChunks = Math.ceil(currentEpisodesList.length / EP_CHUNK_SIZE);
+            
+            // Xử lý thanh Dropdown chọn khoảng tập
+            if (totalChunks > 1) {
+                ui.epChunkSelect.style.display = 'block';
+                ui.epChunkSelect.innerHTML = Array.from({length: totalChunks}).map((_, i) => {
+                    const start = i * EP_CHUNK_SIZE + 1;
+                    const end = Math.min((i + 1) * EP_CHUNK_SIZE, currentEpisodesList.length);
+                    return `<option value="${i}" ${i === currentEpChunk ? 'selected' : ''}>Tập ${start} - ${end}</option>`;
+                }).join('');
+            } else {
+                ui.epChunkSelect.style.display = 'none';
+            }
+
+            // Lọc ra danh sách 100 tập để render
+            const startIdx = currentEpChunk * EP_CHUNK_SIZE;
+            const endIdx = startIdx + EP_CHUNK_SIZE;
+            const episodesToRender = currentEpisodesList.slice(startIdx, endIdx);
+
+            // Render các nút tập phim (Dùng realIdx để đảm bảo bấm vẫn đúng tập thật)
+            ui.epGrid.innerHTML = episodesToRender.map((ep, idx) => {
+                const realIdx = startIdx + idx; 
                 const isActive = activeEpisode && activeEpisode.slug === ep.slug;
-                return `<button class="btn-episode ${isActive ? 'active' : ''}" onclick="selectEpisode(${idx})">${isActive ? '<i class="ph-fill ph-play" style="margin-right:4px;"></i>' : ''}${ep.name}</button>`;
+                return `<button class="btn-episode ${isActive ? 'active' : ''}" onclick="selectEpisode(${realIdx})">${isActive ? '<i class="ph-fill ph-play" style="margin-right:4px;"></i>' : ''}${ep.name}</button>`;
             }).join('');
         }
 
+        window.changeEpChunk = (chunkIdx) => {
+            currentEpChunk = parseInt(chunkIdx);
+            renderEpisodes();
+        };
+
         window.selectEpisode = (idx) => {
             activeEpisode = currentEpisodesList[idx];
-            renderPlayer(); renderEpisodes();
+            // Tự động chuyển dải tập phim nếu người dùng bấm qua lại ở tập nối
+            currentEpChunk = Math.floor(idx / EP_CHUNK_SIZE); 
+            renderPlayer(); 
+            renderEpisodes();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
 
