@@ -63,13 +63,13 @@
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--accent-cyan); }
 
-        /* Ambient Background (Hiệu ứng nền mờ của phim) */
+        /* Ambient Background */
         #app-bg {
             position: fixed; inset: -50px; z-index: -2;
             background-size: cover; background-position: center;
             filter: blur(60px) brightness(0.4);
             transition: background-image 1.5s ease-in-out;
-            transform: scale(1.1); /* Tránh viền trắng khi blur */
+            transform: scale(1.1); 
         }
         #app-bg-overlay {
             position: fixed; inset: 0; z-index: -1;
@@ -109,7 +109,7 @@
             backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
             padding: 20px 32px; z-index: 100; transition: background 0.3s;
         }
-        .navbar.scrolled { background: rgba(10,10,22,0.85); border-bottom: 1px solid var(--border-glass); }
+        .navbar.scrolled { background: rgba(10,10,22,0.95); border-bottom: 1px solid var(--border-glass); }
         
         .nav-logo { font-size: 1.75rem; font-weight: 900; font-style: italic; letter-spacing: -1px; text-transform: uppercase; }
         .nav-links { display: none; gap: 32px; font-size: 0.9rem; font-weight: 600; color: var(--text-muted); }
@@ -119,8 +119,7 @@
         .nav-links a.active::after { content:''; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background: var(--accent-cyan); border-radius: 2px; box-shadow: var(--shadow-glow-cyan); }
 
         /* Search Box */
-        .search-container { position: relative; display: none; }
-        @media (min-width: 640px) { .search-container { display: block; } }
+        .search-container { position: relative; }
         .search-box { 
             display: flex; align-items: center; gap: 12px; 
             background: rgba(255,255,255,0.05); border: 1px solid transparent; 
@@ -171,6 +170,25 @@
         .btn-remove-fav:hover { color: var(--accent-red); background: rgba(255,59,48,0.1); }
         .fav-empty { padding: 32px 24px; text-align: center; color: var(--text-muted); font-size: 0.9rem; }
 
+        /* Mobile Bottom Nav */
+        .mobile-bottom-nav {
+            display: none; position: fixed; bottom: 0; left: 0; width: 100%;
+            background: rgba(10,10,22,0.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border-glass); z-index: 1000;
+            padding: 12px 24px calc(12px + env(safe-area-inset-bottom)); justify-content: space-between;
+        }
+        .mobile-nav-item {
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            color: var(--text-muted); font-size: 0.75rem; font-weight: 600; transition: var(--transition);
+        }
+        .mobile-nav-item.active { color: var(--text-white); }
+        .mobile-nav-item.active i { color: var(--accent-cyan); filter: drop-shadow(0 0 10px rgba(0, 209, 245, 0.5)); }
+        .mobile-nav-item i { font-size: 1.5rem; transition: var(--transition); }
+        .mobile-nav-item.story i { 
+            background: linear-gradient(45deg, var(--accent-purple), var(--accent-cyan)); 
+            -webkit-background-clip: text; color: transparent; filter: drop-shadow(0 4px 8px rgba(176,38,255,0.4));
+        }
+
         /* ==========================================================================
            5. ONBOARDING MODAL
            ========================================================================== */
@@ -210,7 +228,6 @@
         .movie-info-panel { display: flex; flex-direction: column; gap: 20px; }
         .info-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 20px; }
         .movie-title { font-size: 2.5rem; font-weight: 900; color: var(--text-white); line-height: 1.2; letter-spacing: -1px; text-shadow: 0 4px 12px rgba(0,0,0,0.5);}
-        @media (max-width: 768px) { .movie-title { font-size: 2rem; } }
         
         .action-btns { display: flex; gap: 12px; }
         .btn-action { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 20px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; font-size: 0.9rem; font-weight: 600; transition: var(--transition); color: white; backdrop-filter: blur(10px);}
@@ -231,15 +248,13 @@
         .section-title { font-size: 1.25rem; font-weight: 800; color: white; display: flex; align-items: center; gap: 10px; }
         .section-title i { color: var(--accent-cyan); font-size: 1.5rem;}
         
-        /* Dropdown Phân Trang */
         .ep-chunk-select { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 8px; padding: 6px 12px; font-size: 0.85rem; font-weight: 600; outline: none; cursor: pointer; transition: var(--transition); backdrop-filter: blur(10px);}
         .ep-chunk-select:hover { border-color: var(--accent-cyan); }
         .ep-chunk-select option { background: var(--bg-main); color: white; font-weight: 500;}
 
         .ep-count { font-size: 0.8rem; font-weight: 600; background: rgba(255,255,255,0.1); padding: 6px 12px; border-radius: 999px; color: white; white-space: nowrap;}
         
-        .episodes-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; align-content: start; padding-right: 4px;}
-        @media (max-width: 640px) { .episodes-grid { grid-template-columns: repeat(5, 1fr); } }
+        .episodes-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; align-content: start; padding-right: 4px;}
         
         .btn-episode { 
             padding: 12px 4px; border-radius: 12px; font-size: 0.9rem; font-weight: 600;
@@ -330,6 +345,55 @@
         .story-hint { position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; color: rgba(255,255,255,0.4); font-size: 0.8rem; font-weight: 600; pointer-events: none; animation: bounce 2s infinite; }
         @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0) translateX(-50%); } 40% { transform: translateY(-10px) translateX(-50%); } 60% { transform: translateY(-5px) translateX(-50%); } }
 
+        /* ==========================================================================
+           9. MOBILE OPTIMIZATION (Responsive CSS)
+           ========================================================================== */
+        @media (max-width: 768px) {
+            body { padding-bottom: 70px; } /* Nhường chỗ cho Bottom Nav */
+            .mobile-bottom-nav { display: flex; }
+            .container { padding: 0 16px; }
+
+            /* Navbar Mobile */
+            .navbar { flex-wrap: wrap; padding: 16px; gap: 16px; }
+            .navbar > .flex-center { width: 100%; justify-content: space-between; }
+            .nav-logo { font-size: 1.5rem; }
+            .nav-links, .btn-story { display: none !important; }
+            .user-avatar { width: 38px; height: 38px; }
+            
+            /* Search Mobile */
+            .search-container { display: block; width: 100%; order: 3; margin-top: -4px;}
+            .search-box { width: 100%; padding: 12px 16px; background: rgba(255,255,255,0.08); }
+            .search-dropdown { position: absolute; top: calc(100% + 8px); left: 0; width: 100%; min-width: unset; }
+
+            /* User Dropdown Modal (Mobile) */
+            .user-dropdown { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 360px; z-index: 3000; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
+
+            /* Main Content Mobile */
+            .main-content { padding-top: 140px; padding-bottom: 20px; gap: 24px; min-height: auto;}
+            .movie-title { font-size: 1.8rem; }
+            .action-btns { width: 100%; }
+            .btn-action { flex: 1; padding: 14px 10px; font-size: 0.85rem;}
+            
+            /* Episodes Grid Mobile */
+            .episodes-box { padding: 16px; border-radius: 20px; min-height: 400px;}
+            .section-title { font-size: 1.15rem; }
+            .episodes-grid { grid-template-columns: repeat(auto-fill, minmax(65px, 1fr)); gap: 8px; }
+            .btn-episode { padding: 10px 4px; font-size: 0.85rem; }
+
+            /* Explore Grid Mobile */
+            .explore-section { padding-bottom: 40px; }
+            .anime-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .explore-header h2 { font-size: 1.6rem; }
+            .ac-title { font-size: 0.95rem; }
+            .ac-info { padding: 12px 4px 0; }
+
+            /* Onboarding Mobile */
+            .modal-content.onboarding { padding: 32px 20px; border-radius: 24px; }
+            .ob-title { font-size: 1.8rem; }
+            .ob-grid { gap: 8px; margin-bottom: 24px;}
+            .ob-pill { padding: 10px 20px; font-size: 0.85rem; border-radius: 12px;}
+            .btn-primary { padding: 14px 30px; font-size: 1rem; }
+        }
     </style>
 </head>
 <body>
@@ -395,6 +459,22 @@
         </div>
     </nav>
 
+    <!-- MOBILE BOTTOM NAV -->
+    <div class="mobile-bottom-nav">
+        <a href="#" class="mobile-nav-item active" id="m-nav-home">
+            <i class="ph-fill ph-house"></i>
+            <span>Trang Chủ</span>
+        </a>
+        <a href="#explore-section" class="mobile-nav-item" id="m-nav-explore">
+            <i class="ph-fill ph-compass"></i>
+            <span>Khám Phá</span>
+        </a>
+        <div class="mobile-nav-item story" onclick="openStoryMode()">
+            <i class="ph-fill ph-play-circle"></i>
+            <span>T-Story</span>
+        </div>
+    </div>
+
     <!-- PLAYER SECTION (Trang chủ) -->
     <main class="container main-content" id="main-content" style="display: none;">
         <section class="col-left">
@@ -453,6 +533,20 @@
             const nav = document.getElementById('navbar');
             if (window.scrollY > 50) nav.classList.add('scrolled');
             else nav.classList.remove('scrolled');
+
+            // Cập nhật trạng thái Active trên thanh Bottom Nav Mobile
+            const exploreSec = document.getElementById('explore-section');
+            const mNavHome = document.getElementById('m-nav-home');
+            const mNavExplore = document.getElementById('m-nav-explore');
+            if (exploreSec && mNavHome && mNavExplore && exploreSec.style.display !== 'none') {
+                if (window.scrollY >= exploreSec.offsetTop - 200) {
+                    mNavHome.classList.remove('active');
+                    mNavExplore.classList.add('active');
+                } else {
+                    mNavExplore.classList.remove('active');
+                    mNavHome.classList.add('active');
+                }
+            }
         });
 
         // --- DATA DICTIONARY ---
@@ -480,7 +574,6 @@
         let currentEpisodesList = [];
         let activeEpisode = null;
         
-        // Quản lý phân trang cho danh sách tập phim (Mỗi tab 100 tập)
         let currentEpChunk = 0; 
         const EP_CHUNK_SIZE = 100;
 
@@ -557,7 +650,9 @@
             dp.style.display = dp.style.display === 'flex' ? 'none' : 'flex';
         });
         document.addEventListener('click', (e) => {
-            if (!ui.avatarBtn.contains(e.target)) ui.favDropdown.style.display = 'none';
+            if (!ui.avatarBtn.contains(e.target) && !ui.favDropdown.contains(e.target)) {
+                ui.favDropdown.style.display = 'none';
+            }
         });
 
         // ==========================================
@@ -633,13 +728,12 @@
                 const data = await res.json();
 
                 if (data.status) {
-                    currentEpChunk = 0; // Reset lại phân trang tập khi đổi phim mới
+                    currentEpChunk = 0; 
                     
                     currentMovieData = data.movie;
                     currentEpisodesList = data.episodes[0]?.server_data || [];
                     activeEpisode = currentEpisodesList.length > 0 ? currentEpisodesList[0] : null;
 
-                    // Thay đổi ảnh nền theo phim (Ambient Blur)
                     const bgUrl = `https://img.ophim.live/uploads/movies/${currentMovieData.poster_url || currentMovieData.thumb_url}`;
                     ui.appBg.style.backgroundImage = `url('${bgUrl}')`;
 
@@ -690,13 +784,10 @@
             }
         };
 
-        // --- HÀM RENDER TẬP PHIM CÓ PHÂN TRANG CHO PHIM > 100 TẬP ---
         function renderEpisodes() {
             ui.epCount.textContent = `${currentEpisodesList.length} Tập`;
-            
             const totalChunks = Math.ceil(currentEpisodesList.length / EP_CHUNK_SIZE);
             
-            // Xử lý thanh Dropdown chọn khoảng tập
             if (totalChunks > 1) {
                 ui.epChunkSelect.style.display = 'block';
                 ui.epChunkSelect.innerHTML = Array.from({length: totalChunks}).map((_, i) => {
@@ -708,12 +799,10 @@
                 ui.epChunkSelect.style.display = 'none';
             }
 
-            // Lọc ra danh sách 100 tập để render
             const startIdx = currentEpChunk * EP_CHUNK_SIZE;
             const endIdx = startIdx + EP_CHUNK_SIZE;
             const episodesToRender = currentEpisodesList.slice(startIdx, endIdx);
 
-            // Render các nút tập phim (Dùng realIdx để đảm bảo bấm vẫn đúng tập thật)
             ui.epGrid.innerHTML = episodesToRender.map((ep, idx) => {
                 const realIdx = startIdx + idx; 
                 const isActive = activeEpisode && activeEpisode.slug === ep.slug;
@@ -728,7 +817,6 @@
 
         window.selectEpisode = (idx) => {
             activeEpisode = currentEpisodesList[idx];
-            // Tự động chuyển dải tập phim nếu người dùng bấm qua lại ở tập nối
             currentEpChunk = Math.floor(idx / EP_CHUNK_SIZE); 
             renderPlayer(); 
             renderEpisodes();
@@ -736,7 +824,7 @@
         };
 
         // ==========================================
-        // 3. LOGIC EXPLORE (TABS & INFINITE SCROLL)
+        // 3. LOGIC EXPLORE
         // ==========================================
         function renderGenreTabs() {
             const sortedGenres = [...ALL_GENRES].sort((a, b) => {
@@ -868,7 +956,7 @@
         }
 
         // ==========================================
-        // 5. T-STORY LOGIC (TIKTOK STYLE)
+        // 5. T-STORY LOGIC
         // ==========================================
         const storyDOM = {
             modal: document.getElementById('story-modal'),
