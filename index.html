@@ -107,7 +107,7 @@
         .spinner { width: 48px; height: 48px; border: 3px solid rgba(0,209,245,0.2); border-top-color: var(--accent-cyan); border-radius: 50%; animation: spin 1s linear infinite; }
         .loader-text { margin-top: 20px; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.2em; color: var(--text-muted); animation: pulse 2s infinite; }
         
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .app-wrapper { display: flex; min-height: 100vh; animation: fadeIn 0.6s ease-out forwards; width: 100%; overflow-x: hidden; }
 
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -157,7 +157,7 @@
         /* MAIN COLUMN */
         .main-column { margin-left: var(--sidebar-width); flex: 1; display: flex; flex-direction: column; min-height: 100vh; position: relative; width: calc(100% - var(--sidebar-width));}
         
-        /* TOP HEADER (CỐ ĐỊNH, KHÔNG BỊ MẤT KHI CUỘN) */
+        /* TOP HEADER */
         .top-header { 
             position: fixed; top: 0; right: 0; width: calc(100% - var(--sidebar-width)); height: 72px; 
             display: flex; align-items: center; justify-content: space-between; padding: 0 32px;
@@ -266,6 +266,8 @@
         .btn-pill:hover { background: var(--bg-glass-hover); transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.2);}
         .btn-pill.primary { background: var(--text-white); color: var(--bg-main); border: none; box-shadow: 0 6px 15px rgba(255,255,255,0.2);}
         .btn-pill.primary:hover { background: var(--accent-cyan); color: #fff; box-shadow: var(--shadow-glow-cyan);}
+        
+        /* Chỉnh lại nút tim nổi bật khi đã lưu */
         .btn-pill.saved { border-color: var(--accent-red); color: var(--accent-red); background: rgba(255,59,48,0.1);}
         
         .meta-tags { display: flex; flex-wrap: wrap; gap: 10px; font-size: 0.85rem; font-weight: 600; color: var(--text-white); align-items: center;}
@@ -296,9 +298,14 @@
             display: block; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%;
         }
         .btn-episode:hover { background: var(--bg-glass-hover); color: var(--text-white); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.2);}
+        
+        /* FIX: Tối ưu nút active hiển thị rõ ràng trên cả Light / Dark mode */
         .btn-episode.active { 
-            background: var(--text-white); color: #000; border-color: transparent; 
-            box-shadow: 0 6px 16px rgba(255,255,255,0.3); transform: scale(1.05); z-index: 2;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            color: #ffffff !important; 
+            border-color: transparent; 
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2); 
+            transform: scale(1.05); z-index: 2;
         }
 
         /* ==========================================================================
@@ -312,11 +319,11 @@
         .genre-tabs::-webkit-scrollbar { display: none; }
         .tab-btn { padding: 12px 24px; border-radius: 999px; background: var(--bg-glass); border: 1px solid var(--border-glass-strong); color: var(--text-muted); font-weight: 700; font-size: 0.95rem; white-space: nowrap; transition: var(--transition); }
         .tab-btn:hover { background: var(--bg-glass-hover); color: var(--text-white); transform: translateY(-2px);}
-        .tab-btn.active { background: var(--text-white); color: #000; box-shadow: 0 8px 20px rgba(255,255,255,0.2); border-color: transparent;}
+        .tab-btn.active { background: var(--text-white); color: var(--bg-main); box-shadow: 0 8px 20px rgba(0,0,0,0.1); border-color: transparent;}
         
         .tab-btn.recommended { position: relative; border-color: rgba(0, 209, 245, 0.4); color: var(--text-light); }
         .tab-btn.recommended::after { content: '★ GỢI Ý'; position: absolute; top: -8px; right: 10px; background: var(--accent-cyan); color: #000; font-size: 0.6rem; padding: 2px 6px; border-radius: 6px; font-weight: 900; box-shadow: 0 4px 8px rgba(0,209,245,0.4);}
-        .tab-btn.recommended.active::after { background: #000; color: #fff; box-shadow: none;}
+        .tab-btn.recommended.active::after { background: var(--text-white); color: var(--bg-main); box-shadow: none;}
 
         .anime-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
         @media (min-width: 640px) { .anime-grid { grid-template-columns: repeat(3, 1fr); } }
@@ -346,30 +353,30 @@
         .lazy-loader i { animation: spin 1s linear infinite; display: inline-block; margin-right: 10px; font-size: 1.6rem; color: var(--accent-cyan); vertical-align: middle;}
 
         /* ==========================================================================
-           7. ONBOARDING & SCAN MODALS
+           7. ONBOARDING & SCAN MODALS (CẢI TIẾN GỌN GÀNG HƠN)
            ========================================================================== */
         .modal-overlay { position: fixed; inset: 0; background: rgba(5,5,10,0.95); z-index: 3000; backdrop-filter: blur(30px); display: none; align-items: center; justify-content: center; }
         [data-theme="light"] .modal-overlay { background: rgba(244,244,249,0.9); }
-        .modal-content { background: var(--bg-card); border: 1px solid var(--border-glass-strong); border-radius: 40px; padding: 60px 48px; width: 90%; max-width: 800px; text-align: center; box-shadow: var(--shadow-panel); position: relative; overflow: hidden;}
-        .modal-content.onboarding::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(176,38,255,0.1) 0%, transparent 60%); z-index: -1; pointer-events: none; }
         
-        .ob-title { font-size: 3rem; font-weight: 900; margin-bottom: 16px; letter-spacing: -1.5px;}
-        .ob-desc { color: var(--text-muted); margin-bottom: 48px; font-size: 1.1rem; max-width: 600px; margin-left: auto; margin-right: auto;}
+        .modal-content.onboarding { background: var(--bg-card); border: 1px solid var(--border-glass-strong); border-radius: 24px; padding: 40px 32px; width: 90%; max-width: 650px; text-align: center; box-shadow: var(--shadow-panel); position: relative; overflow: hidden;}
+        .modal-content.onboarding::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(176,38,255,0.05) 0%, transparent 60%); z-index: -1; pointer-events: none; }
         
-        /* New Profile Setup Area */
-        .ob-profile-setup { display: flex; flex-direction: column; gap: 20px; max-width: 400px; margin: 0 auto 40px; text-align: left; }
-        .ob-profile-setup label { color: var(--text-white); font-weight: 700; font-size: 0.95rem; margin-bottom: 8px; display: block; }
-        .ob-profile-setup input { width: 100%; border-radius: 16px; padding: 16px 24px; background: var(--bg-glass); border: 1px solid var(--border-glass-strong); color: var(--text-white); outline: none; font-size: 16px !important; transition: var(--transition); font-family: inherit;}
+        .ob-title { font-size: 2rem; font-weight: 900; margin-bottom: 10px; letter-spacing: -1px;}
+        .ob-desc { color: var(--text-muted); margin-bottom: 30px; font-size: 1rem; max-width: 500px; margin-left: auto; margin-right: auto;}
+        
+        .ob-profile-setup { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 30px; text-align: left; }
+        .ob-profile-setup label { color: var(--text-white); font-weight: 700; font-size: 0.9rem; margin-bottom: 6px; display: block; }
+        .ob-profile-setup input { width: 100%; border-radius: 12px; padding: 12px 16px; background: var(--bg-glass); border: 1px solid var(--border-glass-strong); color: var(--text-white); outline: none; font-size: 16px !important; transition: var(--transition); font-family: inherit;}
         .ob-profile-setup input:focus { border-color: var(--accent-cyan); background: var(--bg-glass-hover); box-shadow: var(--shadow-glow-cyan); }
         .ob-profile-setup input::placeholder { color: var(--text-muted); }
 
-        .ob-grid { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; margin-bottom: 48px; }
-        .ob-pill { padding: 16px 32px; border-radius: 20px; border: 1px solid var(--border-glass-strong); background: var(--bg-glass); color: var(--text-light); font-weight: 700; font-size: 1.05rem; cursor: pointer; transition: var(--transition); }
-        .ob-pill:hover { background: var(--bg-glass-hover); transform: translateY(-3px);}
+        .ob-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 30px; }
+        .ob-pill { padding: 10px 20px; border-radius: 14px; border: 1px solid var(--border-glass-strong); background: var(--bg-glass); color: var(--text-light); font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: var(--transition); }
+        .ob-pill:hover { background: var(--bg-glass-hover); transform: translateY(-2px);}
         .ob-pill.active { background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); color: #fff; border-color: transparent; box-shadow: var(--shadow-glow-cyan); transform: scale(1.05); }
 
-        .btn-primary { background: var(--text-white); color: #000; border: none; padding: 20px 60px; border-radius: 20px; font-size: 1.2rem; font-weight: 900; cursor: pointer; transition: var(--transition); width: auto; min-width: 300px; display: inline-flex; align-items: center; justify-content: center; gap: 12px;}
-        .btn-primary:hover { transform: translateY(-4px); box-shadow: 0 15px 40px rgba(255,255,255,0.3); }
+        .btn-primary { background: var(--text-white); color: var(--bg-main); border: none; padding: 14px 40px; border-radius: 16px; font-size: 1.1rem; font-weight: 900; cursor: pointer; transition: var(--transition); width: auto; min-width: 200px; display: inline-flex; align-items: center; justify-content: center; gap: 8px;}
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(255,255,255,0.3); }
         .btn-primary:disabled { background: var(--bg-glass-hover); color: var(--text-muted); cursor: not-allowed; box-shadow: none; transform: none;}
 
         /* ==========================================================================
@@ -438,12 +445,12 @@
             .ac-title { font-size: 0.95rem; }
             .ac-info { padding: 10px 4px 0; }
             
-            .modal-content.onboarding, .modal-content { padding: 32px 20px; border-radius: 24px; width: 95%;}
-            .ob-title { font-size: 2rem; }
-            .ob-desc { font-size: 0.95rem; margin-bottom: 24px;}
-            .ob-profile-setup { margin-bottom: 24px; }
+            .modal-content.onboarding { padding: 30px 20px; border-radius: 20px; width: 95%;}
+            .ob-profile-setup { grid-template-columns: 1fr; gap: 12px; }
+            .ob-title { font-size: 1.8rem; }
+            .ob-desc { font-size: 0.9rem; margin-bottom: 20px;}
             .ob-grid { gap: 8px; margin-bottom: 24px;}
-            .ob-pill { padding: 10px 16px; font-size: 0.85rem; border-radius: 12px;}
+            .ob-pill { padding: 10px 16px; font-size: 0.85rem; border-radius: 10px;}
             .btn-primary { padding: 14px 16px; font-size: 1rem; min-width: 100%;}
         }
 
@@ -493,9 +500,8 @@
     <div id="onboarding-modal" class="modal-overlay">
         <div class="modal-content onboarding">
             <h2 class="ob-title"><span class="gradient-text">T-ANIME</span> VISION</h2>
-            <p class="ob-desc">Chào mừng bạn đến với kỷ nguyên Streaming mới. Hãy thiết lập hồ sơ và chọn những thể loại bạn yêu thích để Trang tối ưu hoá trải nghiệm dành riêng cho bạn!</p>
+            <p class="ob-desc">Chào mừng bạn đến với kỷ nguyên Streaming mới. Hãy thiết lập hồ sơ và chọn thể loại bạn yêu thích để tối ưu hoá trải nghiệm!</p>
             
-            <!-- THÊM HỒ SƠ CÁ NHÂN VÀO ONBOARDING -->
             <div class="ob-profile-setup">
                 <div>
                     <label>Tên Hiển Thị (Bắt buộc)</label>
@@ -514,11 +520,10 @@
         </div>
     </div>
 
-    <!-- SCAN MODAL (QUÉT DỮ LIỆU) -->
+    <!-- SCAN MODAL -->
     <div id="scan-modal" class="modal-overlay">
         <div class="modal-content" style="max-width: 500px; padding: 40px;">
             <h3 class="ob-title" style="font-size: 1.8rem; margin-bottom: 12px;"><i class="ph-fill ph-database"></i> Quét Dữ Liệu</h3>
-            
             <div id="scan-init-view">
                 <p class="ob-desc" style="font-size: 0.95rem; margin-bottom: 32px;">Hệ thống sẽ quét toàn bộ danh sách phim từ trang 1 đến trang cuối để lấy thông tin. Vui lòng chọn định dạng lưu:</p>
                 <div class="ob-grid" style="gap: 16px; margin-bottom: 0;">
@@ -527,7 +532,6 @@
                     <button class="btn-pill" style="width: 100%; background: transparent; border-color: transparent; font-size: 1rem;" onclick="closeScanModal()">Hủy</button>
                 </div>
             </div>
-
             <div id="scan-progress-view" style="display: none;">
                 <p class="ob-desc" style="font-size: 0.9rem; margin-bottom: 16px;">Vui lòng không đóng trình duyệt trong quá trình này.</p>
                 <div style="width: 100%; height: 8px; background: var(--bg-glass-hover); border-radius: 4px; overflow: hidden; margin-bottom: 16px;">
@@ -535,7 +539,6 @@
                 </div>
                 <div id="scan-status" style="color: var(--accent-cyan); font-weight: 700; margin-bottom: 8px; font-size: 0.9rem;">Đang chuẩn bị quét dữ liệu...</div>
                 <div id="scan-stats" style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 32px;">Đã quét: 0 phim</div>
-                
                 <button class="btn-pill" style="width: 100%; color: var(--accent-red); border-color: rgba(255,59,48,0.3); justify-content: center;" onclick="stopScan()">
                     <i class="ph-bold ph-stop-circle"></i> Dừng & Lưu Tạm
                 </button>
@@ -845,7 +848,6 @@
             movieTitle: document.getElementById('movie-title'),
             movieMeta: document.getElementById('movie-meta'),
             movieDesc: document.getElementById('movie-desc'),
-            btnSave: document.getElementById('btn-save'),
             
             epGrid: document.getElementById('episodes-grid'),
             epCount: document.getElementById('ep-count'),
@@ -1144,7 +1146,6 @@
             } else {
                 ui.obGrid.innerHTML = ALL_GENRES.map(g => `<div class="ob-pill" data-slug="${g.slug}" onclick="togglePref(this)">${g.name}</div>`).join('');
                 
-                // Lắng nghe sự kiện để kích hoạt nút
                 ui.obInputName.addEventListener('input', validateOnboardingForm);
 
                 ui.loader.style.display = 'none';
@@ -1161,16 +1162,13 @@
 
         function validateOnboardingForm() {
             const nameInput = ui.obInputName.value.trim();
-            // Nút bấm chỉ được kích hoạt nếu có điền Tên VÀ chọn ít nhất 1 thể loại
             ui.btnSavePrefs.disabled = (selectedPrefs.size === 0 || nameInput === '');
         }
 
         window.savePreferences = () => {
-            // Lưu thể loại
             userPrefsSlugs = Array.from(selectedPrefs);
             localStorage.setItem('tanime_prefs', JSON.stringify(userPrefsSlugs));
             
-            // Lưu Hồ sơ
             const nameInput = ui.obInputName.value.trim();
             const avatarInput = ui.obInputAvatar.value.trim();
             
@@ -1192,14 +1190,11 @@
             if (savedProfile) {
                 const profile = JSON.parse(savedProfile);
                 
-                // Cập nhật tên
                 document.querySelectorAll('.display-user-name').forEach(el => {
                     el.textContent = profile.name;
                 });
                 
-                // Cập nhật ảnh đại diện (Nếu người dùng có điền link)
                 if (profile.avatar) {
-                    // Dùng error fallback để trả về icon mặc định nếu link ảnh bị hỏng
                     const fallbackHTML = `<i class='ph-fill ph-user' style='color: white; font-size: inherit;'></i>`;
                     const avatarImgHTML = `<img src="${profile.avatar}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.outerHTML=\`${fallbackHTML}\`">`;
                     
@@ -1236,7 +1231,6 @@
             ui.epGrid.innerHTML = Array.from({length: 12}).map(() => `<div class="skeleton-block" style="height:44px; border-radius:14px; width:100%;"></div>`).join('');
         }
 
-        // Hàm cuộn với offset để không bị che bởi navbar
         window.loadMovieDetailAndScroll = (slug) => {
             loadMovieDetail(slug);
             const offset = window.innerWidth <= 1024 ? 80 : 0;
@@ -1296,9 +1290,18 @@
         function updateMainPlayerFavUI() {
             if(!currentMovieData) return;
             const isLiked = favorites.some(f => f.slug === currentMovieData.slug);
-            ui.btnSave.className = `btn-pill ${isLiked ? 'saved' : ''}`;
-            ui.btnSave.innerHTML = `<i class="${isLiked ? 'ph-fill' : 'ph-bold'} ph-heart"></i> <span class="action-text">${isLiked ? 'Đã Lưu' : 'Lưu'}</span>`;
+            const btnSave = document.getElementById('btn-save'); // Fetch lại DOM mới nhất
+            if(btnSave) {
+                btnSave.className = `btn-pill ${isLiked ? 'saved' : ''}`;
+                btnSave.innerHTML = `<i class="${isLiked ? 'ph-fill' : 'ph-bold'} ph-heart"></i> <span class="action-text">${isLiked ? 'Đã Lưu' : 'Lưu'}</span>`;
+            }
         }
+
+        window.toggleFavoriteFromMain = () => { 
+            if (currentMovieData) {
+                toggleFavorite({ slug: currentMovieData.slug, name: currentMovieData.name, thumb_url: currentMovieData.thumb_url }); 
+            }
+        };
 
         function renderEpisodes() {
             ui.epCount.textContent = `${currentEpisodesList.length} Tập`;
@@ -1319,7 +1322,6 @@
             ui.epGrid.innerHTML = epsToRender.map((ep, idx) => {
                 const realIdx = startIdx + idx; 
                 const isActive = activeEpisode && activeEpisode.slug === ep.slug;
-                // Nút thu gọn với title
                 return `<button class="btn-episode ${isActive ? 'active' : ''}" title="${ep.name}" onclick="selectEpisode(${realIdx}, this)">${ep.name}</button>`;
             }).join('');
         }
@@ -1456,7 +1458,6 @@
 
             document.addEventListener('click', (e) => { if (!input.contains(e.target) && !dropdown.contains(e.target)) dropdown.style.display = 'none'; });
             
-            // Xử lý Focus/Blur cho Mobile để tránh kẹt dropdown
             input.addEventListener('focus', () => { if(input.value.trim()) dropdown.style.display = 'block'; });
         }
 
@@ -1539,7 +1540,6 @@
         async function loadMoreStories(count) {
             if (isLoadingStory) return; isLoadingStory = true;
             try {
-                // Fetch page 1 trước để xác định số trang an toàn
                 const initRes = await fetch(`https://ophim1.com/v1/api/danh-sach/hoat-hinh?page=1`);
                 const initData = await initRes.json();
                 const totalPages = initData.data?.params?.pagination?.totalPages || 10;
