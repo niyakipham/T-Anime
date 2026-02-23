@@ -270,7 +270,8 @@
         }
         @media (max-width: 768px) { .story-video-wrapper { max-width: 100%; } }
         
-        .story-video-wrapper iframe { width: 100%; height: 100%; border: none; object-fit: cover; pointer-events: none;} /* Disable click iframe để k bị mất focus lướt */
+        /* Bỏ pointer-events: none để user có thể click play video */
+        .story-video-wrapper iframe { width: 100%; height: 100%; border: none; object-fit: cover; } 
 
         /* Overlay UI đè lên video */
         .story-overlay { position: absolute; inset: 0; z-index: 3005; pointer-events: none; display: flex; flex-direction: column; justify-content: flex-end; padding: 24px; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 30%, transparent 100%); }
@@ -796,6 +797,7 @@
         let storyCache = []; // Bộ nhớ đệm chứa dữ liệu story
         let isLoadingStory = false;
         let storyObserver;
+        let videoPlaybackObserver; // Thêm biến theo dõi việc phát âm thanh
 
         window.openStoryMode = () => {
             document.body.classList.add('modal-open');
@@ -811,7 +813,10 @@
         window.closeStoryMode = () => {
             document.body.classList.remove('modal-open');
             storyDOM.modal.style.display = 'none';
-            // Stop iframe playing bằng cách gỡ src hoặc đơn giản là để nó chạy ngầm nhưng bị mute (iframe embed thường k autoplay có tiếng nếu ko tương tác)
+            
+            // Xoá src của tất cả iframe đang chạy khi đóng Story để tắt hẳn âm thanh
+            const iframes = storyDOM.container.querySelectorAll('iframe');
+            iframes.forEach(iframe => iframe.src = '');
         };
 
         // Quan sát xem người dùng đã lướt đến video cuối cùng chưa để load thêm
@@ -825,6 +830,24 @@
                     }
                 });
             }, { threshold: 0.5 });
+
+            // Quản lý việc phát video: Chỉ load iframe khi video nằm trong khung hình (ngăn loạn âm thanh)
+            videoPlaybackObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const iframe = entry.target.querySelector('iframe');
+                    if (!iframe) return;
+
+                    if (entry.isIntersecting) {
+                        // Nếu đang ở trong màn hình, gán lại src để chạy
+                        if (!iframe.src || iframe.src === window.location.href || iframe.src === 'about:blank') {
+                            iframe.src = iframe.dataset.src;
+                        }
+                    } else {
+                        // Nếu lướt qua video khác, xoá src đi để ngắt âm thanh
+                        iframe.src = '';
+                    }
+                });
+            }, { threshold: 0.6 }); // Hiển thị ít nhất 60% mới bắt đầu chạy
         }
 
         async function loadMoreStories(count) {
@@ -852,16 +875,13 @@
                             // Chọn tập ngẫu nhiên
                             const randomEp = eps[Math.floor(Math.random() * eps.length)];
                             
-                            // Thêm tham số fake ?t= vào link embed để giả vờ nhày thời gian (Ophim player có thể ko support params này nhưng nó ép iframe reload mới)
-                            const fakeRandomTimeParam = `&t=${Math.floor(Math.random() * 600)}`; 
-                            const embedLink = randomEp.link_embed + (randomEp.link_embed.includes('?') ? fakeRandomTimeParam : `?${fakeRandomTimeParam.substring(1)}`);
-
                             const storyObj = {
                                 slug: m.slug,
                                 name: m.name,
                                 content: m.content ? m.content.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...' : '',
                                 thumb_url: m.thumb_url,
-                                link: embedLink,
+                                poster_url: m.poster_url,
+                                link: randomEp.link_embed, // Xoá tham số fake time gây hỏng link iframe của Ophim
                                 isLiked: favorites.some(f => f.slug === m.slug)
                             };
                             
@@ -884,11 +904,14 @@
             
             // Xử lý JSON escape để truyền vào hàm click
             const safeObjStr = JSON.stringify({slug: story.slug, name: story.name, thumb_url: story.thumb_url}).replace(/"/g, '&quot;');
+            
+            // Thêm hình nền preview (poster ảnh dọc) trong lúc chờ iframe load
+            const previewImg = `https://img.ophim.live/uploads/movies/${story.poster_url || story.thumb_url}`;
 
             itemDiv.innerHTML = `
-                <div class="story-video-wrapper">
-                    <!-- Dùng pointer-events:none ở CSS để ngăn chặn click nhầm vào quảng cáo của iframe gây chuyển trang -->
-                    <iframe src="${story.link}" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                <div class="story-video-wrapper" style="background: url('${previewImg}') center/cover no-repeat;">
+                    <!-- Đổi src thành data-src, src mặc định để trống -->
+                    <iframe data-src="${story.link}" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                     <div class="story-overlay">
                         <div class="story-info">
                             <h3 class="story-title">${story.name}</h3>
@@ -917,6 +940,7 @@
             // Gắn cờ cho phần tử mới nhất và theo dõi nó
             itemDiv.dataset.isLast = 'true';
             storyObserver.observe(itemDiv);
+            videoPlaybackObserver.observe(itemDiv); // Theo dõi việc phát/ngắt âm thanh
         }
 
         window.toggleStoryLike = (btnElement, movieObj) => {
