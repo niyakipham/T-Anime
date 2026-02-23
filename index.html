@@ -156,19 +156,27 @@
         .user-avatar { width: 44px; height: 44px; border-radius: 14px; background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); padding: 2px; cursor: pointer; position: relative;}
         .user-avatar-inner { width: 100%; height: 100%; background: var(--bg-main); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
 
-        /* Dropdown Favorites */
-        .user-dropdown { position: absolute; top: calc(100% + 20px); right: 0; width: 320px; background: rgba(15,15,25,0.95); border: 1px solid var(--border-glass-strong); border-radius: 16px; box-shadow: var(--shadow-panel); display: none; z-index: 101; backdrop-filter: blur(24px); overflow: hidden; flex-direction: column; }
-        .user-dropdown-header { padding: 20px; border-bottom: 1px solid var(--border-glass); font-weight: 700; color: white; display: flex; align-items: center; gap: 8px; font-size: 1rem;}
-        .favorite-list { max-height: 350px; overflow-y: auto; padding: 8px;}
-        .fav-item { display: flex; gap: 12px; padding: 12px; border-radius: 12px; cursor: pointer; transition: var(--transition); align-items: center; margin-bottom: 4px;}
-        .fav-item:hover { background: rgba(255,255,255,0.08); }
-        .fav-thumb { width: 44px; height: 60px; border-radius: 8px; overflow: hidden; flex-shrink: 0; }
-        .fav-thumb img { width: 100%; height: 100%; object-fit: cover; }
-        .fav-info { flex: 1; min-width: 0; }
-        .fav-title { font-size: 0.9rem; font-weight: 600; color: white; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4;}
-        .btn-remove-fav { color: var(--text-muted); padding: 8px; border-radius: 8px; transition: var(--transition);}
-        .btn-remove-fav:hover { color: var(--accent-red); background: rgba(255,59,48,0.1); }
-        .fav-empty { padding: 32px 24px; text-align: center; color: var(--text-muted); font-size: 0.9rem; }
+        /* Dropdown Avatar (Tabs: Fav, History, Download) */
+        .user-dropdown { position: absolute; top: calc(100% + 20px); right: 0; width: 340px; background: rgba(15,15,25,0.95); border: 1px solid var(--border-glass-strong); border-radius: 16px; box-shadow: var(--shadow-panel); display: none; z-index: 101; backdrop-filter: blur(24px); overflow: hidden; flex-direction: column; }
+        .dropdown-tabs { display: flex; border-bottom: 1px solid var(--border-glass); background: rgba(0,0,0,0.3);}
+        .dropdown-tab { flex: 1; padding: 14px; text-align: center; color: var(--text-muted); cursor: pointer; transition: var(--transition); border-bottom: 2px solid transparent; font-size: 1.3rem;}
+        .dropdown-tab:hover { color: white; background: rgba(255,255,255,0.05); }
+        .dropdown-tab.active { color: var(--accent-cyan); border-bottom-color: var(--accent-cyan); }
+        .dropdown-header-title { padding: 16px 20px 8px; font-size: 0.95rem; font-weight: 800; color: white; text-transform: uppercase; letter-spacing: 0.5px;}
+        
+        .user-list-container { max-height: 380px; overflow-y: auto; padding: 8px 12px 12px;}
+        .list-item { display: flex; gap: 14px; padding: 12px; border-radius: 12px; cursor: pointer; transition: var(--transition); align-items: center; margin-bottom: 4px; background: rgba(255,255,255,0.02);}
+        .list-item:hover { background: rgba(255,255,255,0.08); transform: translateX(4px);}
+        .list-thumb { width: 50px; height: 70px; border-radius: 8px; overflow: hidden; flex-shrink: 0; }
+        .list-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .list-info { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 4px;}
+        .list-title { font-size: 0.95rem; font-weight: 700; color: white; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.3;}
+        .list-subtitle { font-size: 0.8rem; color: var(--accent-cyan); font-weight: 600;}
+        .list-time { font-size: 0.75rem; color: var(--text-muted); }
+        
+        .btn-remove-list { color: var(--text-muted); padding: 8px; border-radius: 8px; transition: var(--transition); display: flex; align-items: center; justify-content: center;}
+        .btn-remove-list:hover { color: var(--accent-red); background: rgba(255,59,48,0.1); }
+        .list-empty { padding: 40px 24px; text-align: center; color: var(--text-muted); font-size: 0.95rem; font-weight: 500;}
 
         /* Mobile Bottom Nav */
         .mobile-bottom-nav {
@@ -442,18 +450,18 @@
             <button class="btn-story" onclick="openStoryMode()">
                 <i class="ph-fill ph-play-circle"></i> T-Story
             </button>
-            
-            <button class="btn-icon"><i class="ph ph-bell" style="font-size: 24px;"></i></button>
-            
-            <!-- Avatar & Dropdown Favorites -->
+            <!-- Avatar & Dropdown User -->
             <div class="user-avatar" id="user-avatar-btn">
                 <div class="user-avatar-inner"><i class="ph-fill ph-user" style="color: var(--text-white); font-size: 20px;"></i></div>
                 
-                <div class="user-dropdown" id="fav-dropdown">
-                    <div class="user-dropdown-header">
-                        <i class="ph-fill ph-heart" style="color: var(--accent-red);"></i> Phim Yêu Thích
+                <div class="user-dropdown" id="user-dropdown">
+                    <div class="dropdown-tabs">
+                        <div class="dropdown-tab active" onclick="event.stopPropagation(); switchDropdownTab('fav')" id="tab-fav" title="Yêu Thích"><i class="ph-fill ph-heart"></i></div>
+                        <div class="dropdown-tab" onclick="event.stopPropagation(); switchDropdownTab('history')" id="tab-history" title="Lịch Sử Xem"><i class="ph-fill ph-clock-counter-clockwise"></i></div>
+                        <div class="dropdown-tab" onclick="event.stopPropagation(); switchDropdownTab('download')" id="tab-download" title="Đã Tải Xuống"><i class="ph-fill ph-download-simple"></i></div>
                     </div>
-                    <div class="favorite-list custom-scrollbar" id="fav-list-container"></div>
+                    <div class="dropdown-header-title" id="dropdown-title">Phim Yêu Thích</div>
+                    <div class="user-list-container custom-scrollbar" id="user-list-container"></div>
                 </div>
             </div>
         </div>
@@ -569,6 +577,9 @@
         let selectedPrefs = new Set(); 
         let userPrefsSlugs = []; 
         let favorites = []; 
+        let historyList = [];
+        let downloadList = [];
+        let currentTab = 'fav';
         
         let currentMovieData = null;
         let currentEpisodesList = [];
@@ -601,18 +612,36 @@
             scrollAnchor: document.getElementById('scroll-anchor'),
 
             avatarBtn: document.getElementById('user-avatar-btn'),
-            favDropdown: document.getElementById('fav-dropdown'),
-            favListContainer: document.getElementById('fav-list-container')
+            userDropdown: document.getElementById('user-dropdown'),
+            userListContainer: document.getElementById('user-list-container')
         };
 
         // ==========================================
-        // 0. QUẢN LÝ YÊU THÍCH (FAVORITES)
+        // 0. QUẢN LÝ USER DATA (FAV, HISTORY, DOWNLOAD)
         // ==========================================
-        function loadFavorites() {
+        function loadUserData() {
             const savedFavs = localStorage.getItem('tanime_favorites');
             if (savedFavs) favorites = JSON.parse(savedFavs);
-            renderFavoritesDropdown();
+            
+            const savedHistory = localStorage.getItem('tanime_history');
+            if (savedHistory) historyList = JSON.parse(savedHistory);
+
+            const savedDownloads = localStorage.getItem('tanime_downloads');
+            if (savedDownloads) downloadList = JSON.parse(savedDownloads);
+            
+            renderUserDropdown();
         }
+
+        window.switchDropdownTab = (tab) => {
+            currentTab = tab;
+            document.querySelectorAll('.dropdown-tab').forEach(el => el.classList.remove('active'));
+            document.getElementById(`tab-${tab}`).classList.add('active');
+            
+            const titles = { 'fav': 'Phim Yêu Thích', 'history': 'Lịch Sử Xem', 'download': 'Đã Tải Xuống' };
+            document.getElementById('dropdown-title').textContent = titles[tab];
+            
+            renderUserDropdown();
+        };
 
         function toggleFavorite(movieObj) {
             const index = favorites.findIndex(f => f.slug === movieObj.slug);
@@ -622,36 +651,74 @@
                 favorites.unshift({ slug: movieObj.slug, name: movieObj.name, thumb_url: movieObj.thumb_url });
             }
             localStorage.setItem('tanime_favorites', JSON.stringify(favorites));
-            renderFavoritesDropdown();
+            if(currentTab === 'fav') renderUserDropdown();
             if (currentMovieData && currentMovieData.slug === movieObj.slug) renderMovieInfo(); 
             return index === -1; 
         }
 
-        function renderFavoritesDropdown() {
-            if (favorites.length === 0) {
-                ui.favListContainer.innerHTML = `<div class="fav-empty">Bạn chưa lưu bộ phim nào.</div>`;
+        function addToHistory(movie, episode) {
+            if (!movie || !episode) return;
+            const now = new Date();
+            const timeStr = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')} - ${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()}`;
+            
+            historyList = historyList.filter(h => h.slug !== movie.slug);
+            historyList.unshift({
+                slug: movie.slug,
+                name: movie.name,
+                thumb_url: movie.thumb_url,
+                epName: episode.name,
+                time: timeStr
+            });
+            
+            if (historyList.length > 30) historyList.pop(); // Max 30
+            localStorage.setItem('tanime_history', JSON.stringify(historyList));
+            if (currentTab === 'history') renderUserDropdown();
+        }
+
+        function renderUserDropdown() {
+            let data = [];
+            let emptyMsg = "";
+            let onRemove = "";
+            
+            if (currentTab === 'fav') {
+                data = favorites; emptyMsg = "Bạn chưa lưu bộ phim nào."; onRemove = "removeFromFav";
+            } else if (currentTab === 'history') {
+                data = historyList; emptyMsg = "Bạn chưa xem bộ phim nào."; onRemove = "removeFromHistory";
+            } else if (currentTab === 'download') {
+                data = downloadList; emptyMsg = "Chưa có tập phim nào được tải."; onRemove = "removeFromDownloads";
+            }
+
+            if (data.length === 0) {
+                ui.userListContainer.innerHTML = `<div class="list-empty">${emptyMsg}</div>`;
                 return;
             }
-            ui.favListContainer.innerHTML = favorites.map(f => `
-                <div class="fav-item" onclick="loadMovieDetailAndScroll('${f.slug}'); document.getElementById('fav-dropdown').style.display='none';">
-                    <div class="fav-thumb"><img src="https://img.ophim.live/uploads/movies/${f.thumb_url}" onerror="this.src='https://via.placeholder.com/44x60/1F2937/00D1F5'"></div>
-                    <div class="fav-info">
-                        <div class="fav-title">${f.name}</div>
+            
+            ui.userListContainer.innerHTML = data.map((item, index) => `
+                <div class="list-item" onclick="loadMovieDetailAndScroll('${item.slug}'); document.getElementById('user-dropdown').style.display='none';">
+                    <div class="list-thumb"><img src="${item.thumb_url.startsWith('http') ? item.thumb_url : 'https://img.ophim.live/uploads/movies/' + item.thumb_url}" onerror="this.src='https://via.placeholder.com/44x60/1F2937/00D1F5'"></div>
+                    <div class="list-info">
+                        <div class="list-title">${item.name}</div>
+                        ${item.epName ? `<div class="list-subtitle">${item.epName}</div>` : ''}
+                        ${item.time ? `<div class="list-time">${item.time}</div>` : ''}
                     </div>
-                    <button class="btn-remove-fav" onclick="event.stopPropagation(); toggleFavorite({slug: '${f.slug}'})">
+                    <button class="btn-remove-list" onclick="event.stopPropagation(); window.${onRemove}(${index})">
                         <i class="ph-fill ph-trash"></i>
                     </button>
                 </div>
             `).join('');
         }
 
+        window.removeFromFav = (idx) => { favorites.splice(idx, 1); localStorage.setItem('tanime_favorites', JSON.stringify(favorites)); renderUserDropdown(); if (currentMovieData) renderMovieInfo(); };
+        window.removeFromHistory = (idx) => { historyList.splice(idx, 1); localStorage.setItem('tanime_history', JSON.stringify(historyList)); renderUserDropdown(); };
+        window.removeFromDownloads = (idx) => { downloadList.splice(idx, 1); localStorage.setItem('tanime_downloads', JSON.stringify(downloadList)); renderUserDropdown(); };
+
         ui.avatarBtn.addEventListener('click', (e) => {
-            const dp = ui.favDropdown;
+            const dp = ui.userDropdown;
             dp.style.display = dp.style.display === 'flex' ? 'none' : 'flex';
         });
         document.addEventListener('click', (e) => {
-            if (!ui.avatarBtn.contains(e.target) && !ui.favDropdown.contains(e.target)) {
-                ui.favDropdown.style.display = 'none';
+            if (!ui.avatarBtn.contains(e.target) && !ui.userDropdown.contains(e.target)) {
+                ui.userDropdown.style.display = 'none';
             }
         });
 
@@ -659,7 +726,7 @@
         // 1. ONBOARDING & PREFERENCES
         // ==========================================
         function checkOnboarding() {
-            loadFavorites(); 
+            loadUserData(); 
             const saved = localStorage.getItem('tanime_prefs');
             if (saved) {
                 userPrefsSlugs = JSON.parse(saved);
@@ -764,7 +831,10 @@
                         <button class="btn-action save ${isLiked ? 'saved' : ''}" onclick="toggleFavoriteFromMain()">
                             <i class="${isLiked ? 'ph-fill' : 'ph-bold'} ph-heart"></i> ${isLiked ? 'Đã Lưu' : 'Lưu Phim'}
                         </button>
-                        <button class="btn-action share"><i class="ph-bold ph-share-network"></i> Chia sẻ</button>
+                        <button class="btn-action" id="btn-download" onclick="downloadCurrentEpisode()">
+                            <i class="ph-bold ph-download-simple"></i> Tải Tập Này
+                        </button>
+                        <button class="btn-action share" onclick="shareStory()"><i class="ph-bold ph-share-network"></i> Chia sẻ</button>
                     </div>
                 </div>
                 <div class="meta-tags">
@@ -820,7 +890,48 @@
             currentEpChunk = Math.floor(idx / EP_CHUNK_SIZE); 
             renderPlayer(); 
             renderEpisodes();
+            addToHistory(currentMovieData, activeEpisode); // Lưu vào lịch sử khi bấm xem tập
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        window.downloadCurrentEpisode = () => {
+            if (!currentMovieData || !activeEpisode) return;
+            const btn = document.getElementById('btn-download');
+            
+            if (btn.classList.contains('downloading')) return;
+            
+            const exists = downloadList.some(d => d.slug === currentMovieData.slug && d.epName === activeEpisode.name);
+            if (exists) {
+                alert("Tập phim này đã nằm trong danh sách Tải Xuống!");
+                return;
+            }
+
+            btn.classList.add('downloading');
+            btn.innerHTML = `<i class="ph-bold ph-spinner-gap" style="animation: spin 1s linear infinite;"></i> Đang Tải...`;
+            
+            // Giả lập thời gian tải (Vì iframe không cho down file trực tiếp, ta lưu vào danh sách offline)
+            setTimeout(() => {
+                const now = new Date();
+                const timeStr = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()}`;
+                
+                downloadList.unshift({
+                    slug: currentMovieData.slug,
+                    name: currentMovieData.name,
+                    thumb_url: currentMovieData.thumb_url,
+                    epName: activeEpisode.name,
+                    time: `Đã tải: ${timeStr}`
+                });
+                
+                localStorage.setItem('tanime_downloads', JSON.stringify(downloadList));
+                if (currentTab === 'download') renderUserDropdown();
+                
+                btn.classList.remove('downloading');
+                btn.innerHTML = `<i class="ph-bold ph-check"></i> Đã Tải Xong`;
+                setTimeout(() => {
+                    if (btn) btn.innerHTML = `<i class="ph-bold ph-download-simple"></i> Tải Tập Này`;
+                }, 3000);
+                
+            }, 1500);
         };
 
         // ==========================================
