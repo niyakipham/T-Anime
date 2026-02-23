@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>T-ANIME</title>
+    <title>T-ANIME | Premium Streaming</title>
     <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- Icons (Phosphor Icons) -->
@@ -107,8 +107,7 @@
         .spinner { width: 48px; height: 48px; border: 3px solid rgba(0,209,245,0.2); border-top-color: var(--accent-cyan); border-radius: 50%; animation: spin 1s linear infinite; }
         .loader-text { margin-top: 20px; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.2em; color: var(--text-muted); animation: pulse 2s infinite; }
         
-        /* FIX: Loại bỏ transform ở animation để không phá vỡ thuộc tính position: fixed của Header và Bottom Nav */
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .app-wrapper { display: flex; min-height: 100vh; animation: fadeIn 0.6s ease-out forwards; width: 100%; overflow-x: hidden; }
 
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -150,7 +149,7 @@
 
         .sidebar-footer { margin-top: auto; display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg-glass); border-radius: 14px; border: 1px solid var(--border-glass-strong); cursor: pointer; transition: var(--transition);}
         .sidebar-footer:hover { background: var(--bg-glass-hover); }
-        .sf-avatar { width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.1rem;}
+        .sf-avatar { width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.1rem; overflow: hidden;}
         .sf-info { flex: 1; overflow: hidden; }
         .sf-name { font-size: 0.85rem; font-weight: 700; color: var(--text-white); white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}
         .sf-sub { font-size: 0.7rem; color: var(--text-muted); }
@@ -173,9 +172,7 @@
         .search-container { position: relative; width: 100%; max-width: 360px; }
         .search-box { display: flex; align-items: center; gap: 12px; background: var(--bg-glass); border: 1px solid var(--border-glass-strong); border-radius: 999px; padding: 10px 20px; transition: var(--transition); backdrop-filter: blur(10px);}
         .search-box:focus-within { background: var(--bg-card); border-color: var(--accent-cyan); box-shadow: var(--shadow-glow-cyan); }
-        
-        /* FIX ZOOM CHO TẤT CẢ INPUT/SELECT BẰNG CÁCH ÉP SIZE TRÊN MOBILE BÊN DƯỚI */
-        .search-box input { background: transparent; border: none; color: var(--text-white); width: 100%; font-family: inherit; outline: none; }
+        .search-box input { background: transparent; border: none; color: var(--text-white); width: 100%; font-family: inherit; outline: none; font-size: 16px !important; }
         .search-box input::placeholder { color: var(--text-muted); font-weight: 500;}
         
         .search-dropdown { position: absolute; top: calc(100% + 8px); left: 0; width: 150%; background: var(--bg-card); border: 1px solid var(--border-glass-strong); border-radius: 16px; box-shadow: var(--shadow-panel); max-height: 60vh; overflow-y: auto; display: none; z-index: 101; backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); padding: 12px; }
@@ -235,16 +232,14 @@
         .theme-swatch.active { border-color: var(--text-white); transform: scale(1.05);}
 
         /* ==========================================================================
-           5. MAIN CONTENT (PLAYER & INFO) - SỬ DỤNG FLEXBOX CHỐNG LỖI DROP COLUMN
+           5. MAIN CONTENT (PLAYER & INFO)
            ========================================================================== */
-        /* Padding-top bù cho Header Fixed */
         .content-wrapper { padding: 90px 32px 40px; max-width: 1500px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px; width: 100%;}
         
         .hero-section { display: flex; flex-direction: column; gap: 24px; align-items: stretch; width: 100%; }
         .hero-left { flex: 1; display: flex; flex-direction: column; min-width: 0; width: 100%; }
         .hero-right { width: 100%; display: flex; flex-direction: column; }
 
-        /* FIX 1: Thu nhỏ độ rộng của phần chọn tập xuống tối đa */
         @media (min-width: 1025px) { 
             .hero-section { flex-direction: row; align-items: flex-start;} 
             .hero-right { flex: 0 0 240px; position: sticky; top: 90px; max-height: calc(100vh - 120px); }
@@ -287,12 +282,11 @@
         .ep-title i { color: var(--accent-purple); font-size: 1.4rem;}
         
         .ep-controls { display: flex; gap: 6px; align-items: center; width: 100%; justify-content: space-between;}
-        .ep-chunk-select { background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass-strong); color: var(--text-white); border-radius: 8px; padding: 4px 8px; font-size: 0.75rem; font-weight: 700; outline: none; cursor: pointer; transition: var(--transition); flex: 1;}
+        .ep-chunk-select { background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass-strong); color: var(--text-white); border-radius: 8px; padding: 4px 8px; font-size: 16px !important; font-weight: 700; outline: none; cursor: pointer; transition: var(--transition); flex: 1;}
         .ep-chunk-select:hover { border-color: var(--accent-cyan); }
         .ep-chunk-select option { background: var(--bg-main); color: var(--text-white); }
         .ep-count { font-size: 0.75rem; font-weight: 700; background: var(--bg-glass-hover); padding: 4px 8px; border-radius: 999px; color: var(--text-white); white-space: nowrap;}
         
-        /* FIX 2: Bóp nhỏ kích thước nút Tập phim siêu gọn */
         .episodes-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(45px, 1fr)); gap: 6px; align-content: start; padding-right: 6px;}
         
         .btn-episode { 
@@ -360,8 +354,15 @@
         .modal-content.onboarding::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(176,38,255,0.1) 0%, transparent 60%); z-index: -1; pointer-events: none; }
         
         .ob-title { font-size: 3rem; font-weight: 900; margin-bottom: 16px; letter-spacing: -1.5px;}
-        .ob-desc { color: var(--text-muted); margin-bottom: 48px; font-size: 1.2rem; max-width: 600px; margin-left: auto; margin-right: auto;}
+        .ob-desc { color: var(--text-muted); margin-bottom: 48px; font-size: 1.1rem; max-width: 600px; margin-left: auto; margin-right: auto;}
         
+        /* New Profile Setup Area */
+        .ob-profile-setup { display: flex; flex-direction: column; gap: 20px; max-width: 400px; margin: 0 auto 40px; text-align: left; }
+        .ob-profile-setup label { color: var(--text-white); font-weight: 700; font-size: 0.95rem; margin-bottom: 8px; display: block; }
+        .ob-profile-setup input { width: 100%; border-radius: 16px; padding: 16px 24px; background: var(--bg-glass); border: 1px solid var(--border-glass-strong); color: var(--text-white); outline: none; font-size: 16px !important; transition: var(--transition); font-family: inherit;}
+        .ob-profile-setup input:focus { border-color: var(--accent-cyan); background: var(--bg-glass-hover); box-shadow: var(--shadow-glow-cyan); }
+        .ob-profile-setup input::placeholder { color: var(--text-muted); }
+
         .ob-grid { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; margin-bottom: 48px; }
         .ob-pill { padding: 16px 32px; border-radius: 20px; border: 1px solid var(--border-glass-strong); background: var(--bg-glass); color: var(--text-light); font-weight: 700; font-size: 1.05rem; cursor: pointer; transition: var(--transition); }
         .ob-pill:hover { background: var(--bg-glass-hover); transform: translateY(-3px);}
@@ -376,13 +377,6 @@
            ========================================================================== */
         .mobile-bottom-nav { display: none; }
         .mobile-search-wrapper { display: none; }
-        
-        /* CHỐNG ZOOM IOS: Ép font-size 16px cho tất cả các form controls trên Mobile */
-        @media (max-width: 768px) {
-            input, select, textarea, .search-box input {
-                font-size: 16px !important; 
-            }
-        }
 
         @media (max-width: 1024px) {
             .sidebar { transform: translateX(-100%); transition: transform 0.3s; }
@@ -447,6 +441,7 @@
             .modal-content.onboarding, .modal-content { padding: 32px 20px; border-radius: 24px; width: 95%;}
             .ob-title { font-size: 2rem; }
             .ob-desc { font-size: 0.95rem; margin-bottom: 24px;}
+            .ob-profile-setup { margin-bottom: 24px; }
             .ob-grid { gap: 8px; margin-bottom: 24px;}
             .ob-pill { padding: 10px 16px; font-size: 0.85rem; border-radius: 12px;}
             .btn-primary { padding: 14px 16px; font-size: 1rem; min-width: 100%;}
@@ -498,7 +493,20 @@
     <div id="onboarding-modal" class="modal-overlay">
         <div class="modal-content onboarding">
             <h2 class="ob-title"><span class="gradient-text">T-ANIME</span> VISION</h2>
-            <p class="ob-desc">Chào mừng bạn đến với kỷ nguyên Streaming mới. Hãy chọn những thể loại bạn yêu thích để Trang tối ưu hoá trải nghiệm dành riêng cho bạn!</p>
+            <p class="ob-desc">Chào mừng bạn đến với kỷ nguyên Streaming mới. Hãy thiết lập hồ sơ và chọn những thể loại bạn yêu thích để Trang tối ưu hoá trải nghiệm dành riêng cho bạn!</p>
+            
+            <!-- THÊM HỒ SƠ CÁ NHÂN VÀO ONBOARDING -->
+            <div class="ob-profile-setup">
+                <div>
+                    <label>Tên Hiển Thị (Bắt buộc)</label>
+                    <input type="text" id="ob-input-name" placeholder="VD: Hoàng Wibu..." autocomplete="off">
+                </div>
+                <div>
+                    <label>Link Ảnh Đại Diện (Tuỳ chọn)</label>
+                    <input type="text" id="ob-input-avatar" placeholder="https://..." autocomplete="off">
+                </div>
+            </div>
+
             <div class="ob-grid" id="ob-genres-grid"></div>
             <button class="btn-primary" id="btn-save-prefs" disabled onclick="savePreferences()">
                 Kích Hoạt Trải Nghiệm <i class="ph-bold ph-rocket-launch"></i>
@@ -535,7 +543,7 @@
         </div>
     </div>
 
-    <!-- APP WRAPPER (Gói toàn bộ giao diện kể cả bottom nav) -->
+    <!-- APP WRAPPER -->
     <div class="app-wrapper" id="app-wrapper" style="display: none;">
         
         <!-- SIDEBAR (Desktop) -->
@@ -579,9 +587,9 @@
             </div>
 
             <div class="sidebar-footer" onclick="openSidePanel('fav')">
-                <div class="sf-avatar"><i class="ph-fill ph-user"></i></div>
+                <div class="sf-avatar display-user-avatar"><i class="ph-fill ph-user"></i></div>
                 <div class="sf-info">
-                    <div class="sf-name">Guest User</div>
+                    <div class="sf-name display-user-name">Guest User</div>
                     <div class="sf-sub">Premium Plan</div>
                 </div>
                 <i class="ph-bold ph-caret-right" style="color: var(--text-muted);"></i>
@@ -593,7 +601,6 @@
             
             <!-- TOP HEADER -->
             <header class="top-header">
-                <!-- Mobile Logo -->
                 <div class="mobile-logo gradient-text" onclick="window.scrollTo(0,0)">T-ANIME</div>
                 
                 <div class="search-container" id="desktop-search">
@@ -605,7 +612,6 @@
                 </div>
 
                 <div class="header-actions">
-                    <!-- NÚT QUÉT DỮ LIỆU ĐÃ TRỞ LẠI -->
                     <button class="header-btn" onclick="openScanModal()" title="Công Cụ Quét Dữ Liệu">
                         <i class="ph-bold ph-database"></i>
                     </button>
@@ -616,7 +622,7 @@
             <!-- CONTENT WRAPPER -->
             <div class="content-wrapper">
                 
-                <!-- Mobile Search (Giấu trên PC, hiện dưới Top Header ở Mobile) -->
+                <!-- Mobile Search -->
                 <div class="mobile-search-wrapper">
                     <div class="search-container">
                         <div class="search-box">
@@ -627,15 +633,13 @@
                     </div>
                 </div>
 
-                <!-- HERO SECTION: Player & Episodes (FLEXBOX BẢO VỆ RỚT CỘT TRÊN PC) -->
+                <!-- HERO SECTION -->
                 <div class="hero-section">
                     <!-- Left: Video Player & Info -->
                     <div class="hero-left">
                         <div class="player-container group" id="main-player-container">
                             <div class="player-glow"></div>
-                            <div id="player-wrapper" style="width: 100%; height: 100%;">
-                                <!-- Sẽ được chèn iFrame hoặc Loading Spinner vào đây -->
-                            </div>
+                            <div id="player-wrapper" style="width: 100%; height: 100%;"></div>
                         </div>
                         
                         <div class="movie-info-panel">
@@ -647,7 +651,6 @@
                                 <div class="skeleton-block" style="width: 50%; height: 40px;"></div>
                             </h1>
                             
-                            <!-- Bảng nút Action tự gập thành Grid trên Mobile -->
                             <div class="action-bar">
                                 <button class="btn-pill primary" id="btn-play-now" onclick="document.querySelector('.btn-episode').click()">
                                     <i class="ph-fill ph-play-circle" style="font-size: 1.4rem;"></i> Xem Ngay
@@ -671,7 +674,7 @@
                         </div>
                     </div>
 
-                    <!-- Right: Episodes Panel (Ghim cứng khi lướt trên PC) -->
+                    <!-- Right: Episodes Panel -->
                     <div class="glass-panel episodes-panel hero-right">
                         <div class="ep-header">
                             <div class="ep-title"><i class="ph-fill ph-monitor-play"></i> Chọn Tập</div>
@@ -680,9 +683,7 @@
                                 <select id="ep-chunk-select" class="ep-chunk-select" style="display: none;" onchange="changeEpChunk(this.value)"></select>
                             </div>
                         </div>
-                        <div class="episodes-grid custom-scrollbar" id="episodes-grid">
-                            <!-- Chứa các nút tập phim -->
-                        </div>
+                        <div class="episodes-grid custom-scrollbar" id="episodes-grid"></div>
                     </div>
                 </div>
 
@@ -692,11 +693,10 @@
                     <div class="genre-tabs custom-scrollbar" id="genre-tabs-container"></div>
                     <div class="anime-grid" id="explore-grid"></div>
                     <div class="lazy-loader" id="lazy-loader"><i class="ph-bold ph-spinner-gap"></i> Đang tải thêm dữ liệu...</div>
-                    <!-- Đẩy root anchor xuống để nạp phim từ sớm, tránh giật lag -->
                     <div id="scroll-anchor" style="height: 10px; width: 100%;"></div>
                 </section>
                 
-            </div> <!-- End Content Wrapper -->
+            </div>
         </main>
 
         <!-- MOBILE BOTTOM NAV -->
@@ -714,11 +714,12 @@
                 <span>T-Story</span>
             </div>
             <div class="mobile-nav-item" onclick="openSidePanel('fav')">
-                <i class="ph-fill ph-user"></i>
+                <div class="display-user-avatar" style="width: 24px; height: 24px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; background: linear-gradient(45deg, var(--accent-purple), var(--accent-cyan));">
+                    <i class="ph-fill ph-user" style="color: white; font-size: 1.2rem;"></i>
+                </div>
                 <span>Cá Nhân</span>
             </div>
         </nav>
-
     </div>
 
     <!-- RIGHT SIDE-PANEL (Library / Profile) -->
@@ -728,9 +729,19 @@
             <div class="sp-title" id="sp-title"><i class="ph-fill ph-bookmark"></i> Thư Viện</div>
             <div class="sp-close" onclick="closeSidePanel()"><i class="ph-bold ph-x"></i></div>
         </div>
-        <div class="sp-content custom-scrollbar" id="sp-content">
-            <!-- Dynamic Content Injected via JS -->
+        
+        <!-- Hiển thị Avatar To ở Sidebar -->
+        <div style="display: flex; align-items: center; gap: 16px; padding: 24px; border-bottom: 1px solid var(--border-glass);">
+            <div class="display-user-avatar" style="width: 56px; height: 56px; border-radius: 16px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); flex-shrink: 0; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+                <i class="ph-fill ph-user" style="color: white; font-size: 2rem;"></i>
+            </div>
+            <div>
+                <div class="display-user-name" style="font-weight: 900; font-size: 1.1rem; color: var(--text-white);">Guest User</div>
+                <div style="font-size: 0.8rem; color: var(--accent-cyan); font-weight: 700;">Thành Viên Premium</div>
+            </div>
         </div>
+
+        <div class="sp-content custom-scrollbar" id="sp-content"></div>
     </aside>
 
     <!-- T-STORY MODAL -->
@@ -777,7 +788,6 @@
             }
         });
 
-        // Hỗ trợ thanh search trên mobile (Đồng bộ value không gọi API dư thừa)
         document.addEventListener("DOMContentLoaded", () => {
             if(window.innerWidth <= 768) {
                 const mainInput = document.getElementById('search-input');
@@ -828,6 +838,8 @@
             onboardingModal: document.getElementById('onboarding-modal'),
             obGrid: document.getElementById('ob-genres-grid'),
             btnSavePrefs: document.getElementById('btn-save-prefs'),
+            obInputName: document.getElementById('ob-input-name'),
+            obInputAvatar: document.getElementById('ob-input-avatar'),
             
             playerWrapper: document.getElementById('player-wrapper'),
             movieTitle: document.getElementById('movie-title'),
@@ -1119,7 +1131,7 @@
         }
 
         // ==========================================
-        // 2. ONBOARDING & INIT
+        // 2. ONBOARDING & INIT & USER PROFILE
         // ==========================================
         function checkOnboarding() {
             initTheme();
@@ -1127,9 +1139,14 @@
             const saved = localStorage.getItem('tanime_prefs');
             if (saved) {
                 userPrefsSlugs = JSON.parse(saved);
+                applyUserProfile();
                 initApp(); 
             } else {
                 ui.obGrid.innerHTML = ALL_GENRES.map(g => `<div class="ob-pill" data-slug="${g.slug}" onclick="togglePref(this)">${g.name}</div>`).join('');
+                
+                // Lắng nghe sự kiện để kích hoạt nút
+                ui.obInputName.addEventListener('input', validateOnboardingForm);
+
                 ui.loader.style.display = 'none';
                 ui.onboardingModal.style.display = 'flex';
             }
@@ -1139,16 +1156,59 @@
             const slug = el.getAttribute('data-slug');
             if (selectedPrefs.has(slug)) { selectedPrefs.delete(slug); el.classList.remove('active'); } 
             else { selectedPrefs.add(slug); el.classList.add('active'); }
-            ui.btnSavePrefs.disabled = selectedPrefs.size === 0;
+            validateOnboardingForm();
         };
 
+        function validateOnboardingForm() {
+            const nameInput = ui.obInputName.value.trim();
+            // Nút bấm chỉ được kích hoạt nếu có điền Tên VÀ chọn ít nhất 1 thể loại
+            ui.btnSavePrefs.disabled = (selectedPrefs.size === 0 || nameInput === '');
+        }
+
         window.savePreferences = () => {
+            // Lưu thể loại
             userPrefsSlugs = Array.from(selectedPrefs);
             localStorage.setItem('tanime_prefs', JSON.stringify(userPrefsSlugs));
+            
+            // Lưu Hồ sơ
+            const nameInput = ui.obInputName.value.trim();
+            const avatarInput = ui.obInputAvatar.value.trim();
+            
+            const userProfile = {
+                name: nameInput || 'Guest User',
+                avatar: avatarInput
+            };
+            localStorage.setItem('tanime_profile', JSON.stringify(userProfile));
+
+            applyUserProfile();
+
             ui.onboardingModal.style.display = 'none';
             ui.loader.style.display = 'flex';
             initApp();
         };
+
+        function applyUserProfile() {
+            const savedProfile = localStorage.getItem('tanime_profile');
+            if (savedProfile) {
+                const profile = JSON.parse(savedProfile);
+                
+                // Cập nhật tên
+                document.querySelectorAll('.display-user-name').forEach(el => {
+                    el.textContent = profile.name;
+                });
+                
+                // Cập nhật ảnh đại diện (Nếu người dùng có điền link)
+                if (profile.avatar) {
+                    // Dùng error fallback để trả về icon mặc định nếu link ảnh bị hỏng
+                    const fallbackHTML = `<i class='ph-fill ph-user' style='color: white; font-size: inherit;'></i>`;
+                    const avatarImgHTML = `<img src="${profile.avatar}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.outerHTML=\`${fallbackHTML}\`">`;
+                    
+                    document.querySelectorAll('.display-user-avatar').forEach(el => {
+                        el.innerHTML = avatarImgHTML;
+                    });
+                }
+            }
+        }
 
         async function initApp() {
             try {
