@@ -2,7 +2,6 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <!-- KHÓA ZOOM TRÊN MOBILE TUYỆT ĐỐI -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <title>T-ANIME | Premium Streaming</title>
     <!-- Font -->
@@ -12,31 +11,32 @@
 
     <style>
         /* ==========================================================================
-           1. CSS VARIABLES & THEME
+           1. CSS VARIABLES & THEME (THEO IMAGE - DEEP SPACE VIBE)
            ========================================================================== */
         :root {
-            --bg-main: #05050A;
-            --bg-sidebar: rgba(10, 10, 18, 0.6);
-            --bg-card: rgba(20, 20, 30, 0.4);
-            --bg-glass: rgba(255, 255, 255, 0.04);
+            /* Nền chủ đạo xanh đen sâu thẳm giống bảng điều khiển */
+            --bg-main: #0B0E17;
+            --bg-sidebar: rgba(18, 22, 36, 0.8);
+            --bg-card: rgba(26, 32, 53, 0.6);
+            --bg-glass: rgba(255, 255, 255, 0.03);
             --bg-glass-hover: rgba(255, 255, 255, 0.08);
             
-            --text-light: #E2E2EC;
-            --text-muted: #8A8A9D;
+            --text-light: #F1F5F9;
+            --text-muted: #94A3B8;
             --text-white: #FFFFFF;
             
-            /* Đổi màu chủ đạo sang Đỏ Crimson & Tím (Chuẩn vibe Overlord/Image) */
-            --accent-purple: #E11D48;
-            --accent-cyan: #7C3AED;
-            --accent-yellow: #FFB800;
-            --accent-red: #FF3B30;
+            /* Màu Gradient chủ đạo: Royal Blue -> Cyan (Giống nút Transfer trong ảnh) */
+            --accent-purple: #1E50FF; 
+            --accent-cyan: #00D1F5;
+            --accent-yellow: #F59E0B;
+            --accent-red: #EF4444;
 
             --border-glass: rgba(255, 255, 255, 0.05);
             --border-glass-strong: rgba(255, 255, 255, 0.1);
 
-            --shadow-glow-purple: 0 0 24px rgba(225, 29, 72, 0.4);
-            --shadow-glow-cyan: 0 0 24px rgba(124, 58, 237, 0.4);
-            --shadow-panel: 0 24px 48px rgba(0, 0, 0, 0.8);
+            --shadow-glow-purple: 0 0 24px rgba(30, 80, 255, 0.4);
+            --shadow-glow-cyan: 0 0 24px rgba(0, 209, 245, 0.4);
+            --shadow-panel: 0 24px 48px rgba(0, 0, 0, 0.6);
             
             --font-main: 'Inter', sans-serif;
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -55,7 +55,7 @@
             --text-muted: #6B6B80;
             --text-white: #000000;
             
-            --accent-purple: #9000FF;
+            --accent-purple: #1E50FF;
             --accent-cyan: #0088A8;
             
             --border-glass: rgba(0, 0, 0, 0.06);
@@ -67,7 +67,7 @@
         [data-color="emerald"] { --accent-purple: #10B981; --accent-cyan: #14B8A6; --shadow-glow-purple: 0 0 24px rgba(16,185,129,0.3); --shadow-glow-cyan: 0 0 24px rgba(20,184,166,0.3); }
         [data-color="rose"] { --accent-purple: #F43F5E; --accent-cyan: #F97316; --shadow-glow-purple: 0 0 24px rgba(244,63,94,0.3); --shadow-glow-cyan: 0 0 24px rgba(249,115,22,0.3); }
         [data-color="amber"] { --accent-purple: #F59E0B; --accent-cyan: #EF4444; --shadow-glow-purple: 0 0 24px rgba(245,158,11,0.3); --shadow-glow-cyan: 0 0 24px rgba(239,68,68,0.3); }
-        [data-color="blue"] { --accent-purple: #3B82F6; --accent-cyan: #6366F1; --shadow-glow-purple: 0 0 24px rgba(59,130,246,0.3); --shadow-glow-cyan: 0 0 24px rgba(99,102,241,0.3); }
+        [data-color="purple"] { --accent-purple: #9333EA; --accent-cyan: #D946EF; --shadow-glow-purple: 0 0 24px rgba(147,51,234,0.3); --shadow-glow-cyan: 0 0 24px rgba(217,70,239,0.3); }
 
         /* ==========================================================================
            2. BASE & RESET
@@ -93,8 +93,8 @@
         ::-webkit-scrollbar-thumb:hover { background: var(--accent-cyan); }
 
         /* Ambient Background */
-        #app-bg { position: fixed; inset: -50px; z-index: -2; background-size: cover; background-position: center; filter: blur(70px) brightness(0.3); transition: background-image 1.5s ease-in-out; transform: scale(1.1); }
-        #app-bg-overlay { position: fixed; inset: 0; z-index: -1; background: linear-gradient(to bottom, rgba(5,5,10,0.7) 0%, rgba(5,5,10,0.98) 100%); transition: background 0.5s ease; }
+        #app-bg { position: fixed; inset: -50px; z-index: -2; background-size: cover; background-position: center; filter: blur(70px) brightness(0.25); transition: background-image 1.5s ease-in-out; transform: scale(1.1); }
+        #app-bg-overlay { position: fixed; inset: 0; z-index: -1; background: linear-gradient(to bottom, rgba(11,14,23,0.7) 0%, rgba(11,14,23,0.98) 100%); transition: background 0.5s ease; }
         [data-theme="light"] #app-bg { filter: blur(70px) brightness(0.85); }
         [data-theme="light"] #app-bg-overlay { background: linear-gradient(to bottom, rgba(244,244,249,0.7) 0%, rgba(244,244,249,0.98) 100%); }
 
@@ -109,7 +109,6 @@
         .spinner { width: 48px; height: 48px; border: 3px solid rgba(0,209,245,0.2); border-top-color: var(--accent-cyan); border-radius: 50%; animation: spin 1s linear infinite; }
         .loader-text { margin-top: 20px; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.2em; color: var(--text-muted); animation: pulse 2s infinite; }
         
-        /* Đã xóa animation: fadeIn chứa transform gây lỗi position fixed */
         .app-wrapper { display: flex; min-height: 100vh; width: 100%; opacity: 0; transition: opacity 0.5s ease; }
 
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -142,12 +141,12 @@
         .nav-item:hover i { transform: scale(1.1); color: var(--accent-cyan);}
         
         .nav-item.active { 
-            background: linear-gradient(135deg, rgba(176,38,255,0.1), rgba(0,209,245,0.1)); 
+            background: linear-gradient(135deg, rgba(30,80,255,0.1), rgba(0,209,245,0.1)); 
             border-color: rgba(0, 209, 245, 0.2); color: var(--text-white); box-shadow: inset 0 0 20px rgba(0, 209, 245, 0.05);
         }
         .nav-item.active i { color: var(--accent-cyan); }
         .nav-item.story-btn { background: linear-gradient(45deg, var(--accent-purple), var(--accent-cyan)); color: white; border: none; margin-top: 8px; box-shadow: var(--shadow-glow-purple); justify-content: center;}
-        .nav-item.story-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(176,38,255,0.4); }
+        .nav-item.story-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(30,80,255,0.4); }
 
         .sidebar-footer { margin-top: auto; display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg-glass); border-radius: 14px; border: 1px solid var(--border-glass-strong); cursor: pointer; transition: var(--transition);}
         .sidebar-footer:hover { background: var(--bg-glass-hover); }
@@ -159,14 +158,14 @@
         /* MAIN COLUMN */
         .main-column { margin-left: var(--sidebar-width); flex: 1; display: flex; flex-direction: column; min-height: 100vh; position: relative; width: calc(100% - var(--sidebar-width));}
         
-        /* TOP HEADER (KHÓA CỐ ĐỊNH, KHÔNG BỊ MẤT KHI CUỘN) */
+        /* TOP HEADER */
         .top-header { 
             position: fixed; top: 0; right: 0; width: calc(100% - var(--sidebar-width)); height: 72px; 
             display: flex; align-items: center; justify-content: space-between; padding: 0 32px;
             background: linear-gradient(to bottom, var(--bg-main) 0%, transparent 100%);
-            z-index: 900; transition: background 0.3s ease, width 0.3s ease;
+            z-index: 500; transition: background 0.3s ease, width 0.3s ease;
         }
-        .top-header.scrolled { background: rgba(5,5,10,0.9); border-bottom: 1px solid var(--border-glass); backdrop-filter: blur(20px);}
+        .top-header.scrolled { background: rgba(11,14,23,0.9); border-bottom: 1px solid var(--border-glass); backdrop-filter: blur(20px);}
         [data-theme="light"] .top-header.scrolled { background: rgba(244,244,249,0.95); }
         
         .mobile-logo { display: none; }
@@ -234,7 +233,7 @@
         .theme-swatch.active { border-color: var(--text-white); transform: scale(1.05);}
 
         /* ==========================================================================
-           5. MAIN CONTENT (PLAYER & INFO) - BÓP NHỎ PHẦN CHỌN TẬP
+           5. MAIN CONTENT (PLAYER & INFO)
            ========================================================================== */
         .content-wrapper { padding: 90px 32px 40px; max-width: 1500px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px; width: 100%;}
         
@@ -244,7 +243,6 @@
 
         @media (min-width: 1025px) { 
             .hero-section { flex-direction: row; align-items: flex-start;} 
-            /* THU NHỎ PHẦN CHỌN TẬP CÒN 200px ĐỂ VIDEO TO HƠN */
             .hero-right { flex: 0 0 200px; position: sticky; top: 90px; max-height: calc(100vh - 120px); }
         }
         @media (min-width: 1280px) { 
@@ -268,19 +266,19 @@
         .btn-pill { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; background: var(--bg-glass); border: 1px solid var(--border-glass-strong); border-radius: 999px; font-size: 0.9rem; font-weight: 700; transition: var(--transition); color: var(--text-white); backdrop-filter: blur(10px);}
         .btn-pill:hover { background: var(--bg-glass-hover); transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.2);}
         
-        /* Hiệu ứng gradient sweep siêu đẹp cho nút Xem Ngay */
+        /* CẬP NHẬT HIỆU ỨNG GRADIENT SWEEP ĐẸP MẮT CHO NÚT "XEM NGAY" */
         .btn-pill.primary { 
             background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan), var(--accent-purple)); 
             background-size: 200% auto;
             color: #fff; 
             border: none; 
-            box-shadow: 0 8px 20px rgba(225, 29, 72, 0.3);
+            box-shadow: 0 8px 24px rgba(30, 80, 255, 0.35);
             transition: 0.5s;
         }
         .btn-pill.primary:hover { 
             background-position: right center;
             color: #fff; 
-            box-shadow: 0 12px 25px rgba(225, 29, 72, 0.5);
+            box-shadow: 0 12px 32px rgba(0, 209, 245, 0.5);
             transform: translateY(-3px) scale(1.02);
         }
         
@@ -305,7 +303,6 @@
         .ep-chunk-select option { background: var(--bg-main); color: var(--text-white); }
         .ep-count { font-size: 0.7rem; font-weight: 700; background: var(--bg-glass-hover); padding: 4px 8px; border-radius: 999px; color: var(--text-white); white-space: nowrap;}
         
-        /* Thu nhỏ nút bấm tập phim để xếp được nhiều hơn */
         .episodes-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); gap: 6px; align-content: start; padding-right: 4px;}
         
         .btn-episode { 
@@ -375,7 +372,7 @@
         [data-theme="light"] .modal-overlay { background: rgba(244,244,249,0.9); }
         
         .modal-content.onboarding { background: var(--bg-card); border: 1px solid var(--border-glass-strong); border-radius: 24px; padding: 40px 32px; width: 90%; max-width: 650px; text-align: center; box-shadow: var(--shadow-panel); position: relative; overflow: hidden;}
-        .modal-content.onboarding::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(176,38,255,0.05) 0%, transparent 60%); z-index: -1; pointer-events: none; }
+        .modal-content.onboarding::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(30,80,255,0.1) 0%, transparent 60%); z-index: -1; pointer-events: none; }
         
         .ob-title { font-size: 2rem; font-weight: 900; margin-bottom: 10px; letter-spacing: -1px;}
         .ob-desc { color: var(--text-muted); margin-bottom: 30px; font-size: 1rem; max-width: 500px; margin-left: auto; margin-right: auto;}
@@ -405,7 +402,6 @@
             .sidebar { transform: translateX(-100%); transition: transform 0.3s; }
             .main-column { margin-left: 0; padding-bottom: 80px; width: 100%;}
             
-            /* ĐẢM BẢO BOTTOM NAV FIXED TRÊN MOBILE MÀ KO BỊ LỖI SCROLL */
             .mobile-bottom-nav {
                 display: flex; position: fixed; bottom: 0; left: 0; width: 100%;
                 background: rgba(10,10,18,0.95); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
@@ -426,7 +422,7 @@
         }
 
         @media (max-width: 768px) {
-            .top-header { height: 64px; padding: 0 16px; background: rgba(5,5,10,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-glass); }
+            .top-header { height: 64px; padding: 0 16px; background: rgba(11,14,23,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-glass); }
             [data-theme="light"] .top-header { background: rgba(244,244,249,0.9); }
             
             .mobile-logo { display: block !important; font-size: 1.4rem; font-weight: 900; font-style: italic; cursor: pointer; }
@@ -453,7 +449,7 @@
             
             .episodes-panel { padding: 16px; margin: 0 16px; min-height: auto; border-radius: 16px;}
             .ep-title { font-size: 1.1rem; }
-            .episodes-grid { max-height: 250px; grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); gap: 6px; }
+            .episodes-grid { max-height: 250px; grid-template-columns: repeat(auto-fill, minmax(45px, 1fr)); gap: 6px; }
             .btn-episode { padding: 8px 4px; font-size: 0.8rem; border-radius: 8px;}
             
             .explore-section { padding: 0 16px; }
@@ -537,7 +533,7 @@
         </div>
     </div>
 
-    <!-- SCAN MODAL (QUÉT DỮ LIỆU ĐÃ TRỞ LẠI) -->
+    <!-- SCAN MODAL -->
     <div id="scan-modal" class="modal-overlay">
         <div class="modal-content" style="max-width: 500px; padding: 40px;">
             <h3 class="ob-title" style="font-size: 1.8rem; margin-bottom: 12px;"><i class="ph-fill ph-database"></i> Quét Dữ Liệu</h3>
@@ -957,11 +953,11 @@
         function renderSidePanel() {
             if (currentPanelTab === 'theme') {
                 const themes = [
-                    { id: 'default', color1: '#B026FF', color2: '#00D1F5', name: 'Cyberpunk' },
+                    { id: 'default', color1: '#1E50FF', color2: '#00D1F5', name: 'Deep Space' },
                     { id: 'emerald', color1: '#10B981', color2: '#14B8A6', name: 'Emerald' },
                     { id: 'blue', color1: '#3B82F6', color2: '#6366F1', name: 'Ocean' },
                     { id: 'rose', color1: '#F43F5E', color2: '#F97316', name: 'Sunset' },
-                    { id: 'amber', color1: '#F59E0B', color2: '#EF4444', name: 'Volcano' }
+                    { id: 'purple', color1: '#9333EA', color2: '#D946EF', name: 'Neon Purple' }
                 ];
                 const currentTheme = localStorage.getItem('tanime_color') || 'default';
                 ui.spContent.innerHTML = `
@@ -1245,7 +1241,7 @@
                 renderGenreTabs();
                 switchTab(userPrefsSlugs.length > 0 ? userPrefsSlugs[0] : ALL_GENRES[0].slug);
                 
-                // Kích hoạt opacity transition bằng JS để không ảnh hưởng css stacking context
+                // Kích hoạt opacity transition bằng JS
                 ui.appWrapper.style.display = 'flex';
                 setTimeout(() => {
                     ui.appWrapper.style.opacity = '1';
