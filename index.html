@@ -39,6 +39,46 @@
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
+        /* --- LIGHT MODE VARIABLES --- */
+        [data-theme="light"] {
+            --bg-main: #f4f4f9;
+            --bg-card: rgba(255, 255, 255, 0.7);
+            --bg-glass: rgba(0, 0, 0, 0.03);
+            --bg-glass-hover: rgba(0, 0, 0, 0.06);
+            
+            --text-light: #1a1a2e;
+            --text-muted: #6b6b80;
+            --text-white: #0f0f1a;
+            
+            --accent-purple: #9000ff;
+            --accent-cyan: #0098ba;
+            
+            --border-glass: rgba(0, 0, 0, 0.08);
+            --border-glass-strong: rgba(0, 0, 0, 0.15);
+            --shadow-panel: 0 24px 48px rgba(0, 0, 0, 0.1);
+        }
+
+        /* --- COLOR THEMES --- */
+        [data-color="emerald"] {
+            --accent-purple: #10b981; --accent-cyan: #14b8a6;
+            --shadow-glow-purple: 0 0 20px rgba(16, 185, 129, 0.4); --shadow-glow-cyan: 0 0 20px rgba(20, 184, 166, 0.4);
+        }
+        [data-color="rose"] {
+            --accent-purple: #f43f5e; --accent-cyan: #f97316;
+            --shadow-glow-purple: 0 0 20px rgba(244, 63, 94, 0.4); --shadow-glow-cyan: 0 0 20px rgba(249, 115, 22, 0.4);
+        }
+        [data-color="amber"] {
+            --accent-purple: #f59e0b; --accent-cyan: #ef4444;
+            --shadow-glow-purple: 0 0 20px rgba(245, 158, 11, 0.4); --shadow-glow-cyan: 0 0 20px rgba(239, 68, 68, 0.4);
+        }
+        [data-color="blue"] {
+            --accent-purple: #3b82f6; --accent-cyan: #6366f1;
+            --shadow-glow-purple: 0 0 20px rgba(59, 130, 246, 0.4); --shadow-glow-cyan: 0 0 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .theme-swatch { transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .theme-swatch:hover { transform: scale(1.15) !important; }
+
         /* ==========================================================================
            2. BASE & RESET
            ========================================================================== */
@@ -50,6 +90,7 @@
             line-height: 1.6; 
             overflow-x: hidden; 
             scroll-behavior: smooth; 
+            transition: background-color 0.5s ease;
         }
         body.modal-open { overflow: hidden; }
         ::selection { background-color: var(--accent-purple); color: var(--text-white); }
@@ -60,7 +101,7 @@
 
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: rgba(138, 138, 157, 0.3); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--accent-cyan); }
 
         /* Ambient Background */
@@ -74,6 +115,11 @@
         #app-bg-overlay {
             position: fixed; inset: 0; z-index: -1;
             background: linear-gradient(to bottom, rgba(10,10,22,0.6) 0%, rgba(10,10,22,0.95) 100%);
+            transition: background 0.5s ease;
+        }
+        [data-theme="light"] #app-bg { filter: blur(60px) brightness(0.9); }
+        [data-theme="light"] #app-bg-overlay {
+            background: linear-gradient(to bottom, rgba(244,244,249,0.7) 0%, rgba(244,244,249,0.98) 100%);
         }
 
         /* ==========================================================================
@@ -110,6 +156,8 @@
             padding: 20px 32px; z-index: 100; transition: background 0.3s;
         }
         .navbar.scrolled { background: rgba(10,10,22,0.95); border-bottom: 1px solid var(--border-glass); }
+        [data-theme="light"] .navbar { background: linear-gradient(to bottom, rgba(244,244,249,0.9) 0%, rgba(244,244,249,0) 100%); }
+        [data-theme="light"] .navbar.scrolled { background: rgba(244,244,249,0.95); }
         
         .nav-logo { font-size: 1.75rem; font-weight: 900; font-style: italic; letter-spacing: -1px; text-transform: uppercase; }
         .nav-links { display: none; gap: 32px; font-size: 0.9rem; font-weight: 600; color: var(--text-muted); }
@@ -122,16 +170,17 @@
         .search-container { position: relative; }
         .search-box { 
             display: flex; align-items: center; gap: 12px; 
-            background: rgba(255,255,255,0.05); border: 1px solid transparent; 
+            background: var(--bg-glass); border: 1px solid transparent; 
             border-radius: 12px; padding: 10px 20px; width: 280px; transition: var(--transition); 
         }
-        .search-box:focus-within { background: rgba(0,0,0,0.5); border-color: rgba(0, 209, 245, 0.5); box-shadow: var(--shadow-glow-cyan); }
+        .search-box:focus-within { background: var(--bg-glass-hover); border-color: rgba(0, 209, 245, 0.5); box-shadow: var(--shadow-glow-cyan); }
         .search-box input { background: transparent; border: none; color: var(--text-white); font-size: 0.9rem; width: 100%; font-family: inherit;}
         .search-box input::placeholder { color: var(--text-muted); }
         
-        .search-dropdown { position: absolute; top: calc(100% + 16px); right: 0; width: 100%; min-width: 360px; background: rgba(15,15,25,0.95); border: 1px solid var(--border-glass-strong); border-radius: 16px; box-shadow: var(--shadow-panel); max-height: 60vh; overflow-y: auto; display: none; z-index: 101; backdrop-filter: blur(24px); padding: 8px; }
+        .search-dropdown { position: absolute; top: calc(100% + 16px); right: 0; width: 100%; min-width: 360px; background: var(--bg-card); border: 1px solid var(--border-glass-strong); border-radius: 16px; box-shadow: var(--shadow-panel); max-height: 60vh; overflow-y: auto; display: none; z-index: 101; backdrop-filter: blur(24px); padding: 8px; }
+        [data-theme="light"] .search-dropdown { background: rgba(255,255,255,0.95); }
         .search-item { display: flex; gap: 16px; padding: 12px; border-radius: 12px; cursor: pointer; transition: var(--transition); margin-bottom: 4px;}
-        .search-item:hover { background: rgba(255,255,255,0.08); }
+        .search-item:hover { background: var(--bg-glass-hover); }
         .search-thumb { width: 48px; height: 68px; border-radius: 8px; background: #1F2937; overflow: hidden; flex-shrink: 0; }
         .search-thumb img { width: 100%; height: 100%; object-fit: cover; }
         .search-info { display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
@@ -146,31 +195,43 @@
         
         .btn-story { 
             display: flex; align-items: center; gap: 8px; padding: 10px 20px; 
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px; font-weight: 600; font-size: 0.9rem; color: white;
+            background: var(--bg-glass); border: 1px solid var(--border-glass-strong);
+            border-radius: 12px; font-weight: 600; font-size: 0.9rem; color: var(--text-white);
             transition: var(--transition);
         }
-        .btn-story:hover { background: linear-gradient(45deg, var(--accent-purple), var(--accent-cyan)); border-color: transparent; box-shadow: var(--shadow-glow-purple); }
+        .btn-story:hover { background: linear-gradient(45deg, var(--accent-purple), var(--accent-cyan)); border-color: transparent; box-shadow: var(--shadow-glow-purple); color: white;}
         .btn-story i { font-size: 1.25rem; }
 
         .user-avatar { width: 44px; height: 44px; border-radius: 14px; background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); padding: 2px; cursor: pointer; position: relative;}
         .user-avatar-inner { width: 100%; height: 100%; background: var(--bg-main); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+        [data-theme="light"] .user-avatar-inner i { color: #fff !important; } 
 
-        /* Dropdown Avatar (Tabs: Fav, History, Download) */
-        .user-dropdown { position: absolute; top: calc(100% + 20px); right: 0; width: 340px; background: rgba(15,15,25,0.95); border: 1px solid var(--border-glass-strong); border-radius: 16px; box-shadow: var(--shadow-panel); display: none; z-index: 101; backdrop-filter: blur(24px); overflow: hidden; flex-direction: column; }
-        .dropdown-tabs { display: flex; border-bottom: 1px solid var(--border-glass); background: rgba(0,0,0,0.3);}
-        .dropdown-tab { flex: 1; padding: 14px; text-align: center; color: var(--text-muted); cursor: pointer; transition: var(--transition); border-bottom: 2px solid transparent; font-size: 1.3rem;}
-        .dropdown-tab:hover { color: white; background: rgba(255,255,255,0.05); }
-        .dropdown-tab.active { color: var(--accent-cyan); border-bottom-color: var(--accent-cyan); }
-        .dropdown-header-title { padding: 16px 20px 8px; font-size: 0.95rem; font-weight: 800; color: white; text-transform: uppercase; letter-spacing: 0.5px;}
+        /* ==========================================================================
+           5. DROPDOWN AVATAR (MENU DỌC MỚI)
+           ========================================================================== */
+        .user-dropdown { position: absolute; top: calc(100% + 20px); right: 0; width: 340px; background: rgba(15,15,25,0.95); border: 1px solid var(--border-glass-strong); border-radius: 20px; box-shadow: var(--shadow-panel); display: none; z-index: 101; backdrop-filter: blur(24px); overflow: hidden; flex-direction: column; }
+        [data-theme="light"] .user-dropdown { background: rgba(255,255,255,0.95); }
+
+        /* Main Menu View */
+        .dropdown-user-info { display: flex; align-items: center; gap: 16px; padding: 24px 20px; border-bottom: 1px solid var(--border-glass); }
+        .dropdown-menu-list { padding: 12px 8px; display: flex; flex-direction: column; gap: 4px; }
+        .dropdown-menu-item { display: flex; align-items: center; gap: 12px; width: 100%; padding: 14px 16px; border-radius: 12px; color: var(--text-white); font-weight: 600; font-size: 0.95rem; transition: var(--transition); background: transparent; text-align: left;}
+        .dropdown-menu-item:hover { background: var(--bg-glass-hover); transform: translateX(4px); }
+        .dropdown-menu-item i:first-child { font-size: 1.3rem; }
+        
+        /* Sub Menu View */
+        .dropdown-sub-header { display: flex; align-items: center; gap: 16px; padding: 16px 20px; border-bottom: 1px solid var(--border-glass); }
+        .btn-back-dropdown { color: var(--text-white); font-size: 1.2rem; padding: 6px; border-radius: 50%; transition: var(--transition); display: flex; align-items: center; background: var(--bg-glass);}
+        .btn-back-dropdown:hover { background: var(--bg-glass-hover); }
+        .dropdown-header-title { font-size: 0.95rem; font-weight: 800; color: var(--text-white); text-transform: uppercase; letter-spacing: 0.5px;}
         
         .user-list-container { max-height: 380px; overflow-y: auto; padding: 8px 12px 12px;}
-        .list-item { display: flex; gap: 14px; padding: 12px; border-radius: 12px; cursor: pointer; transition: var(--transition); align-items: center; margin-bottom: 4px; background: rgba(255,255,255,0.02);}
-        .list-item:hover { background: rgba(255,255,255,0.08); transform: translateX(4px);}
+        .list-item { display: flex; gap: 14px; padding: 12px; border-radius: 12px; cursor: pointer; transition: var(--transition); align-items: center; margin-bottom: 4px; background: var(--bg-glass);}
+        .list-item:hover { background: var(--bg-glass-hover); transform: translateX(4px);}
         .list-thumb { width: 50px; height: 70px; border-radius: 8px; overflow: hidden; flex-shrink: 0; }
         .list-thumb img { width: 100%; height: 100%; object-fit: cover; }
         .list-info { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 4px;}
-        .list-title { font-size: 0.95rem; font-weight: 700; color: white; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.3;}
+        .list-title { font-size: 0.95rem; font-weight: 700; color: var(--text-white); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.3;}
         .list-subtitle { font-size: 0.8rem; color: var(--accent-cyan); font-weight: 600;}
         .list-time { font-size: 0.75rem; color: var(--text-muted); }
         
@@ -185,6 +246,8 @@
             border-top: 1px solid var(--border-glass); z-index: 1000;
             padding: 12px 24px calc(12px + env(safe-area-inset-bottom)); justify-content: space-between;
         }
+        [data-theme="light"] .mobile-bottom-nav { background: rgba(255,255,255,0.95); }
+        
         .mobile-nav-item {
             display: flex; flex-direction: column; align-items: center; gap: 4px;
             color: var(--text-muted); font-size: 0.75rem; font-weight: 600; transition: var(--transition);
@@ -198,24 +261,25 @@
         }
 
         /* ==========================================================================
-           5. ONBOARDING MODAL
+           6. ONBOARDING MODAL
            ========================================================================== */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; backdrop-filter: blur(20px); display: none; align-items: center; justify-content: center; }
+        [data-theme="light"] .modal-overlay { background: rgba(255,255,255,0.8); }
         .modal-content.onboarding { background: var(--bg-card); border: 1px solid var(--border-glass-strong); border-radius: 32px; padding: 48px; width: 90%; max-width: 700px; text-align: center; box-shadow: var(--shadow-panel); }
         .ob-title { font-size: 2.5rem; font-weight: 900; margin-bottom: 12px; letter-spacing: -1px;}
         .ob-desc { color: var(--text-muted); margin-bottom: 40px; font-size: 1.1rem; }
         
         .ob-grid { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-bottom: 40px; }
-        .ob-pill { padding: 14px 28px; border-radius: 16px; border: 1px solid var(--border-glass-strong); background: rgba(255,255,255,0.03); color: var(--text-light); font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: var(--transition); }
-        .ob-pill:hover { background: rgba(255,255,255,0.1); transform: translateY(-2px);}
+        .ob-pill { padding: 14px 28px; border-radius: 16px; border: 1px solid var(--border-glass-strong); background: var(--bg-glass); color: var(--text-light); font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: var(--transition); }
+        .ob-pill:hover { background: var(--bg-glass-hover); transform: translateY(-2px);}
         .ob-pill.active { background: var(--accent-cyan); color: #000; border-color: transparent; box-shadow: var(--shadow-glow-cyan); transform: scale(1.05); }
 
-        .btn-primary { background: var(--text-white); color: #000; border: none; padding: 16px 40px; border-radius: 16px; font-size: 1.1rem; font-weight: 800; cursor: pointer; transition: var(--transition); width: 100%; max-width: 320px; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255,255,255,0.3); }
-        .btn-primary:disabled { background: rgba(255,255,255,0.1); color: var(--text-muted); cursor: not-allowed; box-shadow: none; transform: none;}
+        .btn-primary { background: var(--text-white); color: var(--bg-main); border: none; padding: 16px 40px; border-radius: 16px; font-size: 1.1rem; font-weight: 800; cursor: pointer; transition: var(--transition); width: 100%; max-width: 320px; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .btn-primary:disabled { background: var(--bg-glass-hover); color: var(--text-muted); cursor: not-allowed; box-shadow: none; transform: none;}
 
         /* ==========================================================================
-           6. MAIN GRID (PLAYER & INFO)
+           7. MAIN GRID (PLAYER & INFO)
            ========================================================================== */
         .main-content { padding-top: 120px; padding-bottom: 40px; display: grid; grid-template-columns: 1fr; gap: 32px; min-height: 80vh;}
         @media (min-width: 1200px) { .main-content { grid-template-columns: 1fr 380px; gap: 40px; } }
@@ -229,6 +293,7 @@
             box-shadow: var(--shadow-panel), 0 0 0 1px rgba(255,255,255,0.05); 
             overflow: hidden; 
         }
+        [data-theme="light"] .player-container { box-shadow: var(--shadow-panel), 0 0 0 1px rgba(0,0,0,0.1); }
         .player-container iframe { width: 100%; height: 100%; border: none; position: absolute; top: 0; left: 0; }
         .player-glow { position: absolute; top: -10px; left: -10px; right: -10px; bottom: -10px; background: inherit; filter: blur(30px) opacity(0.5); z-index: -1; }
         
@@ -236,62 +301,63 @@
         .movie-info-panel { display: flex; flex-direction: column; gap: 20px; }
         .info-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 20px; }
         .movie-title { font-size: 2.5rem; font-weight: 900; color: var(--text-white); line-height: 1.2; letter-spacing: -1px; text-shadow: 0 4px 12px rgba(0,0,0,0.5);}
+        [data-theme="light"] .movie-title { text-shadow: none; }
         
         .action-btns { display: flex; gap: 12px; }
-        .btn-action { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 20px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; font-size: 0.9rem; font-weight: 600; transition: var(--transition); color: white; backdrop-filter: blur(10px);}
-        .btn-action:hover { background: rgba(255,255,255,0.15); transform: translateY(-2px);}
-        .btn-action.save.saved { background: var(--text-white); color: #000; border-color: transparent; }
+        .btn-action { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 20px; background: var(--bg-glass); border: 1px solid var(--border-glass-strong); border-radius: 14px; font-size: 0.9rem; font-weight: 600; transition: var(--transition); color: var(--text-white); backdrop-filter: blur(10px);}
+        .btn-action:hover { background: var(--bg-glass-hover); transform: translateY(-2px);}
+        .btn-action.save.saved { background: var(--text-white); color: var(--bg-main); border-color: transparent; }
         .btn-action.save.saved i { color: var(--accent-red); }
         .btn-action i { font-size: 1.2rem; }
         
         .meta-tags { display: flex; flex-wrap: wrap; gap: 12px; font-size: 0.9rem; font-weight: 500; color: var(--text-white); align-items: center;}
         .tag-rating { color: #000; background: var(--accent-yellow); padding: 4px 10px; border-radius: 8px; font-weight: 800; display: flex; align-items: center; gap: 4px;}
-        .tag-box { background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);}
+        .tag-box { background: var(--bg-glass-hover); padding: 4px 10px; border-radius: 8px; border: 1px solid var(--border-glass);}
         
-        .movie-desc { font-size: 1rem; color: #A1A1AA; line-height: 1.8; margin-top: 8px;}
+        .movie-desc { font-size: 1rem; color: var(--text-muted); line-height: 1.8; margin-top: 8px;}
 
         /* Right Col (Episodes) */
         .episodes-box { height: calc(100% - 32px); min-height: 500px; display: flex; flex-direction: column; padding: 24px; }
         .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
-        .section-title { font-size: 1.25rem; font-weight: 800; color: white; display: flex; align-items: center; gap: 10px; }
+        .section-title { font-size: 1.25rem; font-weight: 800; color: var(--text-white); display: flex; align-items: center; gap: 10px; }
         .section-title i { color: var(--accent-cyan); font-size: 1.5rem;}
         
-        .ep-chunk-select { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 8px; padding: 6px 12px; font-size: 0.85rem; font-weight: 600; outline: none; cursor: pointer; transition: var(--transition); backdrop-filter: blur(10px);}
+        .ep-chunk-select { background: var(--bg-glass); border: 1px solid var(--border-glass-strong); color: var(--text-white); border-radius: 8px; padding: 6px 12px; font-size: 0.85rem; font-weight: 600; outline: none; cursor: pointer; transition: var(--transition); backdrop-filter: blur(10px);}
         .ep-chunk-select:hover { border-color: var(--accent-cyan); }
-        .ep-chunk-select option { background: var(--bg-main); color: white; font-weight: 500;}
+        .ep-chunk-select option { background: var(--bg-main); color: var(--text-white); font-weight: 500;}
 
-        .ep-count { font-size: 0.8rem; font-weight: 600; background: rgba(255,255,255,0.1); padding: 6px 12px; border-radius: 999px; color: white; white-space: nowrap;}
+        .ep-count { font-size: 0.8rem; font-weight: 600; background: var(--bg-glass-hover); padding: 6px 12px; border-radius: 999px; color: var(--text-white); white-space: nowrap;}
         
         .episodes-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; align-content: start; padding-right: 4px;}
         
         .btn-episode { 
             padding: 12px 4px; border-radius: 12px; font-size: 0.9rem; font-weight: 600;
-            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); 
+            background: var(--bg-glass); border: 1px solid var(--border-glass-strong); 
             color: var(--text-muted); transition: var(--transition);
             display: flex; align-items: center; justify-content: center;
         }
-        .btn-episode:hover { background: rgba(255,255,255,0.1); color: white; transform: translateY(-2px);}
+        .btn-episode:hover { background: var(--bg-glass-hover); color: var(--text-white); transform: translateY(-2px);}
         .btn-episode.active { 
-            background: var(--text-white); color: #000; border-color: transparent; 
-            box-shadow: 0 8px 20px rgba(255,255,255,0.2); 
+            background: var(--text-white); color: var(--bg-main); border-color: transparent; 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1); 
         }
 
         /* ==========================================================================
-           7. KHÁM PHÁ (EXPLORE SECTION)
+           8. KHÁM PHÁ (EXPLORE SECTION)
            ========================================================================== */
         .explore-section { padding: 40px 24px 80px; max-width: 1400px; margin: 0 auto;}
         .explore-header { margin-bottom: 32px; display: flex; align-items: center; gap: 16px;}
-        .explore-header h2 { font-size: 2rem; font-weight: 900; color: white; letter-spacing: -0.5px;}
+        .explore-header h2 { font-size: 2rem; font-weight: 900; color: var(--text-white); letter-spacing: -0.5px;}
         
         .genre-tabs { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 16px; scrollbar-width: none; }
         .genre-tabs::-webkit-scrollbar { display: none; }
-        .tab-btn { padding: 12px 24px; border-radius: 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.05); color: var(--text-muted); font-weight: 600; font-size: 0.95rem; white-space: nowrap; transition: var(--transition); }
-        .tab-btn:hover { background: rgba(255,255,255,0.1); color: white; }
-        .tab-btn.active { background: var(--text-white); color: #000; box-shadow: 0 8px 20px rgba(255,255,255,0.2); }
+        .tab-btn { padding: 12px 24px; border-radius: 16px; background: var(--bg-glass); border: 1px solid var(--border-glass-strong); color: var(--text-muted); font-weight: 600; font-size: 0.95rem; white-space: nowrap; transition: var(--transition); }
+        .tab-btn:hover { background: var(--bg-glass-hover); color: var(--text-white); }
+        .tab-btn.active { background: var(--text-white); color: var(--bg-main); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
         
-        .tab-btn.recommended { position: relative; border-color: rgba(0, 209, 245, 0.3); color: #E0E0FF; }
+        .tab-btn.recommended { position: relative; border-color: rgba(0, 209, 245, 0.3); color: var(--text-light); }
         .tab-btn.recommended::before { content: ''; position: absolute; top: 8px; right: 8px; width: 6px; height: 6px; background: var(--accent-cyan); border-radius: 50%; box-shadow: 0 0 8px var(--accent-cyan);}
-        .tab-btn.recommended.active::before { background: #000; box-shadow: none; }
+        .tab-btn.recommended.active::before { background: var(--bg-main); box-shadow: none; }
 
         .anime-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 24px; }
         @media (min-width: 640px) { .anime-grid { grid-template-columns: repeat(3, 1fr); } }
@@ -299,7 +365,7 @@
 
         .anime-card { background: transparent; border-radius: 16px; overflow: hidden; transition: var(--transition); cursor: pointer; display: flex; flex-direction: column; group;}
         .anime-card:hover { transform: translateY(-8px); }
-        .ac-thumb { position: relative; width: 100%; aspect-ratio: 2/3; overflow: hidden; background: #1F2937; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);}
+        .ac-thumb { position: relative; width: 100%; aspect-ratio: 2/3; overflow: hidden; background: #1F2937; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);}
         .ac-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
         .anime-card:hover .ac-thumb img { transform: scale(1.08); }
         .ac-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 60%); opacity: 0.8; transition: opacity 0.3s;}
@@ -308,7 +374,7 @@
         .ac-ep { position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); color: white; font-size: 0.8rem; font-weight: 700; padding: 4px 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);}
         
         .ac-info { padding: 16px 4px 0; flex: 1; display: flex; flex-direction: column;}
-        .ac-title { font-size: 1.05rem; font-weight: 800; color: white; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; transition: color 0.3s;}
+        .ac-title { font-size: 1.05rem; font-weight: 800; color: var(--text-white); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; transition: color 0.3s;}
         .anime-card:hover .ac-title { color: var(--accent-cyan); }
         .ac-year { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; font-weight: 500;}
 
@@ -316,7 +382,7 @@
         .lazy-loader i { animation: spin 1s linear infinite; display: inline-block; margin-right: 12px; font-size: 1.5rem; color: var(--accent-cyan); vertical-align: middle;}
 
         /* ==========================================================================
-           8. T-STORY (TIKTOK STYLE)
+           9. T-STORY (TIKTOK STYLE - LUÔN LÀ DARK MODE)
            ========================================================================== */
         .story-modal { position: fixed; inset: 0; background: #000; z-index: 3000; display: none; flex-direction: column; }
         .story-header { position: absolute; top: 0; left: 0; width: 100%; padding: 24px; display: flex; justify-content: space-between; align-items: center; z-index: 3010; background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent); }
@@ -338,7 +404,7 @@
         .story-title { font-size: 1.75rem; font-weight: 900; color: white; margin-bottom: 12px; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .story-desc { font-size: 0.95rem; color: #D1D5DB; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 24px; line-height: 1.5; }
         
-        .btn-watch-now { align-self: flex-start; background: var(--text-white); color: #000; padding: 12px 24px; border-radius: 16px; font-weight: 800; display: flex; align-items: center; gap: 8px; transition: var(--transition); font-size: 1rem;}
+        .btn-watch-now { align-self: flex-start; background: #FFF; color: #000; padding: 12px 24px; border-radius: 16px; font-weight: 800; display: flex; align-items: center; gap: 8px; transition: var(--transition); font-size: 1rem;}
         .btn-watch-now:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(255,255,255,0.2); }
 
         .story-actions { position: absolute; right: 16px; bottom: 100px; display: flex; flex-direction: column; gap: 28px; pointer-events: auto; align-items: center; }
@@ -351,51 +417,43 @@
         @keyframes heartPop { 0% { transform: scale(1); } 50% { transform: scale(1.5); } 100% { transform: scale(1); } }
 
         .story-hint { position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; color: rgba(255,255,255,0.4); font-size: 0.8rem; font-weight: 600; pointer-events: none; animation: bounce 2s infinite; }
-        @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0) translateX(-50%); } 40% { transform: translateY(-10px) translateX(-50%); } 60% { transform: translateY(-5px) translateX(-50%); } }
 
         /* ==========================================================================
-           9. MOBILE OPTIMIZATION (Responsive CSS)
+           10. MOBILE OPTIMIZATION (Responsive CSS)
            ========================================================================== */
         @media (max-width: 768px) {
-            body { padding-bottom: 70px; } /* Nhường chỗ cho Bottom Nav */
+            body { padding-bottom: 70px; } 
             .mobile-bottom-nav { display: flex; }
             .container { padding: 0 16px; }
 
-            /* Navbar Mobile */
             .navbar { flex-wrap: wrap; padding: 16px; gap: 16px; }
             .navbar > .flex-center { width: 100%; justify-content: space-between; }
             .nav-logo { font-size: 1.5rem; }
             .nav-links, .btn-story { display: none !important; }
             .user-avatar { width: 38px; height: 38px; }
             
-            /* Search Mobile */
             .search-container { display: block; width: 100%; order: 3; margin-top: -4px;}
-            .search-box { width: 100%; padding: 12px 16px; background: rgba(255,255,255,0.08); }
+            .search-box { width: 100%; padding: 12px 16px; background: var(--bg-glass-hover); }
             .search-dropdown { position: absolute; top: calc(100% + 8px); left: 0; width: 100%; min-width: unset; }
 
-            /* User Dropdown Modal (Mobile) */
             .user-dropdown { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 360px; z-index: 3000; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
 
-            /* Main Content Mobile */
             .main-content { padding-top: 140px; padding-bottom: 20px; gap: 24px; min-height: auto;}
             .movie-title { font-size: 1.8rem; }
             .action-btns { width: 100%; }
             .btn-action { flex: 1; padding: 14px 10px; font-size: 0.85rem;}
             
-            /* Episodes Grid Mobile */
             .episodes-box { padding: 16px; border-radius: 20px; min-height: 400px;}
             .section-title { font-size: 1.15rem; }
             .episodes-grid { grid-template-columns: repeat(auto-fill, minmax(65px, 1fr)); gap: 8px; }
             .btn-episode { padding: 10px 4px; font-size: 0.85rem; }
 
-            /* Explore Grid Mobile */
             .explore-section { padding-bottom: 40px; }
             .anime-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
             .explore-header h2 { font-size: 1.6rem; }
             .ac-title { font-size: 0.95rem; }
             .ac-info { padding: 12px 4px 0; }
 
-            /* Onboarding Mobile */
             .modal-content.onboarding { padding: 32px 20px; border-radius: 24px; }
             .ob-title { font-size: 1.8rem; }
             .ob-grid { gap: 8px; margin-bottom: 24px;}
@@ -429,7 +487,9 @@
     <!-- NAVBAR -->
     <nav class="navbar flex-between" id="navbar">
         <div class="flex-center gap-4" style="gap: 40px;">
-            <div class="nav-logo cursor-pointer" onclick="window.scrollTo(0,0)">T-ANIME</div>
+            <div class="nav-logo cursor-pointer" onclick="window.scrollTo(0,0)">
+                <span class="gradient-text">T-ANIME</span>
+            </div>
             <ul class="nav-links">
                 <li><a href="#" class="active">Trang Chủ</a></li>
                 <li><a href="#explore-section">Khám Phá</a></li>
@@ -439,7 +499,7 @@
 
         <div class="search-container">
             <div class="search-box">
-                <i class="ph ph-magnifying-glass" style="color: #A1A1AA; font-size: 20px;"></i>
+                <i class="ph ph-magnifying-glass" style="color: var(--text-muted); font-size: 20px;"></i>
                 <input type="text" id="search-input" placeholder="Tìm kiếm anime..." autocomplete="off">
             </div>
             <div class="search-dropdown" id="search-dropdown"></div>
@@ -450,18 +510,58 @@
             <button class="btn-story" onclick="openStoryMode()">
                 <i class="ph-fill ph-play-circle"></i> T-Story
             </button>
-            <!-- Avatar & Dropdown User -->
+            
+            <button class="btn-icon"><i class="ph ph-bell" style="font-size: 24px;"></i></button>
+            
+            <!-- Avatar & Menu Dọc Mới -->
             <div class="user-avatar" id="user-avatar-btn">
-                <div class="user-avatar-inner"><i class="ph-fill ph-user" style="color: var(--text-white); font-size: 20px;"></i></div>
+                <div class="user-avatar-inner"><i class="ph-fill ph-user" style="color: #fff; font-size: 20px;"></i></div>
                 
                 <div class="user-dropdown" id="user-dropdown">
-                    <div class="dropdown-tabs">
-                        <div class="dropdown-tab active" onclick="event.stopPropagation(); switchDropdownTab('fav')" id="tab-fav" title="Yêu Thích"><i class="ph-fill ph-heart"></i></div>
-                        <div class="dropdown-tab" onclick="event.stopPropagation(); switchDropdownTab('history')" id="tab-history" title="Lịch Sử Xem"><i class="ph-fill ph-clock-counter-clockwise"></i></div>
-                        <div class="dropdown-tab" onclick="event.stopPropagation(); switchDropdownTab('download')" id="tab-download" title="Đã Tải Xuống"><i class="ph-fill ph-download-simple"></i></div>
+                    <!-- View Chính Của Menu -->
+                    <div id="dropdown-main-view">
+                        <div class="dropdown-user-info">
+                            <div class="user-avatar-inner" style="width: 48px; height: 48px; flex-shrink: 0;">
+                                <i class="ph-fill ph-user" style="color: #fff; font-size: 24px;"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight: 800; font-size: 1.05rem; color: var(--text-white);">Tài Khoản Guest</div>
+                                <div style="font-size: 0.8rem; color: var(--accent-cyan); font-weight: 600;">Basic Plan</div>
+                            </div>
+                        </div>
+                        <div class="dropdown-menu-list">
+                            <button class="dropdown-menu-item" onclick="event.stopPropagation(); toggleTheme()">
+                                <i class="ph-fill ph-moon" id="theme-icon"></i> <span id="theme-text">Giao diện Sáng</span>
+                            </button>
+                            <button class="dropdown-menu-item" onclick="event.stopPropagation(); openDropdownSubView('theme')">
+                                <i class="ph-fill ph-palette" style="color: var(--accent-purple);"></i> Màu Sắc Chủ Đạo
+                                <i class="ph-bold ph-caret-right" style="margin-left: auto; font-size: 1rem; color: var(--text-muted);"></i>
+                            </button>
+                            <button class="dropdown-menu-item" onclick="event.stopPropagation(); openDropdownSubView('fav')">
+                                <i class="ph-fill ph-heart" style="color: var(--accent-red);"></i> Phim Yêu Thích
+                                <i class="ph-bold ph-caret-right" style="margin-left: auto; font-size: 1rem; color: var(--text-muted);"></i>
+                            </button>
+                            <button class="dropdown-menu-item" onclick="event.stopPropagation(); openDropdownSubView('history')">
+                                <i class="ph-fill ph-clock-counter-clockwise" style="color: var(--accent-yellow);"></i> Lịch Sử Xem
+                                <i class="ph-bold ph-caret-right" style="margin-left: auto; font-size: 1rem; color: var(--text-muted);"></i>
+                            </button>
+                            <button class="dropdown-menu-item" onclick="event.stopPropagation(); openDropdownSubView('download')">
+                                <i class="ph-fill ph-download-simple" style="color: var(--accent-cyan);"></i> Đã Tải Xuống
+                                <i class="ph-bold ph-caret-right" style="margin-left: auto; font-size: 1rem; color: var(--text-muted);"></i>
+                            </button>
+                        </div>
                     </div>
-                    <div class="dropdown-header-title" id="dropdown-title">Phim Yêu Thích</div>
-                    <div class="user-list-container custom-scrollbar" id="user-list-container"></div>
+
+                    <!-- View Phụ (Hiển thị danh sách) -->
+                    <div id="dropdown-sub-view" style="display: none; flex-direction: column;">
+                        <div class="dropdown-sub-header">
+                            <button class="btn-back-dropdown" onclick="event.stopPropagation(); closeDropdownSubView()">
+                                <i class="ph-bold ph-caret-left"></i>
+                            </button>
+                            <span id="dropdown-title" class="dropdown-header-title" style="padding:0;">Tiêu đề</span>
+                        </div>
+                        <div class="user-list-container custom-scrollbar" id="user-list-container"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -527,7 +627,7 @@
         
         <div class="story-container" id="story-container">
             <div class="story-item flex-center" id="story-loading-init">
-                <div class="spinner" style="border-color: rgba(255,255,255,0.2); border-top-color: var(--text-white);"></div>
+                <div class="spinner" style="border-color: rgba(255,255,255,0.2); border-top-color: #fff;"></div>
             </div>
         </div>
     </div>
@@ -542,7 +642,6 @@
             if (window.scrollY > 50) nav.classList.add('scrolled');
             else nav.classList.remove('scrolled');
 
-            // Cập nhật trạng thái Active trên thanh Bottom Nav Mobile
             const exploreSec = document.getElementById('explore-section');
             const mNavHome = document.getElementById('m-nav-home');
             const mNavExplore = document.getElementById('m-nav-explore');
@@ -613,11 +712,47 @@
 
             avatarBtn: document.getElementById('user-avatar-btn'),
             userDropdown: document.getElementById('user-dropdown'),
-            userListContainer: document.getElementById('user-list-container')
+            dropdownMainView: document.getElementById('dropdown-main-view'),
+            dropdownSubView: document.getElementById('dropdown-sub-view'),
+            userListContainer: document.getElementById('user-list-container'),
+            themeIcon: document.getElementById('theme-icon'),
+            themeText: document.getElementById('theme-text')
         };
 
         // ==========================================
-        // 0. QUẢN LÝ USER DATA (FAV, HISTORY, DOWNLOAD)
+        // 0. LOGIC THEME (LIGHT/DARK MODE & COLORS)
+        // ==========================================
+        function initTheme() {
+            const theme = localStorage.getItem('tanime_theme') || 'dark';
+            if (theme === 'light') {
+                document.documentElement.setAttribute('data-theme', 'light');
+                ui.themeIcon.className = 'ph-fill ph-moon';
+                ui.themeText.textContent = 'Giao diện Tối';
+            }
+
+            const color = localStorage.getItem('tanime_color') || 'default';
+            if (color !== 'default') {
+                document.documentElement.setAttribute('data-color', color);
+            }
+        }
+
+        window.toggleTheme = () => {
+            const current = document.documentElement.getAttribute('data-theme');
+            if (current === 'light') {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.setItem('tanime_theme', 'dark');
+                ui.themeIcon.className = 'ph-fill ph-sun';
+                ui.themeText.textContent = 'Giao diện Sáng';
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+                localStorage.setItem('tanime_theme', 'light');
+                ui.themeIcon.className = 'ph-fill ph-moon';
+                ui.themeText.textContent = 'Giao diện Tối';
+            }
+        };
+
+        // ==========================================
+        // 1. QUẢN LÝ USER DATA (FAV, HISTORY, DOWNLOAD)
         // ==========================================
         function loadUserData() {
             const savedFavs = localStorage.getItem('tanime_favorites');
@@ -628,19 +763,22 @@
 
             const savedDownloads = localStorage.getItem('tanime_downloads');
             if (savedDownloads) downloadList = JSON.parse(savedDownloads);
-            
-            renderUserDropdown();
         }
 
-        window.switchDropdownTab = (tab) => {
+        window.openDropdownSubView = (tab) => {
             currentTab = tab;
-            document.querySelectorAll('.dropdown-tab').forEach(el => el.classList.remove('active'));
-            document.getElementById(`tab-${tab}`).classList.add('active');
-            
-            const titles = { 'fav': 'Phim Yêu Thích', 'history': 'Lịch Sử Xem', 'download': 'Đã Tải Xuống' };
+            const titles = { 'fav': 'Phim Yêu Thích', 'history': 'Lịch Sử Xem', 'download': 'Đã Tải Xuống', 'theme': 'Màu Sắc Chủ Đạo' };
             document.getElementById('dropdown-title').textContent = titles[tab];
             
+            ui.dropdownMainView.style.display = 'none';
+            ui.dropdownSubView.style.display = 'flex';
+            
             renderUserDropdown();
+        };
+
+        window.closeDropdownSubView = () => {
+            ui.dropdownSubView.style.display = 'none';
+            ui.dropdownMainView.style.display = 'block';
         };
 
         function toggleFavorite(movieObj) {
@@ -676,6 +814,31 @@
         }
 
         function renderUserDropdown() {
+            if (currentTab === 'theme') {
+                const themes = [
+                    { id: 'default', color1: '#B026FF', color2: '#00D1F5', name: 'Cyberpunk' },
+                    { id: 'emerald', color1: '#10b981', color2: '#14b8a6', name: 'Emerald' },
+                    { id: 'blue', color1: '#3b82f6', color2: '#6366f1', name: 'Ocean' },
+                    { id: 'rose', color1: '#f43f5e', color2: '#f97316', name: 'Sunset' },
+                    { id: 'amber', color1: '#f59e0b', color2: '#ef4444', name: 'Volcano' }
+                ];
+                const currentTheme = localStorage.getItem('tanime_color') || 'default';
+                ui.userListContainer.innerHTML = `
+                    <div style="display:flex; flex-wrap:wrap; gap:16px; padding: 20px 12px; justify-content:center;">
+                        ${themes.map(t => `
+                            <div title="${t.name}" class="theme-swatch ${currentTheme === t.id ? 'active' : ''}" 
+                                 style="background: linear-gradient(135deg, ${t.color1}, ${t.color2}); width: 44px; height: 44px; border-radius: 50%; cursor:pointer; border: 3px solid ${currentTheme === t.id ? 'var(--text-white)' : 'transparent'}; box-shadow: ${currentTheme === t.id ? '0 0 15px ' + t.color1 : 'none'};"
+                                 onclick="event.stopPropagation(); changeColorTheme('${t.id}')">
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div style="padding: 0 20px 20px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
+                        Chọn một dải màu để cá nhân hóa toàn bộ giao diện của bạn.
+                    </div>
+                `;
+                return;
+            }
+
             let data = [];
             let emptyMsg = "";
             let onRemove = "";
@@ -694,7 +857,7 @@
             }
             
             ui.userListContainer.innerHTML = data.map((item, index) => `
-                <div class="list-item" onclick="loadMovieDetailAndScroll('${item.slug}'); document.getElementById('user-dropdown').style.display='none';">
+                <div class="list-item" onclick="loadMovieDetailAndScroll('${item.slug}'); document.getElementById('user-dropdown').style.display='none'; closeDropdownSubView();">
                     <div class="list-thumb"><img src="${item.thumb_url.startsWith('http') ? item.thumb_url : 'https://img.ophim.live/uploads/movies/' + item.thumb_url}" onerror="this.src='https://via.placeholder.com/44x60/1F2937/00D1F5'"></div>
                     <div class="list-info">
                         <div class="list-title">${item.name}</div>
@@ -712,6 +875,12 @@
         window.removeFromHistory = (idx) => { historyList.splice(idx, 1); localStorage.setItem('tanime_history', JSON.stringify(historyList)); renderUserDropdown(); };
         window.removeFromDownloads = (idx) => { downloadList.splice(idx, 1); localStorage.setItem('tanime_downloads', JSON.stringify(downloadList)); renderUserDropdown(); };
 
+        window.changeColorTheme = (themeId) => {
+            document.documentElement.setAttribute('data-color', themeId);
+            localStorage.setItem('tanime_color', themeId);
+            renderUserDropdown(); // Cập nhật lại UI bảng màu
+        };
+
         ui.avatarBtn.addEventListener('click', (e) => {
             const dp = ui.userDropdown;
             dp.style.display = dp.style.display === 'flex' ? 'none' : 'flex';
@@ -719,13 +888,15 @@
         document.addEventListener('click', (e) => {
             if (!ui.avatarBtn.contains(e.target) && !ui.userDropdown.contains(e.target)) {
                 ui.userDropdown.style.display = 'none';
+                closeDropdownSubView(); // Đóng menu sổ ra thì auto reset về màn chính
             }
         });
 
         // ==========================================
-        // 1. ONBOARDING & PREFERENCES
+        // 2. ONBOARDING & PREFERENCES
         // ==========================================
         function checkOnboarding() {
+            initTheme();
             loadUserData(); 
             const saved = localStorage.getItem('tanime_prefs');
             if (saved) {
@@ -765,7 +936,7 @@
         };
 
         // ==========================================
-        // 2. KHỞI TẠO APP VÀ TẢI PHIM CHÍNH
+        // 3. KHỞI TẠO APP VÀ TẢI PHIM CHÍNH
         // ==========================================
         async function initApp() {
             try {
@@ -890,7 +1061,7 @@
             currentEpChunk = Math.floor(idx / EP_CHUNK_SIZE); 
             renderPlayer(); 
             renderEpisodes();
-            addToHistory(currentMovieData, activeEpisode); // Lưu vào lịch sử khi bấm xem tập
+            addToHistory(currentMovieData, activeEpisode);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
 
@@ -909,7 +1080,6 @@
             btn.classList.add('downloading');
             btn.innerHTML = `<i class="ph-bold ph-spinner-gap" style="animation: spin 1s linear infinite;"></i> Đang Tải...`;
             
-            // Giả lập thời gian tải (Vì iframe không cho down file trực tiếp, ta lưu vào danh sách offline)
             setTimeout(() => {
                 const now = new Date();
                 const timeStr = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()}`;
@@ -935,7 +1105,7 @@
         };
 
         // ==========================================
-        // 3. LOGIC EXPLORE
+        // 4. LOGIC EXPLORE
         // ==========================================
         function renderGenreTabs() {
             const sortedGenres = [...ALL_GENRES].sort((a, b) => {
@@ -1031,7 +1201,7 @@
         observer.observe(ui.scrollAnchor);
 
         // ==========================================
-        // 4. SEARCH
+        // 5. SEARCH
         // ==========================================
         let searchTimeout;
         const searchInput = document.getElementById('search-input');
@@ -1067,7 +1237,7 @@
         }
 
         // ==========================================
-        // 5. T-STORY LOGIC
+        // 6. T-STORY LOGIC
         // ==========================================
         const storyDOM = {
             modal: document.getElementById('story-modal'),
