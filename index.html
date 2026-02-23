@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T-ANIME | Streaming Platform</title>
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <!-- Icons (Phosphor Icons) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        /* ==========================================================================
+           1. CSS VARIABLES & THEME (Dark Mode / Cyberpunk)
+           ========================================================================== */
+        :root {
+            --bg-main: #0F0F23;
+            --bg-card: rgba(21, 21, 48, 0.5);
+            --bg-glass: rgba(255, 255, 255, 0.05);
+            --bg-glass-hover: rgba(255, 255, 255, 0.1);
+            
+            --text-light: #E0E0FF;
+            --text-muted: #9CA3AF;
+            --text-white: #FFFFFF;
+            
+            --accent-purple: #B026FF;
+            --accent-cyan: #00D1F5;
+            --accent-yellow: #FACC15;
+            --accent-red: #FF3B30;
+
+            --border-glass: rgba(255, 255, 255, 0.05);
+            --border-glass-strong: rgba(255, 255, 255, 0.1);
+
+            --shadow-glow-purple: 0 0 15px rgba(176, 38, 255, 0.3);
+            --shadow-glow-cyan: 0 0 15px rgba(0, 209, 245, 0.3);
+            --shadow-player: 0 10px 30px rgba(0, 0, 0, 0.5);
+            --shadow-dropdown: 0 10px 40px rgba(0, 0, 0, 0.8);
+
+            --font-main: 'Inter', sans-serif;
+            --transition: all 0.3s ease;
+        }
+
+        /* ==========================================================================
+           2. BASE & RESET
+           ========================================================================== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: var(--font-main); background-color: var(--bg-main); color: var(--text-light); line-height: 1.5; overflow-x: hidden; scroll-behavior: smooth; }
+        /* Ngăn cuộn body khi mở Story Modal */
+        body.modal-open { overflow: hidden; }
+        ::selection { background-color: var(--accent-purple); color: var(--text-white); }
+        a { text-decoration: none; color: inherit; }
+        button { border: none; background: none; cursor: pointer; font-family: inherit; }
+        ul { list-style: none; }
+        img { max-width: 100%; height: auto; display: block; }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-glass); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: rgba(0, 209, 245, 0.3); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(176, 38, 255, 0.5); }
+
+        /* ==========================================================================
+           3. LAYOUT & UTILITIES
+           ========================================================================== */
+        .container { max-width: 1280px; margin: 0 auto; padding: 0 20px; }
+        .gradient-text { background: linear-gradient(to right, var(--accent-purple), var(--accent-cyan)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .flex-center { display: flex; align-items: center; justify-content: center; }
+        .flex-between { display: flex; align-items: center; justify-content: space-between; }
+        .gap-2 { gap: 8px; } .gap-4 { gap: 16px; }
+        .glass-panel { background: var(--bg-card); border: 1px solid var(--border-glass); backdrop-filter: blur(12px); border-radius: 16px; }
+
+        /* Loader */
+        #loader { position: fixed; inset: 0; background: var(--bg-main); z-index: 9999; flex-direction: column; }
+        .spinner { width: 64px; height: 64px; border: 4px solid var(--accent-cyan); border-top-color: var(--accent-purple); border-radius: 50%; animation: spin 1s linear infinite; }
+        .loader-text { margin-top: 16px; font-size: 1.25rem; font-weight: bold; letter-spacing: 0.1em; animation: pulse 2s infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+
+        /* ==========================================================================
+           4. NAVBAR
+           ========================================================================== */
+        .navbar { position: fixed; top: 0; left: 0; width: 100%; background: rgba(15, 15, 35, 0.8); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border-glass); padding: 16px 24px; z-index: 100; }
+        .nav-logo { font-size: 1.5rem; font-weight: 900; font-style: italic; letter-spacing: -1px; }
+        .nav-links { display: none; gap: 24px; font-size: 0.875rem; font-weight: 500; color: var(--text-muted); }
+        @media (min-width: 768px) { .nav-links { display: flex; } }
+        .nav-links a:hover, .nav-links a.active { color: var(--accent-cyan); }
+
+        /* Search Box */
+        .search-container { position: relative; display: none; }
+        @media (min-width: 640px) { .search-container { display: block; } }
+        .search-box { display: flex; align-items: center; gap: 12px; background: var(--bg-glass); border: 1px solid var(--border-glass-strong); border-radius: 999px; padding: 8px 16px; width: 250px; transition: var(--transition); }
+        .search-box:focus-within { border-color: rgba(0, 209, 245, 0.5); box-shadow: var(--shadow-glow-cyan); }
+        .search-box input { background: transparent; border: none; outline: none; color: var(--text-white); font-size: 0.875rem; width: 100%; }
+        .search-dropdown { position: absolute; top: calc(100% + 12px); right: 0; width: 100%; min-width: 320px; background: #151530; border: 1px solid var(--border-glass-strong); border-radius: 12px; box-shadow: var(--shadow-dropdown); max-height: 60vh; overflow-y: auto; display: none; z-index: 101; backdrop-filter: blur(20px); }
+        .search-item { display: flex; gap: 16px; padding: 12px; border-bottom: 1px solid var(--border-glass); cursor: pointer; transition: var(--transition); }
+        .search-item:hover { background: var(--bg-glass-hover); }
+        .search-thumb { width: 56px; height: 80px; border-radius: 4px; background: #1F2937; overflow: hidden; flex-shrink: 0; }
+        .search-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+        .search-item:hover .search-thumb img { transform: scale(1.1); }
+        .search-info { display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
+        .search-title { font-size: 0.875rem; font-weight: 700; color: var(--text-white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .search-item:hover .search-title { color: var(--accent-purple); }
+        .search-origin { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;}
+        .search-msg { padding: 24px; text-align: center; font-size: 0.875rem; color: var(--text-muted); }
+
+        /* Nav Actions */
+        .nav-actions { display: flex; align-items: center; gap: 16px; }
+        .btn-icon { padding: 8px; border-radius: 50%; color: var(--text-light); transition: var(--transition); position: relative; }
+        .btn-icon:hover { background: var(--bg-glass-hover); color: var(--accent-cyan); }
+        
+        /* Nút T-Story mới */
+        .btn-story { 
+            display: flex; align-items: center; gap: 6px; padding: 8px 16px; 
+            background: linear-gradient(45deg, var(--accent-purple), var(--accent-cyan));
+            border-radius: 999px; font-weight: 600; font-size: 0.875rem; color: white;
+            box-shadow: var(--shadow-glow-purple); transition: var(--transition);
+        }
+        .btn-story:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(176, 38, 255, 0.5); }
+        .btn-story i { font-size: 1.125rem; }
+
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(to top right, var(--accent-purple), var(--accent-cyan)); padding: 2px; cursor: pointer; position: relative;}
+        .user-avatar-inner { width: 100%; height: 100%; background: var(--bg-main); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+
+        /* Menu Dropdown cho Avatar (Danh sách yêu thích) */
+        .user-dropdown {
+            position: absolute; top: calc(100% + 12px); right: 0; width: 300px;
+            background: #151530; border: 1px solid var(--border-glass-strong);
+            border-radius: 12px; box-shadow: var(--shadow-dropdown);
+            display: none; z-index: 101; backdrop-filter: blur(20px); overflow: hidden;
+            flex-direction: column;
+        }
+        .user-dropdown-header { padding: 16px; border-bottom: 1px solid var(--border-glass); font-weight: 700; color: white; display: flex; align-items: center; gap: 8px;}
+        .favorite-list { max-height: 300px; overflow-y: auto; }
+        .fav-item { display: flex; gap: 12px; padding: 12px; border-bottom: 1px solid var(--border-glass); cursor: pointer; transition: var(--transition); align-items: center;}
+        .fav-item:hover { background: var(--bg-glass-hover); }
+        .fav-thumb { width: 40px; height: 56px; border-radius: 4px; overflow: hidden; flex-shrink: 0; }
+        .fav-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .fav-info { flex: 1; min-width: 0; }
+        .fav-title { font-size: 0.875rem; font-weight: 600; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .btn-remove-fav { color: var(--text-muted); padding: 4px; border-radius: 4px; transition: var(--transition);}
+        .btn-remove-fav:hover { color: var(--accent-red); background: rgba(255,59,48,0.1); }
+        .fav-empty { padding: 24px; text-align: center; color: var(--text-muted); font-size: 0.875rem; }
+
+        /* ==========================================================================
+           5. ONBOARDING MODAL (Cá nhân hóa)
+           ========================================================================== */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 2000; backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; }
+        .modal-content.onboarding { background: var(--bg-main); border: 1px solid var(--border-glass-strong); border-radius: 24px; padding: 40px; width: 90%; max-width: 650px; box-shadow: var(--shadow-glow-purple); text-align: center; position: relative; overflow: hidden; }
+        .modal-content.onboarding::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(176,38,255,0.1) 0%, transparent 70%); z-index: -1; pointer-events: none; }
+        .ob-title { font-size: 2rem; font-weight: 900; margin-bottom: 8px; }
+        .ob-desc { color: var(--text-muted); margin-bottom: 32px; font-size: 1rem; }
+        
+        .ob-grid { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-bottom: 32px; }
+        .ob-pill { padding: 12px 24px; border-radius: 999px; border: 1px solid var(--border-glass-strong); background: var(--bg-glass); color: var(--text-light); font-weight: 600; cursor: pointer; transition: var(--transition); }
+        .ob-pill:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); }
+        .ob-pill.active { background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); color: white; border-color: transparent; box-shadow: var(--shadow-glow-cyan); transform: scale(1.05); }
+
+        .btn-primary { background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); color: white; border: none; padding: 14px 32px; border-radius: 12px; font-size: 1.125rem; font-weight: 700; cursor: pointer; transition: var(--transition); box-shadow: var(--shadow-glow-purple); width: 100%; max-width: 300px; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(176, 38, 255, 0.5); }
+        .btn-primary:disabled { background: var(--bg-glass); color: var(--text-muted); box-shadow: none; cursor: not-allowed; transform: none; }
+
+        /* ==========================================================================
+           6. MAIN GRID (PLAYER & EPISODES)
+           ========================================================================== */
+        .main-content { padding-top: 100px; padding-bottom: 24px; display: grid; grid-template-columns: 1fr; gap: 32px; }
+        @media (min-width: 1024px) { .main-content { grid-template-columns: 8fr 4fr; } }
+
+        .col-left { display: flex; flex-direction: column; gap: 24px; }
+        .player-container { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; border-radius: 16px; box-shadow: var(--shadow-player); border: 1px solid var(--border-glass-strong); overflow: hidden; }
+        .player-container iframe { width: 100%; height: 100%; border: none; position: absolute; top: 0; left: 0; }
+        .player-glow { position: absolute; top: -5px; left: -5px; right: -5px; bottom: -5px; background: linear-gradient(to right, rgba(176,38,255,0.2), rgba(0,209,245,0.2)); filter: blur(24px); opacity: 0; transition: opacity 0.5s; pointer-events: none; z-index: -1; }
+        .player-container:hover .player-glow { opacity: 1; }
+        
+        /* Movie Info */
+        .info-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; }
+        .movie-title { font-size: 2rem; font-weight: 700; color: var(--text-white); text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .action-btns { display: flex; gap: 12px; }
+        .btn-action { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: var(--bg-glass); border: 1px solid var(--border-glass-strong); border-radius: 8px; font-size: 0.875rem; font-weight: 500; transition: var(--transition); }
+        .btn-action.save { color: var(--text-white); } 
+        .btn-action.save.saved { color: var(--accent-red); border-color: rgba(255, 59, 48, 0.3); background: rgba(255, 59, 48, 0.1);}
+        .btn-action.save:hover { box-shadow: 0 0 15px rgba(255, 59, 48, 0.3); }
+        .btn-action.share { color: var(--accent-cyan); } .btn-action.share:hover { box-shadow: var(--shadow-glow-cyan); }
+        
+        .meta-tags { display: flex; flex-wrap: wrap; gap: 12px; font-size: 0.875rem; color: var(--text-muted); margin-top: 16px; align-items: center;}
+        .tag-rating { color: var(--accent-yellow); font-weight: 600; background: rgba(250, 204, 21, 0.1); padding: 4px 8px; border-radius: 4px; }
+        .tag-box { background: var(--bg-glass-hover); color: var(--text-white); padding: 4px 8px; border-radius: 4px; }
+        .movie-desc { margin-top: 24px; padding: 16px; background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: 12px; font-size: 0.875rem; color: #D1D5DB; line-height: 1.7; }
+
+        /* Right Col (Episodes) */
+        .episodes-box { height: 400px; display: flex; flex-direction: column; padding: 20px; }
+        .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+        .section-title { font-size: 1.125rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .section-title i { color: var(--accent-purple); }
+        .ep-count { font-size: 0.75rem; background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 4px; }
+        .episodes-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; align-content: start; }
+        .btn-episode { padding: 8px 4px; border-radius: 8px; font-size: 0.875rem; background: var(--bg-glass); border: 1px solid var(--border-glass); color: #D1D5DB; transition: var(--transition); }
+        .btn-episode:hover { background: rgba(255,255,255,0.15); }
+        .btn-episode.active { background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); color: white; border: none; box-shadow: var(--shadow-glow-purple); }
+
+        /* ==========================================================================
+           7. KHÁM PHÁ THỂ LOẠI (Lazy Load Grid)
+           ========================================================================== */
+        .explore-section { padding-bottom: 60px; }
+        .explore-header { margin-bottom: 24px; display: flex; align-items: center; gap: 12px;}
+        .explore-header h2 { font-size: 1.75rem; font-weight: 800; color: white; }
+        
+        .genre-tabs { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 12px; scrollbar-width: none; }
+        .genre-tabs::-webkit-scrollbar { display: none; }
+        .tab-btn { padding: 8px 20px; border-radius: 999px; background: var(--bg-glass); border: 1px solid var(--border-glass-strong); color: var(--text-muted); font-weight: 600; font-size: 0.875rem; white-space: nowrap; transition: var(--transition); }
+        .tab-btn:hover { background: var(--bg-glass-hover); color: white; }
+        .tab-btn.active { background: var(--bg-glass-hover); border-color: var(--accent-cyan); color: var(--accent-cyan); box-shadow: inset 0 0 10px rgba(0,209,245,0.2); }
+        .tab-btn.recommended { position: relative; overflow: hidden; border-color: rgba(176,38,255,0.5); color: #E0E0FF; }
+        .tab-btn.recommended::after { content: '★'; position: absolute; top: -2px; right: 4px; font-size: 10px; color: var(--accent-yellow); }
+        .tab-btn.recommended.active { background: linear-gradient(135deg, rgba(176,38,255,0.2), rgba(0,209,245,0.2)); border-color: var(--accent-purple); box-shadow: var(--shadow-glow-purple); color: white; }
+
+        .anime-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 24px; }
+        @media (min-width: 640px) { .anime-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (min-width: 1024px) { .anime-grid { grid-template-columns: repeat(5, 1fr); } }
+
+        .anime-card { background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border-glass); overflow: hidden; transition: var(--transition); cursor: pointer; display: flex; flex-direction: column; }
+        .anime-card:hover { transform: translateY(-5px); border-color: rgba(0,209,245,0.5); box-shadow: var(--shadow-glow-cyan); }
+        .ac-thumb { position: relative; width: 100%; aspect-ratio: 2/3; overflow: hidden; background: #1F2937; }
+        .ac-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+        .anime-card:hover .ac-thumb img { transform: scale(1.1); }
+        .ac-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent 50%); }
+        .ac-ep { position: absolute; bottom: 8px; right: 8px; background: var(--accent-purple); color: white; font-size: 0.75rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .ac-info { padding: 12px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .ac-title { font-size: 0.9rem; font-weight: 700; color: white; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 8px; transition: color 0.3s;}
+        .anime-card:hover .ac-title { color: var(--accent-cyan); }
+        .ac-year { font-size: 0.75rem; color: var(--text-muted); }
+
+        .lazy-loader { text-align: center; padding: 32px 0; color: var(--accent-cyan); font-weight: 600; display: none; }
+        .lazy-loader i { animation: spin 1s linear infinite; display: inline-block; margin-right: 8px; font-size: 1.25rem; }
+
+        /* ==========================================================================
+           8. T-STORY (TIKTOK STYLE)
+           ========================================================================== */
+        .story-modal {
+            position: fixed; inset: 0; background: #000; z-index: 3000;
+            display: none; flex-direction: column;
+        }
+        
+        .story-header {
+            position: absolute; top: 0; left: 0; width: 100%; padding: 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 3010; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+        }
+        .story-logo { font-size: 1.25rem; font-weight: 900; font-style: italic; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .story-logo span { color: var(--accent-purple); }
+        .btn-close-story { color: white; background: rgba(255,255,255,0.2); border-radius: 50%; padding: 8px; backdrop-filter: blur(4px); transition: var(--transition); }
+        .btn-close-story:hover { background: rgba(255,255,255,0.4); transform: scale(1.1); }
+
+        /* Container chứa các video lướt */
+        .story-container {
+            flex: 1; width: 100%; height: 100%; overflow-y: scroll;
+            scroll-snap-type: y mandatory; /* Hít từng video một */
+            scrollbar-width: none; /* Hide scrollbar Firefox */
+        }
+        .story-container::-webkit-scrollbar { display: none; } /* Hide scrollbar Chrome */
+
+        .story-item {
+            position: relative; width: 100%; height: 100vh;
+            scroll-snap-align: start; /* Điểm hít */
+            background: #111; display: flex; align-items: center; justify-content: center;
+        }
+
+        /* Khung video tỷ lệ 9:16 trên Mobile, 16:9 nhưng căn giữa trên PC */
+        .story-video-wrapper {
+            position: relative; width: 100%; height: 100%; max-width: 500px; margin: 0 auto;
+            background: #000; box-shadow: 0 0 50px rgba(0,0,0,0.8);
+        }
+        @media (max-width: 768px) { .story-video-wrapper { max-width: 100%; } }
+        
+        .story-video-wrapper iframe { width: 100%; height: 100%; border: none; object-fit: cover; pointer-events: none;} /* Disable click iframe để k bị mất focus lướt */
+
+        /* Overlay UI đè lên video */
+        .story-overlay { position: absolute; inset: 0; z-index: 3005; pointer-events: none; display: flex; flex-direction: column; justify-content: flex-end; padding: 24px; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 30%, transparent 100%); }
+        
+        .story-info { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; pointer-events: auto; padding-right: 60px;}
+        .story-title { font-size: 1.5rem; font-weight: 800; color: white; margin-bottom: 8px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .story-desc { font-size: 0.875rem; color: #E5E7EB; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 16px; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
+        .btn-watch-now { align-self: flex-start; background: rgba(255,255,255,0.2); backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 8px 20px; border-radius: 999px; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: var(--transition); }
+        .btn-watch-now:hover { background: white; color: black; }
+
+        /* Nút Tương tác bên phải */
+        .story-actions { position: absolute; right: 16px; bottom: 80px; display: flex; flex-direction: column; gap: 24px; pointer-events: auto; align-items: center; }
+        .action-icon { display: flex; flex-direction: column; align-items: center; gap: 4px; color: white; background: none; border: none; cursor: pointer; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); transition: var(--transition); }
+        .action-icon i { font-size: 2rem; transition: transform 0.2s; }
+        .action-icon:hover i { transform: scale(1.2); }
+        .action-icon span { font-size: 0.75rem; font-weight: 600; }
+        
+        /* Hiệu ứng thả tim Story */
+        .action-icon.liked i { color: var(--accent-red); animation: heartPop 0.3s ease; }
+        @keyframes heartPop { 0% { transform: scale(1); } 50% { transform: scale(1.4); } 100% { transform: scale(1); } }
+
+        /* Cảnh báo lướt */
+        .story-hint { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; color: rgba(255,255,255,0.5); font-size: 0.75rem; pointer-events: none; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0) translateX(-50%); } 40% { transform: translateY(-10px) translateX(-50%); } 60% { transform: translateY(-5px) translateX(-50%); } }
+
+    </style>
+</head>
+<body>
+
+    <!-- LOADER -->
+    <div id="loader" class="flex-center">
+        <div class="spinner"></div>
+        <h2 class="loader-text gradient-text">ĐANG TẢI DỮ LIỆU...</h2>
+    </div>
+
+    <!-- ONBOARDING MODAL -->
+    <div id="onboarding-modal" class="modal-overlay">
+        <div class="modal-content onboarding">
+            <h2 class="ob-title gradient-text">CHÀO MỪNG ĐẾN T-ANIME</h2>
+            <p class="ob-desc">Để Trang đề xuất phim chuẩn gu Hoàng nhất, hãy chọn những thể loại Hoàng yêu thích nhé!</p>
+            <div class="ob-grid" id="ob-genres-grid"></div>
+            <button class="btn-primary" id="btn-save-prefs" disabled onclick="savePreferences()">Bắt Đầu Trải Nghiệm</button>
+        </div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar flex-between">
+        <div class="flex-center gap-4" style="gap: 32px;">
+            <div class="nav-logo gradient-text cursor-pointer" onclick="window.scrollTo(0,0)">T-ANIME</div>
+            <ul class="nav-links">
+                <li><a href="#" class="active">Trang Chủ</a></li>
+                <li><a href="#explore-section">Khám Phá</a></li>
+                <li><a href="#">Lịch Chiếu</a></li>
+            </ul>
+        </div>
+
+        <div class="search-container">
+            <div class="search-box">
+                <i class="ph ph-magnifying-glass" style="color: #9CA3AF; font-size: 18px;"></i>
+                <input type="text" id="search-input" placeholder="Tìm kiếm anime..." autocomplete="off">
+            </div>
+            <div class="search-dropdown" id="search-dropdown"></div>
+        </div>
+
+        <div class="nav-actions">
+            <!-- Nút T-Story -->
+            <button class="btn-story" onclick="openStoryMode()">
+                <i class="ph-fill ph-play-circle"></i> T-Story
+            </button>
+            
+            <button class="btn-icon"><i class="ph ph-bell" style="font-size: 20px;"></i><span class="badge"></span></button>
+            
+            <!-- Avatar & Dropdown Favorites -->
+            <div class="user-avatar" id="user-avatar-btn">
+                <div class="user-avatar-inner"><i class="ph ph-user" style="color: var(--accent-cyan); font-size: 20px;"></i></div>
+                
+                <!-- Dropdown Yêu Thích -->
+                <div class="user-dropdown" id="fav-dropdown">
+                    <div class="user-dropdown-header">
+                        <i class="ph-fill ph-heart" style="color: var(--accent-red);"></i> Phim Yêu Thích
+                    </div>
+                    <div class="favorite-list custom-scrollbar" id="fav-list-container">
+                        <!-- Danh sách nạp bằng JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- PLAYER SECTION (Trang chủ) -->
+    <main class="container main-content" id="main-content" style="display: none;">
+        <section class="col-left">
+            <div class="player-container group">
+                <div class="player-glow"></div>
+                <div id="player-wrapper" style="width: 100%; height: 100%;"></div>
+            </div>
+            <div id="movie-info-container"></div>
+        </section>
+
+        <aside class="col-right">
+            <div class="glass-panel episodes-box">
+                <div class="section-header">
+                    <h3 class="section-title"><i class="ph-fill ph-play-circle"></i> Danh Sách Tập</h3>
+                    <span class="ep-count" id="ep-count">0 Tập</span>
+                </div>
+                <div class="episodes-grid custom-scrollbar" id="episodes-grid"></div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- EXPLORE (THỂ LOẠI) SECTION -->
+    <section class="container explore-section" id="explore-section" style="display: none;">
+        <div class="explore-header">
+            <i class="ph-fill ph-compass" style="font-size: 2rem; color: var(--accent-purple);"></i>
+            <h2>Khám Phá Theo Sở Thích</h2>
+        </div>
+        <div class="genre-tabs custom-scrollbar" id="genre-tabs-container"></div>
+        <div class="anime-grid" id="explore-grid"></div>
+        <div class="lazy-loader" id="lazy-loader"><i class="ph ph-spinner-gap"></i> Đang tải thêm dữ liệu...</div>
+        <div id="scroll-anchor" style="height: 10px; width: 100%;"></div>
+    </section>
+
+    <!-- ==========================================================================
+         T-STORY (MÀN HÌNH LƯỚT VIDEO NGẮN)
+         ========================================================================== -->
+    <div class="story-modal" id="story-modal">
+        <div class="story-header">
+            <div class="story-logo">T-<span>STORY</span></div>
+            <button class="btn-close-story" onclick="closeStoryMode()"><i class="ph ph-x" style="font-size: 20px;"></i></button>
+        </div>
+        
+        <div class="story-container" id="story-container">
+            <!-- Các story-item sẽ được JS nạp vào đây theo dạng Lazy load vô hạn -->
+            <div class="story-item flex-center" id="story-loading-init">
+                <div class="spinner" style="border-color: white; border-top-color: var(--accent-purple);"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+         JAVASCRIPT LOGIC
+         ========================================================================== -->
+    <script>
+        // --- DATA DICTIONARY ---
+        const ALL_GENRES = [
+            { name: 'Hành Động', slug: 'hanh-dong' }, { name: 'Phiêu Lưu', slug: 'phieu-luu' },
+            { name: 'Tình Cảm', slug: 'tinh-cam' }, { name: 'Hài Hước', slug: 'hai-huoc' },
+            { name: 'Viễn Tưởng', slug: 'vien-tuong' }, { name: 'Học Đường', slug: 'hoc-duong' },
+            { name: 'Phép Thuật', slug: 'phep-thuat' }, { name: 'Kinh Dị', slug: 'kinh-di' },
+            { name: 'Cổ Trang', slug: 'co-trang' }, { name: 'Thể Thao', slug: 'the-thao' }
+        ];
+
+        // --- STATE ---
+        let selectedPrefs = new Set(); 
+        let userPrefsSlugs = []; 
+        let favorites = []; // Array object {slug, name, thumb_url}
+        
+        let currentMovieData = null;
+        let currentEpisodesList = [];
+        let activeEpisode = null;
+
+        let exploreState = { currentTabSlug: '', apiPage: 1, localData: [], renderCount: 0, isFetching: false, hasMoreData: true };
+
+        // --- DOM ---
+        const ui = {
+            loader: document.getElementById('loader'),
+            mainContent: document.getElementById('main-content'),
+            exploreSection: document.getElementById('explore-section'),
+            onboardingModal: document.getElementById('onboarding-modal'),
+            obGrid: document.getElementById('ob-genres-grid'),
+            btnSavePrefs: document.getElementById('btn-save-prefs'),
+            
+            playerWrapper: document.getElementById('player-wrapper'),
+            movieInfo: document.getElementById('movie-info-container'),
+            epGrid: document.getElementById('episodes-grid'),
+            epCount: document.getElementById('ep-count'),
+            
+            genreTabs: document.getElementById('genre-tabs-container'),
+            exploreGrid: document.getElementById('explore-grid'),
+            lazyLoader: document.getElementById('lazy-loader'),
+            scrollAnchor: document.getElementById('scroll-anchor'),
+
+            // Favorites DOM
+            avatarBtn: document.getElementById('user-avatar-btn'),
+            favDropdown: document.getElementById('fav-dropdown'),
+            favListContainer: document.getElementById('fav-list-container')
+        };
+
+        // ==========================================
+        // 0. QUẢN LÝ YÊU THÍCH (FAVORITES)
+        // ==========================================
+        function loadFavorites() {
+            const savedFavs = localStorage.getItem('tanime_favorites');
+            if (savedFavs) favorites = JSON.parse(savedFavs);
+            renderFavoritesDropdown();
+        }
+
+        function toggleFavorite(movieObj) {
+            const index = favorites.findIndex(f => f.slug === movieObj.slug);
+            if (index > -1) {
+                favorites.splice(index, 1); // Xoá
+            } else {
+                favorites.unshift({ // Thêm lên đầu
+                    slug: movieObj.slug,
+                    name: movieObj.name,
+                    thumb_url: movieObj.thumb_url
+                });
+            }
+            localStorage.setItem('tanime_favorites', JSON.stringify(favorites));
+            renderFavoritesDropdown();
+            // Cập nhật UI nút thả tim ở Main Player nếu đang xem phim đó
+            if (currentMovieData && currentMovieData.slug === movieObj.slug) {
+                renderMovieInfo(); 
+            }
+            return index === -1; // Trả về true nếu vừa thêm (thả tim)
+        }
+
+        function renderFavoritesDropdown() {
+            if (favorites.length === 0) {
+                ui.favListContainer.innerHTML = `<div class="fav-empty">Bạn chưa lưu bộ phim nào.</div>`;
+                return;
+            }
+            ui.favListContainer.innerHTML = favorites.map(f => `
+                <div class="fav-item" onclick="loadMovieDetailAndScroll('${f.slug}'); document.getElementById('fav-dropdown').style.display='none';">
+                    <div class="fav-thumb"><img src="https://img.ophim.live/uploads/movies/${f.thumb_url}" onerror="this.src='https://via.placeholder.com/40x56/1F2937/00D1F5'"></div>
+                    <div class="fav-info">
+                        <div class="fav-title">${f.name}</div>
+                    </div>
+                    <button class="btn-remove-fav" onclick="event.stopPropagation(); toggleFavorite({slug: '${f.slug}'})">
+                        <i class="ph-fill ph-trash"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Toggle dropdown Yêu thích
+        ui.avatarBtn.addEventListener('click', (e) => {
+            const dp = ui.favDropdown;
+            dp.style.display = dp.style.display === 'flex' ? 'none' : 'flex';
+        });
+        document.addEventListener('click', (e) => {
+            if (!ui.avatarBtn.contains(e.target)) ui.favDropdown.style.display = 'none';
+        });
+
+        // ==========================================
+        // 1. ONBOARDING & PREFERENCES
+        // ==========================================
+        function checkOnboarding() {
+            loadFavorites(); // Load danh sách thả tim
+            const saved = localStorage.getItem('tanime_prefs');
+            if (saved) {
+                userPrefsSlugs = JSON.parse(saved);
+                initApp(); 
+            } else {
+                renderOnboarding();
+                ui.loader.style.display = 'none';
+                ui.onboardingModal.style.display = 'flex';
+            }
+        }
+
+        function renderOnboarding() {
+            ui.obGrid.innerHTML = ALL_GENRES.map(g => `
+                <div class="ob-pill" data-slug="${g.slug}" onclick="togglePref(this)">${g.name}</div>
+            `).join('');
+        }
+
+        window.togglePref = (el) => {
+            const slug = el.getAttribute('data-slug');
+            if (selectedPrefs.has(slug)) {
+                selectedPrefs.delete(slug);
+                el.classList.remove('active');
+            } else {
+                selectedPrefs.add(slug);
+                el.classList.add('active');
+            }
+            ui.btnSavePrefs.disabled = selectedPrefs.size === 0;
+        };
+
+        window.savePreferences = () => {
+            userPrefsSlugs = Array.from(selectedPrefs);
+            localStorage.setItem('tanime_prefs', JSON.stringify(userPrefsSlugs));
+            ui.onboardingModal.style.display = 'none';
+            ui.loader.style.display = 'flex';
+            initApp();
+        };
+
+        // ==========================================
+        // 2. KHỞI TẠO APP VÀ TẢI PHIM CHÍNH
+        // ==========================================
+        async function initApp() {
+            try {
+                const res = await fetch('https://ophim1.com/v1/api/danh-sach/hoat-hinh?page=1');
+                const data = await res.json();
+                
+                if (data.status === 'success' && data.data.items.length > 0) {
+                    await loadMovieDetail(data.data.items[0].slug);
+                }
+                
+                renderGenreTabs();
+                const initialTab = userPrefsSlugs.length > 0 ? userPrefsSlugs[0] : ALL_GENRES[0].slug;
+                switchTab(initialTab);
+
+                ui.mainContent.style.display = 'grid';
+                ui.exploreSection.style.display = 'block';
+            } catch (error) {
+                console.error(error);
+            } finally {
+                ui.loader.style.display = 'none';
+            }
+        }
+
+        async function loadMovieDetail(slug) {
+            try {
+                const res = await fetch(`https://ophim1.com/phim/${slug}`);
+                const data = await res.json();
+
+                if (data.status) {
+                    currentMovieData = data.movie;
+                    currentEpisodesList = data.episodes[0]?.server_data || [];
+                    activeEpisode = currentEpisodesList.length > 0 ? currentEpisodesList[0] : null;
+
+                    renderPlayer();
+                    renderMovieInfo();
+                    renderEpisodes();
+                }
+            } catch (error) { console.error(error); }
+        }
+
+        function renderPlayer() {
+            if (activeEpisode) {
+                ui.playerWrapper.innerHTML = `<iframe src="${activeEpisode.link_embed}" allowfullscreen title="Anime Player"></iframe>`;
+            } else {
+                ui.playerWrapper.innerHTML = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#4B5563;"><i class="ph ph-monitor-play" style="font-size:48px;animation:pulse 2s infinite;"></i></div>`;
+            }
+        }
+
+        function renderMovieInfo() {
+            const m = currentMovieData;
+            const plainContent = m.content ? m.content.replace(/<[^>]*>?/gm, '').substring(0, 300) + '...' : '';
+            const isLiked = favorites.some(f => f.slug === m.slug);
+            
+            ui.movieInfo.innerHTML = `
+                <div class="info-header">
+                    <h1 class="movie-title">${m.name}</h1>
+                    <div class="action-btns">
+                        <button class="btn-action save ${isLiked ? 'saved' : ''}" onclick="toggleFavoriteFromMain()">
+                            <i class="${isLiked ? 'ph-fill' : 'ph'} ph-heart"></i> ${isLiked ? 'Đã Lưu' : 'Lưu'}
+                        </button>
+                        <button class="btn-action share"><i class="ph-fill ph-share-network"></i> Chia sẻ</button>
+                    </div>
+                </div>
+                <div class="meta-tags">
+                    <span class="tag-rating"><i class="ph-fill ph-star"></i> ${m.tmdb?.vote_average || '9.5'}</span>
+                    <span class="tag-box">${m.quality || 'FHD'}</span>
+                    <span class="tag-box">${m.lang || 'Vietsub'}</span>
+                    <span>•</span><span>Năm: ${m.year}</span>
+                </div>
+                <div class="movie-desc">${plainContent}</div>
+            `;
+        }
+
+        window.toggleFavoriteFromMain = () => {
+            if (currentMovieData) {
+                toggleFavorite({ slug: currentMovieData.slug, name: currentMovieData.name, thumb_url: currentMovieData.thumb_url });
+            }
+        };
+
+        function renderEpisodes() {
+            ui.epCount.textContent = `${currentEpisodesList.length} Tập`;
+            ui.epGrid.innerHTML = currentEpisodesList.map((ep, idx) => {
+                const isActive = activeEpisode && activeEpisode.slug === ep.slug;
+                return `<button class="btn-episode ${isActive ? 'active' : ''}" onclick="selectEpisode(${idx})">${ep.name}</button>`;
+            }).join('');
+        }
+
+        window.selectEpisode = (idx) => {
+            activeEpisode = currentEpisodesList[idx];
+            renderPlayer(); renderEpisodes();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        // ==========================================
+        // 3. LOGIC EXPLORE (TABS & INFINITE SCROLL)
+        // ==========================================
+        function renderGenreTabs() {
+            const sortedGenres = [...ALL_GENRES].sort((a, b) => {
+                const aPref = userPrefsSlugs.includes(a.slug);
+                const bPref = userPrefsSlugs.includes(b.slug);
+                return bPref - aPref;
+            });
+
+            ui.genreTabs.innerHTML = sortedGenres.map(g => {
+                const isRecommended = userPrefsSlugs.includes(g.slug);
+                return `<button class="tab-btn ${isRecommended ? 'recommended' : ''}" id="tab-${g.slug}" onclick="switchTab('${g.slug}')">${g.name}</button>`;
+            }).join('');
+        }
+
+        window.switchTab = async (slug) => {
+            if (exploreState.currentTabSlug === slug) return;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            const activeTab = document.getElementById(`tab-${slug}`);
+            if(activeTab) {
+                activeTab.classList.add('active');
+                activeTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+
+            exploreState = { currentTabSlug: slug, apiPage: 1, localData: [], renderCount: 0, isFetching: false, hasMoreData: true };
+            ui.exploreGrid.innerHTML = '';
+            await fetchMoreGenreData();
+        };
+
+        async function fetchMoreGenreData() {
+            if (exploreState.isFetching || !exploreState.hasMoreData) return;
+            exploreState.isFetching = true;
+            ui.lazyLoader.style.display = 'block';
+
+            try {
+                const res = await fetch(`https://ophim1.com/v1/api/the-loai/${exploreState.currentTabSlug}?page=${exploreState.apiPage}`);
+                const data = await res.json();
+
+                if (data.status === 'success' && data.data.items.length > 0) {
+                    exploreState.localData.push(...data.data.items);
+                    exploreState.apiPage++;
+                    append10ItemsToGrid();
+                } else {
+                    exploreState.hasMoreData = false;
+                }
+            } catch (error) { console.error(error); } 
+            finally {
+                exploreState.isFetching = false;
+                ui.lazyLoader.style.display = 'none';
+            }
+        }
+
+        function append10ItemsToGrid() {
+            const nextIndex = exploreState.renderCount;
+            const itemsToRender = exploreState.localData.slice(nextIndex, nextIndex + 10);
+            
+            if (itemsToRender.length === 0) {
+                if(exploreState.hasMoreData) fetchMoreGenreData();
+                return;
+            }
+
+            const html = itemsToRender.map(item => `
+                <div class="anime-card" onclick="loadMovieDetailAndScroll('${item.slug}')">
+                    <div class="ac-thumb">
+                        <img src="https://img.ophim.live/uploads/movies/${item.thumb_url}" onerror="this.src='https://via.placeholder.com/200x300/1F2937/00D1F5?text=No+Image'">
+                        <div class="ac-overlay"></div>
+                        <div class="ac-ep">${item.episode_current || 'Tập 1'}</div>
+                    </div>
+                    <div class="ac-info">
+                        <div class="ac-title">${item.name}</div>
+                        <div class="ac-year">${item.year}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            ui.exploreGrid.insertAdjacentHTML('beforeend', html);
+            exploreState.renderCount += itemsToRender.length;
+        }
+
+        window.loadMovieDetailAndScroll = (slug) => {
+            loadMovieDetail(slug);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+                if (exploreState.renderCount >= exploreState.localData.length) {
+                    fetchMoreGenreData();
+                } else {
+                    append10ItemsToGrid();
+                }
+            }
+        }, { rootMargin: '0px 0px 200px 0px' });
+        observer.observe(ui.scrollAnchor);
+
+        // ==========================================
+        // 4. SEARCH
+        // ==========================================
+        let searchTimeout;
+        const searchInput = document.getElementById('search-input');
+        const searchDropdown = document.getElementById('search-dropdown');
+        
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.trim();
+            clearTimeout(searchTimeout);
+            if (!query) { searchDropdown.style.display = 'none'; return; }
+            searchDropdown.style.display = 'block';
+            searchDropdown.innerHTML = `<div class="search-msg">Đang quét dữ liệu...</div>`;
+            searchTimeout = setTimeout(() => executeSearch(query), 500);
+        });
+
+        async function executeSearch(query) {
+            try {
+                const res = await fetch(`https://ophim1.com/v1/api/tim-kiem?keyword=${encodeURIComponent(query)}`);
+                const data = await res.json();
+                if (data.status === 'success' && data.data.items.length > 0) {
+                    searchDropdown.innerHTML = data.data.items.map(item => `
+                        <div class="search-item" onclick="loadMovieDetailAndScroll('${item.slug}'); document.getElementById('search-dropdown').style.display='none';">
+                            <div class="search-thumb"><img src="https://img.ophim.live/uploads/movies/${item.thumb_url}"></div>
+                            <div class="search-info">
+                                <div class="search-title">${item.name}</div>
+                                <div class="search-origin">${item.origin_name}</div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    searchDropdown.innerHTML = `<div class="search-msg">Không tìm thấy phim.</div>`;
+                }
+            } catch (error) { console.error(error); }
+        }
+
+        // ==========================================
+        // 5. T-STORY LOGIC (TIKTOK STYLE)
+        // ==========================================
+        const storyDOM = {
+            modal: document.getElementById('story-modal'),
+            container: document.getElementById('story-container'),
+            loadingInit: document.getElementById('story-loading-init')
+        };
+
+        let storyCache = []; // Bộ nhớ đệm chứa dữ liệu story
+        let isLoadingStory = false;
+        let storyObserver;
+
+        window.openStoryMode = () => {
+            document.body.classList.add('modal-open');
+            storyDOM.modal.style.display = 'flex';
+            
+            // Nếu là lần đầu mở, init IntersectionObserver và load 3 video đầu tiên
+            if (storyCache.length === 0) {
+                initStoryObserver();
+                loadMoreStories(3);
+            }
+        };
+
+        window.closeStoryMode = () => {
+            document.body.classList.remove('modal-open');
+            storyDOM.modal.style.display = 'none';
+            // Stop iframe playing bằng cách gỡ src hoặc đơn giản là để nó chạy ngầm nhưng bị mute (iframe embed thường k autoplay có tiếng nếu ko tương tác)
+        };
+
+        // Quan sát xem người dùng đã lướt đến video cuối cùng chưa để load thêm
+        function initStoryObserver() {
+            storyObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    // Nếu người dùng lướt đến phần tử áp chót, tự động load thêm 2 video
+                    if (entry.isIntersecting && entry.target.dataset.isLast === 'true') {
+                        entry.target.dataset.isLast = 'false'; // Xoá cờ
+                        loadMoreStories(2);
+                    }
+                });
+            }, { threshold: 0.5 });
+        }
+
+        async function loadMoreStories(count) {
+            if (isLoadingStory) return;
+            isLoadingStory = true;
+
+            try {
+                // Lấy random 1 trang từ 1 đến 50 (để có phim ngẫu nhiên)
+                const randomPage = Math.floor(Math.random() * 50) + 1;
+                const listRes = await fetch(`https://ophim1.com/v1/api/danh-sach/hoat-hinh?page=${randomPage}`);
+                const listData = await listRes.json();
+                
+                if (listData.status === 'success') {
+                    // Bốc random số lượng phim cần thiết từ trang này
+                    const items = listData.data.items.sort(() => 0.5 - Math.random()).slice(0, count);
+                    
+                    for (const item of items) {
+                        // Lấy chi tiết để có link tập phim
+                        const detailRes = await fetch(`https://ophim1.com/phim/${item.slug}`);
+                        const detailData = await detailRes.json();
+                        
+                        if (detailData.status && detailData.episodes[0]?.server_data.length > 0) {
+                            const m = detailData.movie;
+                            const eps = detailData.episodes[0].server_data;
+                            // Chọn tập ngẫu nhiên
+                            const randomEp = eps[Math.floor(Math.random() * eps.length)];
+                            
+                            // Thêm tham số fake ?t= vào link embed để giả vờ nhày thời gian (Ophim player có thể ko support params này nhưng nó ép iframe reload mới)
+                            const fakeRandomTimeParam = `&t=${Math.floor(Math.random() * 600)}`; 
+                            const embedLink = randomEp.link_embed + (randomEp.link_embed.includes('?') ? fakeRandomTimeParam : `?${fakeRandomTimeParam.substring(1)}`);
+
+                            const storyObj = {
+                                slug: m.slug,
+                                name: m.name,
+                                content: m.content ? m.content.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...' : '',
+                                thumb_url: m.thumb_url,
+                                link: embedLink,
+                                isLiked: favorites.some(f => f.slug === m.slug)
+                            };
+                            
+                            storyCache.push(storyObj);
+                            appendStoryToDOM(storyObj);
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error("Lỗi tải Story:", error);
+            } finally {
+                isLoadingStory = false;
+                if(storyDOM.loadingInit) storyDOM.loadingInit.style.display = 'none'; // Ẩn loading ban đầu
+            }
+        }
+
+        function appendStoryToDOM(story) {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'story-item';
+            
+            // Xử lý JSON escape để truyền vào hàm click
+            const safeObjStr = JSON.stringify({slug: story.slug, name: story.name, thumb_url: story.thumb_url}).replace(/"/g, '&quot;');
+
+            itemDiv.innerHTML = `
+                <div class="story-video-wrapper">
+                    <!-- Dùng pointer-events:none ở CSS để ngăn chặn click nhầm vào quảng cáo của iframe gây chuyển trang -->
+                    <iframe src="${story.link}" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                    <div class="story-overlay">
+                        <div class="story-info">
+                            <h3 class="story-title">${story.name}</h3>
+                            <p class="story-desc">${story.content}</p>
+                            <button class="btn-watch-now" onclick="watchFromStory('${story.slug}')">
+                                <i class="ph-fill ph-play"></i> Xem Full Bộ
+                            </button>
+                        </div>
+                    </div>
+                    <div class="story-actions">
+                        <button class="action-icon ${story.isLiked ? 'liked' : ''}" onclick="toggleStoryLike(this, ${safeObjStr})">
+                            <i class="${story.isLiked ? 'ph-fill' : 'ph'} ph-heart"></i>
+                            <span>Thích</span>
+                        </button>
+                        <button class="action-icon" onclick="shareStory()">
+                            <i class="ph-fill ph-share-fat"></i>
+                            <span>Chia sẻ</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="story-hint"><i class="ph ph-caret-up"></i> Vuốt để xem tiếp</div>
+            `;
+            
+            storyDOM.container.appendChild(itemDiv);
+            
+            // Gắn cờ cho phần tử mới nhất và theo dõi nó
+            itemDiv.dataset.isLast = 'true';
+            storyObserver.observe(itemDiv);
+        }
+
+        window.toggleStoryLike = (btnElement, movieObj) => {
+            const isAdded = toggleFavorite(movieObj); // Hàm tái sử dụng từ phần quản lý favorites
+            if (isAdded) {
+                btnElement.classList.add('liked');
+                btnElement.querySelector('i').classList.remove('ph');
+                btnElement.querySelector('i').classList.add('ph-fill');
+            } else {
+                btnElement.classList.remove('liked');
+                btnElement.querySelector('i').classList.remove('ph-fill');
+                btnElement.querySelector('i').classList.add('ph');
+            }
+        };
+
+        window.watchFromStory = (slug) => {
+            closeStoryMode();
+            loadMovieDetailAndScroll(slug);
+        };
+
+        window.shareStory = () => { alert("Đã copy link phim vào khay nhớ tạm!"); };
+
+        // Init App Trigger
+        window.onload = checkOnboarding;
+
+    </script>
+</body>
+</html>
