@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>T-ANIME</title>
+    <title>T-ANIME | Premium Streaming</title>
     <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- Icons -->
@@ -1700,12 +1700,16 @@
                     for (const item of items) {
                         const detailRes = await fetch(`https://ophim1.com/phim/${item.slug}`); const detailData = await detailRes.json();
                         if (detailData.status && detailData.episodes[0]?.server_data.length > 0) {
-                            const m = detailData.movie; const eps = detailData.episodes[0].server_data; const randomEpIndex = Math.floor(Math.random() * eps.length); const randomEp = eps[randomEpIndex];
+                            const m = detailData.movie; const eps = detailData.episodes[0].server_data; 
+                            
+                            // FIX: Chỉ random phim ngẫu nhiên, nhưng luôn lấy Tập 1 (index 0) để người dùng có thể xem trọn vẹn, tua/phát bình thường.
+                            const firstEpIndex = 0; 
+                            const firstEp = eps[firstEpIndex];
                             
                             const storyObj = { 
                                 slug: m.slug, name: m.name, content: m.content ? m.content.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...' : '', 
-                                thumb_url: m.thumb_url, poster_url: m.poster_url, link: randomEp.link_embed, isLiked: favorites.some(f => f.slug === m.slug),
-                                episodes: eps, currentEpIndex: randomEpIndex
+                                thumb_url: m.thumb_url, poster_url: m.poster_url, link: firstEp.link_embed, isLiked: favorites.some(f => f.slug === m.slug),
+                                episodes: eps, currentEpIndex: firstEpIndex
                             };
                             storyCache.push(storyObj); appendStoryToDOM(storyObj);
                         }
