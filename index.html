@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>T-ANIME | Premium Streaming</title>
     <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -71,6 +71,13 @@
            2. BASE & RESET
            ========================================================================== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        /* Tự động thu nhỏ toàn bộ giao diện (rem units) trên thiết bị nhỏ */
+        html { font-size: 16px; }
+        @media (max-width: 1024px) { html { font-size: 15px; } }
+        @media (max-width: 768px) { html { font-size: 14px; } }
+        @media (max-width: 480px) { html { font-size: 13.5px; } }
+
         body { font-family: var(--font-main); background-color: var(--bg-main); color: var(--text-light); line-height: 1.6; overflow-x: hidden; scroll-behavior: smooth; transition: background-color 0.5s ease; -webkit-tap-highlight-color: transparent;}
         body.modal-open { overflow: hidden; }
         ::selection { background-color: var(--accent-purple); color: #fff; }
@@ -160,7 +167,9 @@
         .search-container { position: relative; width: 100%; max-width: 400px; }
         .search-box { display: flex; align-items: center; gap: 12px; background: var(--bg-glass); border: 1px solid var(--border-glass-strong); border-radius: 999px; padding: 12px 24px; transition: var(--transition); backdrop-filter: blur(10px);}
         .search-box:focus-within { background: var(--bg-card); border-color: var(--accent-cyan); box-shadow: var(--shadow-glow-cyan); }
-        .search-box input { background: transparent; border: none; color: var(--text-white); font-size: 0.95rem; width: 100%; font-family: inherit; outline: none;}
+        .search-box input { background: transparent; border: none; color: var(--text-white); width: 100%; font-family: inherit; outline: none;}
+        /* Khoá zoom trên mobile */
+        .search-box input[type="text"] { font-size: 16px !important; }
         .search-box input::placeholder { color: var(--text-muted); font-weight: 500;}
         
         .search-dropdown { position: absolute; top: calc(100% + 12px); left: 0; width: 150%; background: var(--bg-card); border: 1px solid var(--border-glass-strong); border-radius: 20px; box-shadow: var(--shadow-panel); max-height: 60vh; overflow-y: auto; display: none; z-index: 101; backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); padding: 12px; }
@@ -224,7 +233,9 @@
            ========================================================================== */
         .content-wrapper { padding: 0 40px 60px; max-width: 1600px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px;}
         
+        /* Grid cho PC: Ép phần chọn tập nằm bên phải nếu màn hình > 1024px */
         .hero-section { display: grid; grid-template-columns: 1fr; gap: 32px; align-items: start; }
+        @media (min-width: 1025px) { .hero-section { grid-template-columns: 1fr 320px; gap: 24px;} }
         @media (min-width: 1280px) { .hero-section { grid-template-columns: 1fr 380px; gap: 40px;} }
 
         /* Player */
@@ -252,13 +263,13 @@
         .movie-desc { font-size: 1.05rem; color: var(--text-muted); line-height: 1.8;}
 
         /* Right Col (Episodes) */
-        .episodes-panel { display: flex; flex-direction: column; height: 100%; min-height: 600px; padding: 28px;}
-        .ep-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 16px; }
+        .episodes-panel { display: flex; flex-direction: column; height: 100%; max-height: 650px; padding: 24px;}
+        .ep-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
         .ep-title { font-size: 1.4rem; font-weight: 900; color: var(--text-white); display: flex; align-items: center; gap: 12px; }
         .ep-title i { color: var(--accent-purple); font-size: 1.8rem;}
         
         .ep-controls { display: flex; gap: 8px; align-items: center;}
-        .ep-chunk-select { background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass-strong); color: var(--text-white); border-radius: 12px; padding: 8px 16px; font-size: 0.9rem; font-weight: 700; outline: none; cursor: pointer; transition: var(--transition);}
+        .ep-chunk-select { background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass-strong); color: var(--text-white); border-radius: 12px; padding: 8px 12px; font-size: 0.85rem; font-weight: 700; outline: none; cursor: pointer; transition: var(--transition);}
         .ep-chunk-select:hover { border-color: var(--accent-cyan); }
         .ep-chunk-select option { background: var(--bg-main); color: var(--text-white); }
         .ep-count { font-size: 0.85rem; font-weight: 700; background: var(--bg-glass-hover); padding: 8px 16px; border-radius: 999px; color: var(--text-white); }
@@ -369,6 +380,10 @@
             .top-header { padding: 0 24px; height: 80px;}
             .content-wrapper { padding: 0 24px 40px; }
             .side-panel { width: 100%; max-width: 400px; }
+            
+            /* Bỏ max-height của panel chọn tập để trên Tablet hiển thị tự do dưới player */
+            .episodes-panel { max-height: none; min-height: 350px; padding: 24px; }
+            .episodes-grid { max-height: 400px; }
         }
 
         /* Pure Mobile Optimizations */
@@ -392,33 +407,33 @@
             
             .player-container { border-radius: 16px; }
             .movie-info-panel { margin-top: 16px; gap: 16px; }
-            .movie-title { font-size: 1.8rem; letter-spacing: -0.5px; }
-            .movie-desc { font-size: 0.95rem; line-height: 1.6; }
+            .movie-title { font-size: 2rem; letter-spacing: -0.5px; }
+            .movie-desc { font-size: 1.05rem; line-height: 1.6; }
             
             /* Action Bar Grid for Mobile */
-            .action-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: 100%;}
-            .btn-pill { padding: 12px 8px; font-size: 0.85rem; width: 100%; border-radius: 12px;}
-            .btn-pill.primary { grid-column: span 3; font-size: 1rem; padding: 14px;} /* Play button spans full width */
+            .action-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%;}
+            .btn-pill { padding: 12px 4px; font-size: 0.9rem; width: 100%; border-radius: 12px; gap: 6px;}
+            .btn-pill.primary { grid-column: span 3; font-size: 1.1rem; padding: 14px;} /* Play button spans full width */
             
             /* Episodes constrained box */
             .episodes-panel { padding: 20px; min-height: auto; border-radius: 20px;}
             .ep-title { font-size: 1.2rem; }
             .episodes-grid { max-height: 350px; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 8px; }
-            .btn-episode { padding: 10px 4px; font-size: 0.85rem; border-radius: 10px;}
+            .btn-episode { padding: 10px 4px; font-size: 0.95rem; border-radius: 10px;}
             
             .explore-section { padding: 0 20px; }
-            .section-heading { font-size: 1.6rem; margin-bottom: 20px;}
+            .section-heading { font-size: 1.8rem; margin-bottom: 20px;}
             .anime-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
-            .ac-title { font-size: 0.95rem; }
+            .ac-title { font-size: 1.05rem; }
             .ac-info { padding: 12px 4px 0; }
             
             /* Onboarding Scale down */
             .modal-content.onboarding { padding: 40px 24px; border-radius: 28px; width: 95%;}
-            .ob-title { font-size: 2rem; }
-            .ob-desc { font-size: 1rem; margin-bottom: 32px;}
+            .ob-title { font-size: 2.2rem; }
+            .ob-desc { font-size: 1.1rem; margin-bottom: 32px;}
             .ob-grid { gap: 10px; margin-bottom: 32px;}
-            .ob-pill { padding: 12px 20px; font-size: 0.9rem; border-radius: 14px;}
-            .btn-primary { padding: 16px 20px; font-size: 1rem; min-width: 100%;}
+            .ob-pill { padding: 12px 20px; font-size: 0.95rem; border-radius: 14px;}
+            .btn-primary { padding: 16px 20px; font-size: 1.1rem; min-width: 100%;}
         }
 
         /* ==========================================================================
@@ -597,7 +612,7 @@
                         </div>
                     </div>
 
-                    <!-- Right: Episodes Panel (Giới hạn chiều cao trên Mobile) -->
+                    <!-- Right: Episodes Panel -->
                     <div class="glass-panel episodes-panel">
                         <div class="ep-header">
                             <div class="ep-title"><i class="ph-fill ph-monitor-play"></i> Chọn Tập</div>
@@ -692,6 +707,19 @@
                     if(mNavExplore) mNavExplore.classList.remove('active');
                     if(mNavHome) mNavHome.classList.add('active');
                 }
+            }
+        });
+
+        // Hỗ trợ thanh search trên mobile
+        document.addEventListener("DOMContentLoaded", () => {
+            if(window.innerWidth <= 640) {
+                // Liên kết 2 ô input search desktop và mobile
+                const mainInput = document.getElementById('search-input');
+                const mobInput = document.getElementById('m-search-input');
+                mobInput.addEventListener('input', (e) => {
+                    mainInput.value = e.target.value;
+                    mainInput.dispatchEvent(new Event('input'));
+                });
             }
         });
 
