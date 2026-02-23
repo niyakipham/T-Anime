@@ -2,9 +2,8 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <!-- KHÓA ZOOM TRÊN MOBILE TUYỆT ĐỐI -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>T-ANIME | Premium Streaming</title>
+    <title>T-ANIME</title>
     <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- Icons (Phosphor Icons) -->
@@ -108,7 +107,8 @@
         .spinner { width: 48px; height: 48px; border: 3px solid rgba(0,209,245,0.2); border-top-color: var(--accent-cyan); border-radius: 50%; animation: spin 1s linear infinite; }
         .loader-text { margin-top: 20px; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.2em; color: var(--text-muted); animation: pulse 2s infinite; }
         
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* FIX: Loại bỏ transform ở animation để không phá vỡ thuộc tính position: fixed của Header và Bottom Nav */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .app-wrapper { display: flex; min-height: 100vh; animation: fadeIn 0.6s ease-out forwards; width: 100%; overflow-x: hidden; }
 
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -124,7 +124,7 @@
             position: fixed; top: 0; left: 0; width: var(--sidebar-width); height: 100vh; 
             background: var(--bg-sidebar); border-right: 1px solid var(--border-glass);
             backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-            display: flex; flex-direction: column; padding: 28px 20px; z-index: 100;
+            display: flex; flex-direction: column; padding: 28px 20px; z-index: 1000;
         }
         .sidebar-logo { font-size: 1.8rem; font-weight: 900; font-style: italic; letter-spacing: -1px; margin-bottom: 40px; text-align: center; cursor: pointer;}
         
@@ -158,12 +158,12 @@
         /* MAIN COLUMN */
         .main-column { margin-left: var(--sidebar-width); flex: 1; display: flex; flex-direction: column; min-height: 100vh; position: relative; width: calc(100% - var(--sidebar-width));}
         
-        /* TOP HEADER (Search & Actions) */
+        /* TOP HEADER (CỐ ĐỊNH, KHÔNG BỊ MẤT KHI CUỘN) */
         .top-header { 
-            position: sticky; top: 0; left: 0; width: 100%; height: 72px; 
+            position: fixed; top: 0; right: 0; width: calc(100% - var(--sidebar-width)); height: 72px; 
             display: flex; align-items: center; justify-content: space-between; padding: 0 32px;
             background: linear-gradient(to bottom, var(--bg-main) 0%, transparent 100%);
-            z-index: 90; transition: background 0.3s ease;
+            z-index: 500; transition: background 0.3s ease, width 0.3s ease;
         }
         .top-header.scrolled { background: rgba(5,5,10,0.9); border-bottom: 1px solid var(--border-glass); backdrop-filter: blur(20px);}
         [data-theme="light"] .top-header.scrolled { background: rgba(244,244,249,0.95); }
@@ -237,18 +237,20 @@
         /* ==========================================================================
            5. MAIN CONTENT (PLAYER & INFO) - SỬ DỤNG FLEXBOX CHỐNG LỖI DROP COLUMN
            ========================================================================== */
-        .content-wrapper { padding: 0 32px 40px; max-width: 1500px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px; width: 100%;}
+        /* Padding-top bù cho Header Fixed */
+        .content-wrapper { padding: 90px 32px 40px; max-width: 1500px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px; width: 100%;}
         
         .hero-section { display: flex; flex-direction: column; gap: 24px; align-items: stretch; width: 100%; }
         .hero-left { flex: 1; display: flex; flex-direction: column; min-width: 0; width: 100%; }
         .hero-right { width: 100%; display: flex; flex-direction: column; }
 
+        /* FIX 1: Thu nhỏ độ rộng của phần chọn tập xuống tối đa */
         @media (min-width: 1025px) { 
             .hero-section { flex-direction: row; align-items: flex-start;} 
-            .hero-right { flex: 0 0 320px; position: sticky; top: 90px; max-height: calc(100vh - 120px); }
+            .hero-right { flex: 0 0 240px; position: sticky; top: 90px; max-height: calc(100vh - 120px); }
         }
         @media (min-width: 1280px) { 
-            .hero-right { flex: 0 0 360px; } 
+            .hero-right { flex: 0 0 260px; } 
         }
 
         /* Player */
@@ -260,7 +262,7 @@
         .skeleton-block { animation: pulseSkeleton 1.5s infinite ease-in-out; border-radius: 10px; }
         
         /* Movie Info Below Player */
-        .movie-info-panel { display: flex; flex-direction: column; gap: 20px; margin-top: 24px; min-width: 0; /* Ngăn text làm bể layout flex */}
+        .movie-info-panel { display: flex; flex-direction: column; gap: 20px; margin-top: 24px; min-width: 0; }
         .movie-title { font-size: 2.5rem; font-weight: 900; color: var(--text-white); line-height: 1.2; letter-spacing: -1px; text-shadow: 0 4px 20px rgba(0,0,0,0.6); word-break: break-word;}
         [data-theme="light"] .movie-title { text-shadow: none; }
         
@@ -278,22 +280,23 @@
         .movie-desc { font-size: 0.95rem; color: var(--text-muted); line-height: 1.7; word-break: break-word;}
 
         /* Right Col (Episodes) */
-        .episodes-panel { padding: 20px; height: 100%; flex: 1; display: flex; flex-direction: column; overflow: hidden;}
+        .episodes-panel { padding: 16px; height: 100%; flex: 1; display: flex; flex-direction: column; overflow: hidden; border-radius: 16px;}
         
-        .ep-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
-        .ep-title { font-size: 1.2rem; font-weight: 900; color: var(--text-white); display: flex; align-items: center; gap: 8px; }
-        .ep-title i { color: var(--accent-purple); font-size: 1.6rem;}
+        .ep-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
+        .ep-title { font-size: 1.1rem; font-weight: 900; color: var(--text-white); display: flex; align-items: center; gap: 6px; }
+        .ep-title i { color: var(--accent-purple); font-size: 1.4rem;}
         
-        .ep-controls { display: flex; gap: 8px; align-items: center;}
-        .ep-chunk-select { background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass-strong); color: var(--text-white); border-radius: 10px; padding: 6px 10px; font-size: 0.8rem; font-weight: 700; outline: none; cursor: pointer; transition: var(--transition);}
+        .ep-controls { display: flex; gap: 6px; align-items: center; width: 100%; justify-content: space-between;}
+        .ep-chunk-select { background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass-strong); color: var(--text-white); border-radius: 8px; padding: 4px 8px; font-size: 0.75rem; font-weight: 700; outline: none; cursor: pointer; transition: var(--transition); flex: 1;}
         .ep-chunk-select:hover { border-color: var(--accent-cyan); }
         .ep-chunk-select option { background: var(--bg-main); color: var(--text-white); }
-        .ep-count { font-size: 0.8rem; font-weight: 700; background: var(--bg-glass-hover); padding: 6px 12px; border-radius: 999px; color: var(--text-white); white-space: nowrap;}
+        .ep-count { font-size: 0.75rem; font-weight: 700; background: var(--bg-glass-hover); padding: 4px 8px; border-radius: 999px; color: var(--text-white); white-space: nowrap;}
         
-        .episodes-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; align-content: start; padding-right: 6px;}
+        /* FIX 2: Bóp nhỏ kích thước nút Tập phim siêu gọn */
+        .episodes-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(45px, 1fr)); gap: 6px; align-content: start; padding-right: 6px;}
         
         .btn-episode { 
-            padding: 10px 6px; border-radius: 10px; font-size: 0.85rem; font-weight: 700;
+            padding: 8px 4px; border-radius: 8px; font-size: 0.8rem; font-weight: 700;
             background: var(--bg-glass); border: 1px solid var(--border-glass-strong); 
             color: var(--text-muted); transition: var(--transition);
             display: block; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%;
@@ -349,23 +352,23 @@
         .lazy-loader i { animation: spin 1s linear infinite; display: inline-block; margin-right: 10px; font-size: 1.6rem; color: var(--accent-cyan); vertical-align: middle;}
 
         /* ==========================================================================
-           7. ONBOARDING MODAL
+           7. ONBOARDING & SCAN MODALS
            ========================================================================== */
         .modal-overlay { position: fixed; inset: 0; background: rgba(5,5,10,0.95); z-index: 3000; backdrop-filter: blur(30px); display: none; align-items: center; justify-content: center; }
         [data-theme="light"] .modal-overlay { background: rgba(244,244,249,0.9); }
-        .modal-content.onboarding { background: var(--bg-card); border: 1px solid var(--border-glass-strong); border-radius: 32px; padding: 48px 40px; width: 90%; max-width: 700px; text-align: center; box-shadow: var(--shadow-panel); position: relative; overflow: hidden;}
+        .modal-content { background: var(--bg-card); border: 1px solid var(--border-glass-strong); border-radius: 40px; padding: 60px 48px; width: 90%; max-width: 800px; text-align: center; box-shadow: var(--shadow-panel); position: relative; overflow: hidden;}
         .modal-content.onboarding::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(176,38,255,0.1) 0%, transparent 60%); z-index: -1; pointer-events: none; }
         
-        .ob-title { font-size: 2.5rem; font-weight: 900; margin-bottom: 12px; letter-spacing: -1px;}
-        .ob-desc { color: var(--text-muted); margin-bottom: 40px; font-size: 1.1rem; max-width: 550px; margin-left: auto; margin-right: auto;}
+        .ob-title { font-size: 3rem; font-weight: 900; margin-bottom: 16px; letter-spacing: -1.5px;}
+        .ob-desc { color: var(--text-muted); margin-bottom: 48px; font-size: 1.2rem; max-width: 600px; margin-left: auto; margin-right: auto;}
         
-        .ob-grid { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-bottom: 40px; }
-        .ob-pill { padding: 14px 28px; border-radius: 16px; border: 1px solid var(--border-glass-strong); background: var(--bg-glass); color: var(--text-light); font-weight: 700; font-size: 1rem; cursor: pointer; transition: var(--transition); }
-        .ob-pill:hover { background: var(--bg-glass-hover); transform: translateY(-2px);}
+        .ob-grid { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; margin-bottom: 48px; }
+        .ob-pill { padding: 16px 32px; border-radius: 20px; border: 1px solid var(--border-glass-strong); background: var(--bg-glass); color: var(--text-light); font-weight: 700; font-size: 1.05rem; cursor: pointer; transition: var(--transition); }
+        .ob-pill:hover { background: var(--bg-glass-hover); transform: translateY(-3px);}
         .ob-pill.active { background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); color: #fff; border-color: transparent; box-shadow: var(--shadow-glow-cyan); transform: scale(1.05); }
 
-        .btn-primary { background: var(--text-white); color: #000; border: none; padding: 18px 48px; border-radius: 16px; font-size: 1.1rem; font-weight: 900; cursor: pointer; transition: var(--transition); width: auto; min-width: 260px; display: inline-flex; align-items: center; justify-content: center; gap: 10px;}
-        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(255,255,255,0.3); }
+        .btn-primary { background: var(--text-white); color: #000; border: none; padding: 20px 60px; border-radius: 20px; font-size: 1.2rem; font-weight: 900; cursor: pointer; transition: var(--transition); width: auto; min-width: 300px; display: inline-flex; align-items: center; justify-content: center; gap: 12px;}
+        .btn-primary:hover { transform: translateY(-4px); box-shadow: 0 15px 40px rgba(255,255,255,0.3); }
         .btn-primary:disabled { background: var(--bg-glass-hover); color: var(--text-muted); cursor: not-allowed; box-shadow: none; transform: none;}
 
         /* ==========================================================================
@@ -398,8 +401,8 @@
             .mobile-nav-item.active i { color: var(--accent-cyan); filter: drop-shadow(0 0 12px rgba(0, 209, 245, 0.6)); }
             .mobile-nav-item i { font-size: 1.5rem; transition: var(--transition); }
             
-            .top-header { padding: 0 20px; height: 72px;}
-            .content-wrapper { padding: 0 20px 32px; }
+            .top-header { padding: 0 20px; height: 72px; width: 100%; right: 0;}
+            .content-wrapper { padding: 90px 20px 32px; }
             .side-panel { width: 100%; max-width: 360px; }
             .episodes-panel { position: relative; top: 0; max-height: none; min-height: 350px; }
         }
@@ -416,7 +419,7 @@
             .mobile-search-wrapper .search-box { border-radius: 14px; padding: 10px 16px; background: var(--bg-card); border: 1px solid var(--border-glass-strong);}
             .mobile-search-wrapper .search-dropdown { width: 100%; left: 0; top: calc(100% + 8px); }
             
-            .content-wrapper { padding: 0 0 60px; gap: 20px;}
+            .content-wrapper { padding: 74px 0 60px; gap: 20px;}
             .hero-section { gap: 12px; padding: 0;}
             
             .player-container { border-radius: 0; border: none; box-shadow: none; }
@@ -432,7 +435,7 @@
             
             .episodes-panel { padding: 16px; margin: 0 16px; min-height: auto; border-radius: 16px;}
             .ep-title { font-size: 1.1rem; }
-            .episodes-grid { max-height: 320px; grid-template-columns: repeat(auto-fill, minmax(65px, 1fr)); gap: 6px; }
+            .episodes-grid { max-height: 250px; grid-template-columns: repeat(auto-fill, minmax(45px, 1fr)); gap: 6px; }
             .btn-episode { padding: 8px 4px; font-size: 0.8rem; border-radius: 8px;}
             
             .explore-section { padding: 0 16px; }
@@ -441,7 +444,7 @@
             .ac-title { font-size: 0.95rem; }
             .ac-info { padding: 10px 4px 0; }
             
-            .modal-content.onboarding { padding: 32px 20px; border-radius: 24px; width: 95%;}
+            .modal-content.onboarding, .modal-content { padding: 32px 20px; border-radius: 24px; width: 95%;}
             .ob-title { font-size: 2rem; }
             .ob-desc { font-size: 0.95rem; margin-bottom: 24px;}
             .ob-grid { gap: 8px; margin-bottom: 24px;}
@@ -500,6 +503,35 @@
             <button class="btn-primary" id="btn-save-prefs" disabled onclick="savePreferences()">
                 Kích Hoạt Trải Nghiệm <i class="ph-bold ph-rocket-launch"></i>
             </button>
+        </div>
+    </div>
+
+    <!-- SCAN MODAL (QUÉT DỮ LIỆU) -->
+    <div id="scan-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 500px; padding: 40px;">
+            <h3 class="ob-title" style="font-size: 1.8rem; margin-bottom: 12px;"><i class="ph-fill ph-database"></i> Quét Dữ Liệu</h3>
+            
+            <div id="scan-init-view">
+                <p class="ob-desc" style="font-size: 0.95rem; margin-bottom: 32px;">Hệ thống sẽ quét toàn bộ danh sách phim từ trang 1 đến trang cuối để lấy thông tin. Vui lòng chọn định dạng lưu:</p>
+                <div class="ob-grid" style="gap: 16px; margin-bottom: 0;">
+                    <button class="btn-primary" style="min-width: unset; width: 100%; padding: 14px;" onclick="startScan('json')"><i class="ph-bold ph-file-code"></i> Tải JSON</button>
+                    <button class="btn-pill" style="width: 100%; background: var(--bg-glass); border: 1px solid var(--border-glass-strong); font-size: 1.1rem; padding: 14px;" onclick="startScan('csv')"><i class="ph-bold ph-file-csv"></i> Tải CSV</button>
+                    <button class="btn-pill" style="width: 100%; background: transparent; border-color: transparent; font-size: 1rem;" onclick="closeScanModal()">Hủy</button>
+                </div>
+            </div>
+
+            <div id="scan-progress-view" style="display: none;">
+                <p class="ob-desc" style="font-size: 0.9rem; margin-bottom: 16px;">Vui lòng không đóng trình duyệt trong quá trình này.</p>
+                <div style="width: 100%; height: 8px; background: var(--bg-glass-hover); border-radius: 4px; overflow: hidden; margin-bottom: 16px;">
+                    <div id="scan-progress-fill" style="height: 100%; width: 0%; background: linear-gradient(to right, var(--accent-purple), var(--accent-cyan)); transition: width 0.3s;"></div>
+                </div>
+                <div id="scan-status" style="color: var(--accent-cyan); font-weight: 700; margin-bottom: 8px; font-size: 0.9rem;">Đang chuẩn bị quét dữ liệu...</div>
+                <div id="scan-stats" style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 32px;">Đã quét: 0 phim</div>
+                
+                <button class="btn-pill" style="width: 100%; color: var(--accent-red); border-color: rgba(255,59,48,0.3); justify-content: center;" onclick="stopScan()">
+                    <i class="ph-bold ph-stop-circle"></i> Dừng & Lưu Tạm
+                </button>
+            </div>
         </div>
     </div>
 
@@ -573,6 +605,10 @@
                 </div>
 
                 <div class="header-actions">
+                    <!-- NÚT QUÉT DỮ LIỆU ĐÃ TRỞ LẠI -->
+                    <button class="header-btn" onclick="openScanModal()" title="Công Cụ Quét Dữ Liệu">
+                        <i class="ph-bold ph-database"></i>
+                    </button>
                     <button class="header-btn"><i class="ph-bold ph-bell"></i><span class="badge"></span></button>
                 </div>
             </header>
@@ -960,6 +996,129 @@
         }
 
         // ==========================================
+        // 1.5 CRAWL DATA SCRIPT (TOOL QUÉT PHIM)
+        // ==========================================
+        let isScanning = false;
+        let scanFormat = 'json';
+        let scannedData = [];
+        
+        const scanUI = {
+            modal: document.getElementById('scan-modal'),
+            initView: document.getElementById('scan-init-view'),
+            progressView: document.getElementById('scan-progress-view'),
+            progressFill: document.getElementById('scan-progress-fill'),
+            status: document.getElementById('scan-status'),
+            stats: document.getElementById('scan-stats')
+        };
+
+        window.openScanModal = () => {
+            scanUI.modal.style.display = 'flex';
+            scanUI.initView.style.display = 'block';
+            scanUI.progressView.style.display = 'none';
+        };
+
+        window.closeScanModal = () => {
+            if (isScanning && !confirm("Bạn có chắc muốn đóng? Quá trình quét sẽ bị dừng lại!")) return;
+            isScanning = false;
+            scanUI.modal.style.display = 'none';
+        };
+
+        window.startScan = async (format) => {
+            scanFormat = format;
+            isScanning = true;
+            scannedData = [];
+            
+            scanUI.initView.style.display = 'none';
+            scanUI.progressView.style.display = 'block';
+            scanUI.progressFill.style.width = '0%';
+            scanUI.stats.textContent = 'Đã quét: 0 phim';
+
+            try {
+                scanUI.status.textContent = "Đang phân tích cấu trúc dữ liệu...";
+                const initialRes = await fetch('https://ophim1.com/v1/api/danh-sach/hoat-hinh?page=1');
+                const initialData = await initialRes.json();
+                
+                const totalPages = initialData.data?.params?.pagination?.totalPages || 1442;
+                
+                for (let page = 1; page <= totalPages; page++) {
+                    if (!isScanning) break;
+                    
+                    scanUI.status.textContent = `Đang lấy danh sách phim trang ${page} / ${totalPages}...`;
+                    const pageRes = await fetch(`https://ophim1.com/v1/api/danh-sach/hoat-hinh?page=${page}`);
+                    const pageData = await pageRes.json();
+                    const items = pageData.data.items;
+
+                    const batchSize = 5;
+                    for (let i = 0; i < items.length; i += batchSize) {
+                        if (!isScanning) break;
+                        const batch = items.slice(i, i + batchSize);
+                        scanUI.status.textContent = `Đang quét chi tiết phim trang ${page}... (${i+1} đến ${i + batch.length} / ${items.length})`;
+                        
+                        await Promise.all(batch.map(async (item) => {
+                            try {
+                                const detailRes = await fetch(`https://ophim1.com/phim/${item.slug}`);
+                                const detailData = await detailRes.json();
+                                if (detailData.status && detailData.movie) {
+                                    const m = detailData.movie;
+                                    scannedData.push({
+                                        id: m._id, name: m.name, origin_name: m.origin_name, year: m.year,
+                                        quality: m.quality, lang: m.lang, episode_current: m.episode_current,
+                                        content: m.content ? m.content.replace(/<[^>]*>?/gm, '').replace(/(\r\n|\n|\r)/gm, " ").trim() : "",
+                                        thumb_url: m.thumb_url, poster_url: m.poster_url
+                                    });
+                                }
+                            } catch (e) { console.error(e); }
+                        }));
+                        scanUI.stats.textContent = `Đã quét: ${scannedData.length} phim`;
+                    }
+                    scanUI.progressFill.style.width = `${(page / totalPages) * 100}%`;
+                }
+
+                if (isScanning) {
+                    scanUI.status.textContent = "Hoàn tất quét dữ liệu!";
+                    finishScan();
+                }
+            } catch (error) {
+                console.error(error);
+                scanUI.status.textContent = "Có lỗi xảy ra!";
+                isScanning = false;
+            }
+        };
+
+        window.stopScan = () => {
+            isScanning = false;
+            scanUI.status.textContent = "Đã dừng. Đang chuẩn bị file tải xuống...";
+            setTimeout(finishScan, 1000);
+        };
+
+        function finishScan() {
+            isScanning = false;
+            if (scannedData.length === 0) {
+                alert("Không có dữ liệu nào được quét!");
+                closeScanModal(); return;
+            }
+
+            if (scanFormat === 'json') {
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(scannedData, null, 2));
+                triggerDownload(dataStr, `ophim_data_${Date.now()}.json`);
+            } else {
+                const header = Object.keys(scannedData[0]);
+                const replacer = (key, value) => value === null ? '' : value.toString().replace(/"/g, '""');
+                const csv = scannedData.map(row => header.map(fieldName => `"${replacer(fieldName, row[fieldName])}"`).join(','));
+                csv.unshift(header.join(','));
+                const blob = new Blob(["\uFEFF" + csv.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+                triggerDownload(URL.createObjectURL(blob), `ophim_data_${Date.now()}.csv`);
+            }
+            closeScanModal();
+        }
+
+        function triggerDownload(url, filename) {
+            const a = document.createElement('a');
+            a.href = url; a.download = filename;
+            document.body.appendChild(a); a.click(); a.remove();
+        }
+
+        // ==========================================
         // 2. ONBOARDING & INIT
         // ==========================================
         function checkOnboarding() {
@@ -1100,7 +1259,8 @@
             ui.epGrid.innerHTML = epsToRender.map((ep, idx) => {
                 const realIdx = startIdx + idx; 
                 const isActive = activeEpisode && activeEpisode.slug === ep.slug;
-                return `<button class="btn-episode ${isActive ? 'active' : ''}" title="${ep.name}" onclick="selectEpisode(${realIdx}, this)">${isActive ? '<i class="ph-fill ph-play" style="margin-right:4px;"></i> ' : ''}${ep.name}</button>`;
+                // Nút thu gọn với title
+                return `<button class="btn-episode ${isActive ? 'active' : ''}" title="${ep.name}" onclick="selectEpisode(${realIdx}, this)">${ep.name}</button>`;
             }).join('');
         }
 
@@ -1113,7 +1273,6 @@
             renderEpisodes(); 
             addToHistory(currentMovieData, activeEpisode);
             
-            // Tự động cuộn lưới tập phim tới nút đang được chọn
             setTimeout(() => {
                 const activeBtn = document.querySelector('.btn-episode.active');
                 if(activeBtn && ui.epGrid) {
@@ -1320,6 +1479,7 @@
         async function loadMoreStories(count) {
             if (isLoadingStory) return; isLoadingStory = true;
             try {
+                // Fetch page 1 trước để xác định số trang an toàn
                 const initRes = await fetch(`https://ophim1.com/v1/api/danh-sach/hoat-hinh?page=1`);
                 const initData = await initRes.json();
                 const totalPages = initData.data?.params?.pagination?.totalPages || 10;
