@@ -2,6 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
+    <!-- KHÓA ZOOM TRÊN MOBILE TUYỆT ĐỐI -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <title>T-ANIME | Premium Streaming</title>
     <!-- Font -->
@@ -72,12 +73,12 @@
            ========================================================================== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
+        html, body { overflow-x: hidden; width: 100%; position: relative;}
         html { font-size: 14.5px; }
         @media (max-width: 1024px) { html { font-size: 13.5px; } }
         @media (max-width: 768px) { html { font-size: 13px; } }
-        @media (max-width: 480px) { html { font-size: 12.5px; } }
 
-        body { font-family: var(--font-main); background-color: var(--bg-main); color: var(--text-light); line-height: 1.6; overflow-x: hidden; scroll-behavior: smooth; transition: background-color 0.5s ease; -webkit-tap-highlight-color: transparent;}
+        body { font-family: var(--font-main); background-color: var(--bg-main); color: var(--text-light); line-height: 1.6; scroll-behavior: smooth; transition: background-color 0.5s ease; -webkit-tap-highlight-color: transparent;}
         body.modal-open { overflow: hidden; }
         ::selection { background-color: var(--accent-purple); color: #fff; }
         a { text-decoration: none; color: inherit; }
@@ -107,8 +108,8 @@
         .spinner { width: 48px; height: 48px; border: 3px solid rgba(0,209,245,0.2); border-top-color: var(--accent-cyan); border-radius: 50%; animation: spin 1s linear infinite; }
         .loader-text { margin-top: 20px; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.2em; color: var(--text-muted); animation: pulse 2s infinite; }
         
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .app-wrapper { display: flex; min-height: 100vh; animation: fadeIn 0.6s ease-out forwards; width: 100%; overflow-x: hidden; }
+        /* Đã xóa animation: fadeIn chứa transform gây lỗi position fixed */
+        .app-wrapper { display: flex; min-height: 100vh; width: 100%; opacity: 0; transition: opacity 0.5s ease; }
 
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
@@ -157,12 +158,12 @@
         /* MAIN COLUMN */
         .main-column { margin-left: var(--sidebar-width); flex: 1; display: flex; flex-direction: column; min-height: 100vh; position: relative; width: calc(100% - var(--sidebar-width));}
         
-        /* TOP HEADER */
+        /* TOP HEADER (KHÓA CỐ ĐỊNH, KHÔNG BỊ MẤT KHI CUỘN) */
         .top-header { 
             position: fixed; top: 0; right: 0; width: calc(100% - var(--sidebar-width)); height: 72px; 
             display: flex; align-items: center; justify-content: space-between; padding: 0 32px;
             background: linear-gradient(to bottom, var(--bg-main) 0%, transparent 100%);
-            z-index: 500; transition: background 0.3s ease, width 0.3s ease;
+            z-index: 900; transition: background 0.3s ease, width 0.3s ease;
         }
         .top-header.scrolled { background: rgba(5,5,10,0.9); border-bottom: 1px solid var(--border-glass); backdrop-filter: blur(20px);}
         [data-theme="light"] .top-header.scrolled { background: rgba(244,244,249,0.95); }
@@ -232,7 +233,7 @@
         .theme-swatch.active { border-color: var(--text-white); transform: scale(1.05);}
 
         /* ==========================================================================
-           5. MAIN CONTENT (PLAYER & INFO)
+           5. MAIN CONTENT (PLAYER & INFO) - BÓP NHỎ PHẦN CHỌN TẬP
            ========================================================================== */
         .content-wrapper { padding: 90px 32px 40px; max-width: 1500px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px; width: 100%;}
         
@@ -242,10 +243,11 @@
 
         @media (min-width: 1025px) { 
             .hero-section { flex-direction: row; align-items: flex-start;} 
-            .hero-right { flex: 0 0 240px; position: sticky; top: 90px; max-height: calc(100vh - 120px); }
+            /* THU NHỎ PHẦN CHỌN TẬP CÒN 200px ĐỂ VIDEO TO HƠN */
+            .hero-right { flex: 0 0 200px; position: sticky; top: 90px; max-height: calc(100vh - 120px); }
         }
         @media (min-width: 1280px) { 
-            .hero-right { flex: 0 0 260px; } 
+            .hero-right { flex: 0 0 220px; } 
         }
 
         /* Player */
@@ -267,7 +269,6 @@
         .btn-pill.primary { background: var(--text-white); color: var(--bg-main); border: none; box-shadow: 0 6px 15px rgba(255,255,255,0.2);}
         .btn-pill.primary:hover { background: var(--accent-cyan); color: #fff; box-shadow: var(--shadow-glow-cyan);}
         
-        /* Chỉnh lại nút tim nổi bật khi đã lưu */
         .btn-pill.saved { border-color: var(--accent-red); color: var(--accent-red); background: rgba(255,59,48,0.1);}
         
         .meta-tags { display: flex; flex-wrap: wrap; gap: 10px; font-size: 0.85rem; font-weight: 600; color: var(--text-white); align-items: center;}
@@ -277,29 +278,29 @@
         .movie-desc { font-size: 0.95rem; color: var(--text-muted); line-height: 1.7; word-break: break-word;}
 
         /* Right Col (Episodes) */
-        .episodes-panel { padding: 16px; height: 100%; flex: 1; display: flex; flex-direction: column; overflow: hidden; border-radius: 16px;}
+        .episodes-panel { padding: 12px 16px; height: 100%; flex: 1; display: flex; flex-direction: column; overflow: hidden; border-radius: 16px;}
         
-        .ep-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
-        .ep-title { font-size: 1.1rem; font-weight: 900; color: var(--text-white); display: flex; align-items: center; gap: 6px; }
-        .ep-title i { color: var(--accent-purple); font-size: 1.4rem;}
+        .ep-header { display: flex; flex-direction: column; margin-bottom: 12px; gap: 8px; }
+        .ep-title { font-size: 1rem; font-weight: 900; color: var(--text-white); display: flex; align-items: center; gap: 6px; }
+        .ep-title i { color: var(--accent-purple); font-size: 1.2rem;}
         
         .ep-controls { display: flex; gap: 6px; align-items: center; width: 100%; justify-content: space-between;}
-        .ep-chunk-select { background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass-strong); color: var(--text-white); border-radius: 8px; padding: 4px 8px; font-size: 16px !important; font-weight: 700; outline: none; cursor: pointer; transition: var(--transition); flex: 1;}
+        .ep-chunk-select { background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass-strong); color: var(--text-white); border-radius: 8px; padding: 4px 6px; font-size: 16px !important; font-weight: 700; outline: none; cursor: pointer; transition: var(--transition); flex: 1;}
         .ep-chunk-select:hover { border-color: var(--accent-cyan); }
         .ep-chunk-select option { background: var(--bg-main); color: var(--text-white); }
-        .ep-count { font-size: 0.75rem; font-weight: 700; background: var(--bg-glass-hover); padding: 4px 8px; border-radius: 999px; color: var(--text-white); white-space: nowrap;}
+        .ep-count { font-size: 0.7rem; font-weight: 700; background: var(--bg-glass-hover); padding: 4px 8px; border-radius: 999px; color: var(--text-white); white-space: nowrap;}
         
-        .episodes-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(45px, 1fr)); gap: 6px; align-content: start; padding-right: 6px;}
+        /* Thu nhỏ nút bấm tập phim để xếp được nhiều hơn */
+        .episodes-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); gap: 6px; align-content: start; padding-right: 4px;}
         
         .btn-episode { 
-            padding: 8px 4px; border-radius: 8px; font-size: 0.8rem; font-weight: 700;
+            padding: 6px 2px; border-radius: 8px; font-size: 0.8rem; font-weight: 700;
             background: var(--bg-glass); border: 1px solid var(--border-glass-strong); 
             color: var(--text-muted); transition: var(--transition);
             display: block; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%;
         }
         .btn-episode:hover { background: var(--bg-glass-hover); color: var(--text-white); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.2);}
         
-        /* FIX: Tối ưu nút active hiển thị rõ ràng trên cả Light / Dark mode */
         .btn-episode.active { 
             background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
             color: #ffffff !important; 
@@ -319,11 +320,11 @@
         .genre-tabs::-webkit-scrollbar { display: none; }
         .tab-btn { padding: 12px 24px; border-radius: 999px; background: var(--bg-glass); border: 1px solid var(--border-glass-strong); color: var(--text-muted); font-weight: 700; font-size: 0.95rem; white-space: nowrap; transition: var(--transition); }
         .tab-btn:hover { background: var(--bg-glass-hover); color: var(--text-white); transform: translateY(-2px);}
-        .tab-btn.active { background: var(--text-white); color: var(--bg-main); box-shadow: 0 8px 20px rgba(0,0,0,0.1); border-color: transparent;}
+        .tab-btn.active { background: var(--text-white); color: #000; box-shadow: 0 8px 20px rgba(255,255,255,0.2); border-color: transparent;}
         
         .tab-btn.recommended { position: relative; border-color: rgba(0, 209, 245, 0.4); color: var(--text-light); }
         .tab-btn.recommended::after { content: '★ GỢI Ý'; position: absolute; top: -8px; right: 10px; background: var(--accent-cyan); color: #000; font-size: 0.6rem; padding: 2px 6px; border-radius: 6px; font-weight: 900; box-shadow: 0 4px 8px rgba(0,209,245,0.4);}
-        .tab-btn.recommended.active::after { background: var(--text-white); color: var(--bg-main); box-shadow: none;}
+        .tab-btn.recommended.active::after { background: #000; color: #fff; box-shadow: none;}
 
         .anime-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
         @media (min-width: 640px) { .anime-grid { grid-template-columns: repeat(3, 1fr); } }
@@ -353,7 +354,7 @@
         .lazy-loader i { animation: spin 1s linear infinite; display: inline-block; margin-right: 10px; font-size: 1.6rem; color: var(--accent-cyan); vertical-align: middle;}
 
         /* ==========================================================================
-           7. ONBOARDING & SCAN MODALS (CẢI TIẾN GỌN GÀNG HƠN)
+           7. ONBOARDING & SCAN MODALS
            ========================================================================== */
         .modal-overlay { position: fixed; inset: 0; background: rgba(5,5,10,0.95); z-index: 3000; backdrop-filter: blur(30px); display: none; align-items: center; justify-content: center; }
         [data-theme="light"] .modal-overlay { background: rgba(244,244,249,0.9); }
@@ -375,7 +376,7 @@
         .ob-pill:hover { background: var(--bg-glass-hover); transform: translateY(-2px);}
         .ob-pill.active { background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); color: #fff; border-color: transparent; box-shadow: var(--shadow-glow-cyan); transform: scale(1.05); }
 
-        .btn-primary { background: var(--text-white); color: var(--bg-main); border: none; padding: 14px 40px; border-radius: 16px; font-size: 1.1rem; font-weight: 900; cursor: pointer; transition: var(--transition); width: auto; min-width: 200px; display: inline-flex; align-items: center; justify-content: center; gap: 8px;}
+        .btn-primary { background: var(--text-white); color: #000; border: none; padding: 14px 40px; border-radius: 16px; font-size: 1.1rem; font-weight: 900; cursor: pointer; transition: var(--transition); width: auto; min-width: 200px; display: inline-flex; align-items: center; justify-content: center; gap: 8px;}
         .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(255,255,255,0.3); }
         .btn-primary:disabled { background: var(--bg-glass-hover); color: var(--text-muted); cursor: not-allowed; box-shadow: none; transform: none;}
 
@@ -389,6 +390,7 @@
             .sidebar { transform: translateX(-100%); transition: transform 0.3s; }
             .main-column { margin-left: 0; padding-bottom: 80px; width: 100%;}
             
+            /* ĐẢM BẢO BOTTOM NAV FIXED TRÊN MOBILE MÀ KO BỊ LỖI SCROLL */
             .mobile-bottom-nav {
                 display: flex; position: fixed; bottom: 0; left: 0; width: 100%;
                 background: rgba(10,10,18,0.95); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
@@ -436,7 +438,7 @@
             
             .episodes-panel { padding: 16px; margin: 0 16px; min-height: auto; border-radius: 16px;}
             .ep-title { font-size: 1.1rem; }
-            .episodes-grid { max-height: 250px; grid-template-columns: repeat(auto-fill, minmax(45px, 1fr)); gap: 6px; }
+            .episodes-grid { max-height: 250px; grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); gap: 6px; }
             .btn-episode { padding: 8px 4px; font-size: 0.8rem; border-radius: 8px;}
             
             .explore-section { padding: 0 16px; }
@@ -520,10 +522,11 @@
         </div>
     </div>
 
-    <!-- SCAN MODAL -->
+    <!-- SCAN MODAL (QUÉT DỮ LIỆU ĐÃ TRỞ LẠI) -->
     <div id="scan-modal" class="modal-overlay">
         <div class="modal-content" style="max-width: 500px; padding: 40px;">
             <h3 class="ob-title" style="font-size: 1.8rem; margin-bottom: 12px;"><i class="ph-fill ph-database"></i> Quét Dữ Liệu</h3>
+            
             <div id="scan-init-view">
                 <p class="ob-desc" style="font-size: 0.95rem; margin-bottom: 32px;">Hệ thống sẽ quét toàn bộ danh sách phim từ trang 1 đến trang cuối để lấy thông tin. Vui lòng chọn định dạng lưu:</p>
                 <div class="ob-grid" style="gap: 16px; margin-bottom: 0;">
@@ -532,6 +535,7 @@
                     <button class="btn-pill" style="width: 100%; background: transparent; border-color: transparent; font-size: 1rem;" onclick="closeScanModal()">Hủy</button>
                 </div>
             </div>
+
             <div id="scan-progress-view" style="display: none;">
                 <p class="ob-desc" style="font-size: 0.9rem; margin-bottom: 16px;">Vui lòng không đóng trình duyệt trong quá trình này.</p>
                 <div style="width: 100%; height: 8px; background: var(--bg-glass-hover); border-radius: 4px; overflow: hidden; margin-bottom: 16px;">
@@ -539,6 +543,7 @@
                 </div>
                 <div id="scan-status" style="color: var(--accent-cyan); font-weight: 700; margin-bottom: 8px; font-size: 0.9rem;">Đang chuẩn bị quét dữ liệu...</div>
                 <div id="scan-stats" style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 32px;">Đã quét: 0 phim</div>
+                
                 <button class="btn-pill" style="width: 100%; color: var(--accent-red); border-color: rgba(255,59,48,0.3); justify-content: center;" onclick="stopScan()">
                     <i class="ph-bold ph-stop-circle"></i> Dừng & Lưu Tạm
                 </button>
@@ -1215,7 +1220,12 @@
                 renderGenreTabs();
                 switchTab(userPrefsSlugs.length > 0 ? userPrefsSlugs[0] : ALL_GENRES[0].slug);
                 
+                // Kích hoạt opacity transition bằng JS để không ảnh hưởng css stacking context
                 ui.appWrapper.style.display = 'flex';
+                setTimeout(() => {
+                    ui.appWrapper.style.opacity = '1';
+                }, 50);
+
             } catch (error) { console.error(error); } 
             finally { ui.loader.style.display = 'none'; }
         }
@@ -1227,8 +1237,12 @@
             ui.playerWrapper.innerHTML = `<div class="flex-center" style="width:100%;height:100%;"><div class="spinner"></div></div>`;
             ui.movieTitle.innerHTML = `<div class="skeleton-block" style="width: 80%; height: 40px; margin-bottom: 8px;"></div><div class="skeleton-block" style="width: 50%; height: 40px;"></div>`;
             ui.movieDesc.innerHTML = `<div class="skeleton-block" style="width: 100%; height: 16px; margin-bottom: 8px;"></div><div class="skeleton-block" style="width: 90%; height: 16px; margin-bottom: 8px;"></div><div class="skeleton-block" style="width: 70%; height: 16px;"></div>`;
-            ui.movieMeta.innerHTML = `<div class="skeleton-block" style="width: 60%; height: 24px;"></div>`;
-            ui.epGrid.innerHTML = Array.from({length: 12}).map(() => `<div class="skeleton-block" style="height:44px; border-radius:14px; width:100%;"></div>`).join('');
+            
+            const btnSave = document.getElementById('btn-save');
+            if(btnSave) {
+                btnSave.className = 'btn-pill';
+                btnSave.innerHTML = `<i class="ph-bold ph-heart"></i> <span class="action-text">Lưu</span>`;
+            }
         }
 
         window.loadMovieDetailAndScroll = (slug) => {
@@ -1290,7 +1304,7 @@
         function updateMainPlayerFavUI() {
             if(!currentMovieData) return;
             const isLiked = favorites.some(f => f.slug === currentMovieData.slug);
-            const btnSave = document.getElementById('btn-save'); // Fetch lại DOM mới nhất
+            const btnSave = document.getElementById('btn-save'); 
             if(btnSave) {
                 btnSave.className = `btn-pill ${isLiked ? 'saved' : ''}`;
                 btnSave.innerHTML = `<i class="${isLiked ? 'ph-fill' : 'ph-bold'} ph-heart"></i> <span class="action-text">${isLiked ? 'Đã Lưu' : 'Lưu'}</span>`;
