@@ -1065,35 +1065,124 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
 
-        window.downloadCurrentEpisode = () => {
+        // --- THUẬT TOÁN TẢI TỪNG CHUNK .TS VÀ GHÉP FILE ---
+        window.downloadCurrentEpisode = async () => {
             if (!currentMovieData || !activeEpisode) return;
             const btn = document.getElementById('btn-download');
             
             if (btn.classList.contains('downloading')) return;
             
-            const exists = downloadList.some(d => d.slug === currentMovieData.slug && d.epName === activeEpisode.name);
-            if (exists) {
-                alert("Tập phim này đã nằm trong danh sách Tải Xuống!");
+            const m3u8Link = activeEpisode.link_m3u8;
+            if (!m3u8Link) {
+                alert("Lỗi: Không tìm thấy link tải (m3u8) cho tập phim này!");
                 return;
             }
 
             btn.classList.add('downloading');
-            btn.innerHTML = `<i class="ph-bold ph-spinner-gap" style="animation: spin 1s linear infinite;"></i> Đang Tải...`;
+            btn.innerHTML = `<i class="ph-bold ph-spinner-gap" style="animation: spin 1s linear infinite;"></i> Đang phân tích...`;
             
-            setTimeout(() => {
-                const now = new Date();
-                const timeStr = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()}`;
+            try {
+                // Hàm tiện ích tải file dạng text
+                const fetchText = async (url) => {
+                    const res = await fetch(url);
+                    if (!res.ok) throw new Error('Network response was not ok');
+                    return await res.text();
+                };
+
+                // Bước 1: Lấy nội dung file m3u8 (Có thể là Master Playlist hoặc Media Playlist)
+                let manifest = await fetchText(m3u8Link);
+                let baseUrl = m3u8Link.substring(0, m3u8Link.lastIndexOf('/') + 1);
+
+                // Bước 2: Nếu là Master Playlist (chứa nhiều độ phân giải), tìm chất lượng cao nhất
+                if (manifest.includes('#EXT-X-STREAM-INF')) {
+                    const lines = manifest.split('\n');
+                    let bestResolutionUrl = '';
+                    for (let i = 0; i < lines.length; i++) {
+                        if (lines[i].includes('#EXT-X-STREAM-INF')) {
+                            let nextLine = lines[i+1].trim();
+                            if (nextLine) bestResolutionUrl = nextLine;
+                        }
+                    }
+                    if (bestResolutionUrl) {
+                        if (!bestResolutionUrl.startsWith('http')) {
+                            bestResolutionUrl = baseUrl + bestResolutionUrl;
+                        }
+                        manifest = await fetchText(bestResolutionUrl);
+                        baseUrl = bestResolutionUrl.substring(0, bestResolutionUrl.lastIndexOf('/') + 1);
+                    }
+                }
+
+                // Bước 3: Đọc và gom lại tất cả các URL đoạn video đuôi .ts
+                const tsUrls = [];
+                const lines = manifest.split('\n');
+                for (let line of lines) {
+                    line = line.trim();
+                    // Các file ts không bắt đầu bằng '#'
+                    if (line && !line.startsWith('#')) {
+                        tsUrls.push(line.startsWith('http') ? line : baseUrl + line);
+                    }
+                }
+
+                if (tsUrls.length === 0) throw new Error("Không tìm thấy dữ liệu video chunk!");
+
+                // Bước 4: Tải song song từng cụm file (Batch downloading) để tăng tốc và tránh đơ
+                const chunks = new Array(tsUrls.length);
+                let downloadedCount = 0;
+                const batchSize = 5; // Tải 5 đoạn cùng một lúc
+
+                for (let i = 0; i < tsUrls.length; i += batchSize) {
+                    const batch = tsUrls.slice(i, i + batchSize);
+                    const promises = batch.map(async (url, idx) => {
+                        const res = await fetch(url);
+                        if (!res.ok) throw new Error(`Lỗi tải đoạn video ${i + idx}`);
+                        const buffer = await res.arrayBuffer(); // Tải dưới dạng nhị phân thô
+                        return { index: i + idx, buffer };
+                    });
+
+                    // Chờ cụm 5 file tải xong rồi mới lưu mảng
+                    const results = await Promise.all(promises);
+                    for (const r of results) {
+                        chunks[r.index] = r.buffer;
+                    }
+                    
+                    downloadedCount += batch.length;
+                    const percent = Math.floor((downloadedCount / tsUrls.length) * 100);
+                    btn.innerHTML = `<i class="ph-bold ph-spinner-gap" style="animation: spin 1s linear infinite;"></i> Đang tải ${percent}%`;
+                }
+
+                // Bước 5: Ghép tất cả các đoạn .ts lại thành một file Blob duy nhất
+                btn.innerHTML = `<i class="ph-bold ph-spinner-gap" style="animation: spin 1s linear infinite;"></i> Đang ghép video...`;
+                const blob = new Blob(chunks, { type: 'video/mp2t' });
+                const url = window.URL.createObjectURL(blob);
                 
-                downloadList.unshift({
-                    slug: currentMovieData.slug,
-                    name: currentMovieData.name,
-                    thumb_url: currentMovieData.thumb_url,
-                    epName: activeEpisode.name,
-                    time: `Đã tải: ${timeStr}`
-                });
+                // Bước 6: Kích hoạt tự động tải xuống file Video
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                // Định dạng file là .ts (đọc được bằng VLC, Windows Media Player)
+                a.download = `${currentMovieData.slug}-tap-${activeEpisode.name}.ts`;
+                document.body.appendChild(a);
+                a.click();
                 
-                localStorage.setItem('tanime_downloads', JSON.stringify(downloadList));
-                if (currentTab === 'download') renderUserDropdown();
+                // Dọn dẹp bộ nhớ đệm
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                
+                // Lưu vào mục "Đã tải xuống"
+                const exists = downloadList.some(d => d.slug === currentMovieData.slug && d.epName === activeEpisode.name);
+                if (!exists) {
+                    const now = new Date();
+                    const timeStr = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()}`;
+                    downloadList.unshift({
+                        slug: currentMovieData.slug,
+                        name: currentMovieData.name,
+                        thumb_url: currentMovieData.thumb_url,
+                        epName: activeEpisode.name,
+                        time: `Đã tải: ${timeStr}`
+                    });
+                    localStorage.setItem('tanime_downloads', JSON.stringify(downloadList));
+                    if (currentTab === 'download') renderUserDropdown();
+                }
                 
                 btn.classList.remove('downloading');
                 btn.innerHTML = `<i class="ph-bold ph-check"></i> Đã Tải Xong`;
@@ -1101,7 +1190,20 @@
                     if (btn) btn.innerHTML = `<i class="ph-bold ph-download-simple"></i> Tải Tập Này`;
                 }, 3000);
                 
-            }, 1500);
+            } catch (error) {
+                console.error("Lỗi tải video .ts:", error);
+                // Bước 7: Fallback - Giải pháp dự phòng nếu bị máy chủ chặn kết nối CORS
+                if (confirm("Quá trình tải ghép file bị lỗi mạng (hoặc do máy chủ chặn). Bạn có muốn mở Link tải gốc ở Tab mới để dùng IDM / Cốc Cốc bắt link không?")) {
+                    const a = document.createElement('a');
+                    a.href = m3u8Link;
+                    a.target = '_blank';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                }
+                btn.classList.remove('downloading');
+                btn.innerHTML = `<i class="ph-bold ph-download-simple"></i> Tải Tập Này`;
+            }
         };
 
         // ==========================================
