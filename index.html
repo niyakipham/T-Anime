@@ -1181,11 +1181,22 @@
                                 const detailData = await detailRes.json();
                                 if (detailData.status && detailData.movie) {
                                     const m = detailData.movie;
+                                    
+                                    // TRÍCH XUẤT TẤT CẢ LINK M3U8 CỦA PHIM
+                                    let m3u8_links = "";
+                                    if (detailData.episodes && detailData.episodes.length > 0 && detailData.episodes[0].server_data) {
+                                        m3u8_links = detailData.episodes[0].server_data
+                                            .map(ep => ep.link_m3u8)
+                                            .filter(link => link) // Lọc bỏ các link rỗng
+                                            .join(', '); // Nối các link bằng dấu phẩy
+                                    }
+
                                     scannedData.push({
                                         id: m._id, name: m.name, origin_name: m.origin_name, year: m.year,
                                         quality: m.quality, lang: m.lang, episode_current: m.episode_current,
                                         content: m.content ? m.content.replace(/<[^>]*>?/gm, '').replace(/(\r\n|\n|\r)/gm, " ").trim() : "",
-                                        thumb_url: m.thumb_url, poster_url: m.poster_url
+                                        thumb_url: m.thumb_url, poster_url: m.poster_url,
+                                        m3u8_links: m3u8_links // Thêm trường dữ liệu link m3u8
                                     });
                                 }
                             } catch (e) { console.error(e); }
