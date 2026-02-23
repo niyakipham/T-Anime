@@ -6,15 +6,14 @@
     <title>T-ANIME | Premium Streaming</title>
     <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <!-- Icons (Phosphor Icons) -->
+    <!-- Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <style>
         /* ==========================================================================
-           1. CSS VARIABLES & THEME (THEO IMAGE - DEEP SPACE VIBE)
+           1. CSS VARIABLES & THEME
            ========================================================================== */
         :root {
-            /* Nền chủ đạo xanh đen sâu thẳm giống bảng điều khiển */
             --bg-main: #0B0E17;
             --bg-sidebar: rgba(18, 22, 36, 0.8);
             --bg-card: rgba(26, 32, 53, 0.6);
@@ -25,7 +24,6 @@
             --text-muted: #94A3B8;
             --text-white: #FFFFFF;
             
-            /* Màu Gradient chủ đạo: Royal Blue -> Cyan (Giống nút Transfer trong ảnh) */
             --accent-purple: #1E50FF; 
             --accent-cyan: #00D1F5;
             --accent-yellow: #F59E0B;
@@ -119,7 +117,7 @@
            3. APP LAYOUT (SIDEBAR + MAIN)
            ========================================================================== */
         
-        /* SIDEBAR (Desktop) */
+        /* SIDEBAR */
         .sidebar { 
             position: fixed; top: 0; left: 0; width: var(--sidebar-width); height: 100vh; 
             background: var(--bg-sidebar); border-right: 1px solid var(--border-glass);
@@ -193,7 +191,7 @@
         .header-btn .badge { position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; background: var(--accent-red); border-radius: 50%; box-shadow: 0 0 8px var(--accent-red);}
 
         /* ==========================================================================
-           4. RIGHT SIDE-PANEL
+           4. RIGHT SIDE-PANEL & THEME CARDS
            ========================================================================== */
         .side-panel-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 2000; backdrop-filter: blur(4px); display: none; opacity: 0; transition: opacity 0.3s; }
         .side-panel { 
@@ -228,12 +226,18 @@
         .sp-btn-remove:hover { background: var(--accent-red); transform: scale(1.1);}
         .sp-empty { text-align: center; color: var(--text-muted); padding: 50px 20px; font-size: 0.95rem; font-weight: 500;}
 
-        .theme-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 12px;}
-        .theme-swatch { aspect-ratio: 1; border-radius: 12px; cursor: pointer; transition: var(--transition); border: 2px solid transparent;}
-        .theme-swatch.active { border-color: var(--text-white); transform: scale(1.05);}
+        /* BẢNG CHỌN THEME MỚI (DẠNG CARD) */
+        .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 12px;}
+        .theme-card { display: flex; flex-direction: column; gap: 8px; cursor: pointer; }
+        .theme-swatch-box { width: 100%; aspect-ratio: 2/1; border-radius: 12px; display: flex; overflow: hidden; border: 2px solid transparent; transition: var(--transition); box-shadow: 0 4px 10px rgba(0,0,0,0.2);}
+        .theme-card:hover .theme-swatch-box { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
+        .theme-card.active .theme-swatch-box { border-color: var(--accent-cyan); transform: scale(1.05); }
+        .theme-swatch-box div { flex: 1; height: 100%; }
+        .theme-name { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-align: center; transition: var(--transition);}
+        .theme-card:hover .theme-name, .theme-card.active .theme-name { color: var(--text-white); }
 
         /* ==========================================================================
-           5. MAIN CONTENT (PLAYER & INFO)
+           5. MAIN CONTENT (PLAYER & INFO) 
            ========================================================================== */
         .content-wrapper { padding: 90px 32px 40px; max-width: 1500px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px; width: 100%;}
         
@@ -243,10 +247,10 @@
 
         @media (min-width: 1025px) { 
             .hero-section { flex-direction: row; align-items: flex-start;} 
-            .hero-right { flex: 0 0 200px; position: sticky; top: 90px; max-height: calc(100vh - 120px); }
+            .hero-right { flex: 0 0 240px; position: sticky; top: 90px; max-height: calc(100vh - 120px); }
         }
         @media (min-width: 1280px) { 
-            .hero-right { flex: 0 0 220px; } 
+            .hero-right { flex: 0 0 260px; } 
         }
 
         /* Player */
@@ -266,11 +270,11 @@
         .btn-pill { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; background: var(--bg-glass); border: 1px solid var(--border-glass-strong); border-radius: 999px; font-size: 0.9rem; font-weight: 700; transition: var(--transition); color: var(--text-white); backdrop-filter: blur(10px);}
         .btn-pill:hover { background: var(--bg-glass-hover); transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.2);}
         
-        /* CẬP NHẬT HIỆU ỨNG GRADIENT SWEEP ĐẸP MẮT CHO NÚT "XEM NGAY" */
+        /* HIỆU ỨNG NÚT GLOW & GRADIENT SWEEP */
         .btn-pill.primary { 
             background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan), var(--accent-purple)); 
             background-size: 200% auto;
-            color: #fff; 
+            color: #fff !important; 
             border: none; 
             box-shadow: 0 8px 24px rgba(30, 80, 255, 0.35);
             transition: 0.5s;
@@ -313,6 +317,7 @@
         }
         .btn-episode:hover { background: var(--bg-glass-hover); color: var(--text-white); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.2);}
         
+        /* KHẮC PHỤC LỖI TÀNG HÌNH: NÚT LUÔN CÓ MÀU CHỮ SÁNG TRÊN NỀN GRADIENT */
         .btn-episode.active { 
             background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
             color: #ffffff !important; 
@@ -330,13 +335,16 @@
 
         .genre-tabs { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 16px; scrollbar-width: none; margin-bottom: 12px;}
         .genre-tabs::-webkit-scrollbar { display: none; }
+        
         .tab-btn { padding: 12px 24px; border-radius: 999px; background: var(--bg-glass); border: 1px solid var(--border-glass-strong); color: var(--text-muted); font-weight: 700; font-size: 0.95rem; white-space: nowrap; transition: var(--transition); }
         .tab-btn:hover { background: var(--bg-glass-hover); color: var(--text-white); transform: translateY(-2px);}
-        .tab-btn.active { background: var(--text-white); color: #000; box-shadow: 0 8px 20px rgba(255,255,255,0.2); border-color: transparent;}
+        
+        /* KHẮC PHỤC LỖI TÀNG HÌNH: Dùng var(--bg-main) làm màu chữ để luôn tương phản với nền Trắng/Đen */
+        .tab-btn.active { background: var(--text-white); color: var(--bg-main) !important; box-shadow: 0 8px 20px rgba(255,255,255,0.2); border-color: transparent;}
         
         .tab-btn.recommended { position: relative; border-color: rgba(0, 209, 245, 0.4); color: var(--text-light); }
         .tab-btn.recommended::after { content: '★ GỢI Ý'; position: absolute; top: -8px; right: 10px; background: var(--accent-cyan); color: #000; font-size: 0.6rem; padding: 2px 6px; border-radius: 6px; font-weight: 900; box-shadow: 0 4px 8px rgba(0,209,245,0.4);}
-        .tab-btn.recommended.active::after { background: #000; color: #fff; box-shadow: none;}
+        .tab-btn.recommended.active::after { background: var(--bg-main); color: var(--text-white); box-shadow: none;}
 
         .anime-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
         @media (min-width: 640px) { .anime-grid { grid-template-columns: repeat(3, 1fr); } }
@@ -366,31 +374,42 @@
         .lazy-loader i { animation: spin 1s linear infinite; display: inline-block; margin-right: 10px; font-size: 1.6rem; color: var(--accent-cyan); vertical-align: middle;}
 
         /* ==========================================================================
-           7. ONBOARDING & SCAN MODALS
+           7. ONBOARDING & SCAN MODALS (ĐÃ THIẾT KẾ LẠI SIÊU GỌN)
            ========================================================================== */
         .modal-overlay { position: fixed; inset: 0; background: rgba(5,5,10,0.95); z-index: 3000; backdrop-filter: blur(30px); display: none; align-items: center; justify-content: center; }
         [data-theme="light"] .modal-overlay { background: rgba(244,244,249,0.9); }
         
-        .modal-content.onboarding { background: var(--bg-card); border: 1px solid var(--border-glass-strong); border-radius: 24px; padding: 40px 32px; width: 90%; max-width: 650px; text-align: center; box-shadow: var(--shadow-panel); position: relative; overflow: hidden;}
-        .modal-content.onboarding::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(30,80,255,0.1) 0%, transparent 60%); z-index: -1; pointer-events: none; }
+        .modal-content.onboarding { background: var(--bg-card); border: 1px solid var(--border-glass-strong); border-radius: 24px; padding: 40px; width: 90%; max-width: 650px; text-align: center; box-shadow: var(--shadow-panel); position: relative; overflow: hidden;}
+        .modal-content.onboarding::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(30,80,255,0.08) 0%, transparent 60%); z-index: -1; pointer-events: none; }
         
-        .ob-title { font-size: 2rem; font-weight: 900; margin-bottom: 10px; letter-spacing: -1px;}
-        .ob-desc { color: var(--text-muted); margin-bottom: 30px; font-size: 1rem; max-width: 500px; margin-left: auto; margin-right: auto;}
+        .ob-title { font-size: 2rem; font-weight: 900; margin-bottom: 8px; letter-spacing: -1px;}
+        .ob-desc { color: var(--text-muted); margin-bottom: 24px; font-size: 0.95rem; max-width: 500px; margin-left: auto; margin-right: auto;}
         
-        .ob-profile-setup { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 30px; text-align: left; }
-        .ob-profile-setup label { color: var(--text-white); font-weight: 700; font-size: 0.9rem; margin-bottom: 6px; display: block; }
-        .ob-profile-setup input { width: 100%; border-radius: 12px; padding: 12px 16px; background: var(--bg-glass); border: 1px solid var(--border-glass-strong); color: var(--text-white); outline: none; font-size: 16px !important; transition: var(--transition); font-family: inherit;}
+        /* KHU VỰC CÀI ĐẶT AVATAR MỚI */
+        .ob-avatar-section { display: flex; flex-direction: column; align-items: center; gap: 16px; margin-bottom: 24px; }
+        .ob-avatar-preview { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--accent-cyan); overflow: hidden; box-shadow: var(--shadow-glow-cyan); position: relative; background: var(--bg-main); display: flex; align-items: center; justify-content: center;}
+        .ob-avatar-preview img { width: 100%; height: 100%; object-fit: cover; }
+        .ob-preset-avatars { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+        .ob-preset-avatars img { width: 44px; height: 44px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: var(--transition); background: var(--bg-glass); padding: 2px;}
+        .ob-preset-avatars img:hover { transform: scale(1.1); border-color: var(--accent-purple); }
+        
+        .ob-divider { display: flex; align-items: center; text-align: center; color: var(--text-muted); font-size: 0.8rem; margin: 16px 0; width: 100%; }
+        .ob-divider::before, .ob-divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--border-glass-strong); margin: 0 10px; }
+
+        .ob-profile-setup { display: flex; flex-direction: column; gap: 12px; text-align: left; margin-bottom: 24px;}
+        .ob-profile-setup input { width: 100%; border-radius: 12px; padding: 14px 16px; background: var(--bg-glass); border: 1px solid var(--border-glass-strong); color: var(--text-white); outline: none; font-size: 16px !important; transition: var(--transition); font-family: inherit;}
         .ob-profile-setup input:focus { border-color: var(--accent-cyan); background: var(--bg-glass-hover); box-shadow: var(--shadow-glow-cyan); }
         .ob-profile-setup input::placeholder { color: var(--text-muted); }
 
-        .ob-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 30px; }
-        .ob-pill { padding: 10px 20px; border-radius: 14px; border: 1px solid var(--border-glass-strong); background: var(--bg-glass); color: var(--text-light); font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: var(--transition); }
+        .ob-grid { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 30px; max-height: 150px; overflow-y: auto; padding-right: 4px;}
+        .ob-pill { padding: 8px 16px; border-radius: 12px; border: 1px solid var(--border-glass-strong); background: var(--bg-glass); color: var(--text-light); font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: var(--transition); }
         .ob-pill:hover { background: var(--bg-glass-hover); transform: translateY(-2px);}
         .ob-pill.active { background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); color: #fff; border-color: transparent; box-shadow: var(--shadow-glow-cyan); transform: scale(1.05); }
 
-        .btn-primary { background: var(--text-white); color: #000; border: none; padding: 14px 40px; border-radius: 16px; font-size: 1.1rem; font-weight: 900; cursor: pointer; transition: var(--transition); width: auto; min-width: 200px; display: inline-flex; align-items: center; justify-content: center; gap: 8px;}
+        /* KHẮC PHỤC LỖI TÀNG HÌNH: Dùng var(--bg-main) làm màu chữ cho nút Primary */
+        .btn-primary { background: var(--text-white); color: var(--bg-main) !important; border: none; padding: 14px 40px; border-radius: 16px; font-size: 1.1rem; font-weight: 900; cursor: pointer; transition: var(--transition); width: auto; min-width: 200px; display: inline-flex; align-items: center; justify-content: center; gap: 8px;}
         .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(255,255,255,0.3); }
-        .btn-primary:disabled { background: var(--bg-glass-hover); color: var(--text-muted); cursor: not-allowed; box-shadow: none; transform: none;}
+        .btn-primary:disabled { background: var(--bg-glass-hover); color: var(--text-muted) !important; cursor: not-allowed; box-shadow: none; transform: none;}
 
         /* ==========================================================================
            8. MOBILE OPTIMIZATION
@@ -459,11 +478,8 @@
             .ac-info { padding: 10px 4px 0; }
             
             .modal-content.onboarding { padding: 30px 20px; border-radius: 20px; width: 95%;}
-            .ob-profile-setup { grid-template-columns: 1fr; gap: 12px; }
             .ob-title { font-size: 1.8rem; }
-            .ob-desc { font-size: 0.9rem; margin-bottom: 20px;}
-            .ob-grid { gap: 8px; margin-bottom: 24px;}
-            .ob-pill { padding: 10px 16px; font-size: 0.85rem; border-radius: 10px;}
+            .ob-desc { font-size: 0.9rem; margin-bottom: 16px;}
             .btn-primary { padding: 14px 16px; font-size: 1rem; min-width: 100%;}
         }
 
@@ -509,26 +525,35 @@
         <div class="loader-text">ĐANG KHỞI ĐỘNG...</div>
     </div>
 
-    <!-- ONBOARDING MODAL -->
+    <!-- ONBOARDING MODAL (ĐÃ NÂNG CẤP GIAO DIỆN CHỌN AVATAR) -->
     <div id="onboarding-modal" class="modal-overlay">
         <div class="modal-content onboarding">
-            <h2 class="ob-title"><span class="gradient-text">T-ANIME</span> VISION</h2>
-            <p class="ob-desc">Chào mừng bạn đến với kỷ nguyên Streaming mới. Hãy thiết lập hồ sơ và chọn thể loại bạn yêu thích để tối ưu hoá trải nghiệm!</p>
+            <h2 class="ob-title"><span class="gradient-text">Diện Mạo Mới</span></h2>
+            <p class="ob-desc">Chọn một ảnh đại diện thật chất để thể hiện cá tính và thiết lập hồ sơ của bạn nhé!</p>
             
+            <div class="ob-avatar-section">
+                <div class="ob-avatar-preview">
+                    <img id="ob-preview-img" src="https://api.dicebear.com/7.x/adventurer/svg?seed=Felix" alt="Avatar">
+                </div>
+                <div class="ob-preset-avatars">
+                    <!-- Ảnh preset mẫu từ thư viện mở (nhìn khá Anime) -->
+                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Felix" onclick="selectPresetAvatar(this.src)">
+                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Aneka" onclick="selectPresetAvatar(this.src)">
+                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Mimi" onclick="selectPresetAvatar(this.src)">
+                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Nala" onclick="selectPresetAvatar(this.src)">
+                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Leo" onclick="selectPresetAvatar(this.src)">
+                </div>
+            </div>
+
             <div class="ob-profile-setup">
-                <div>
-                    <label>Tên Hiển Thị (Bắt buộc)</label>
-                    <input type="text" id="ob-input-name" placeholder="VD: Hoàng Wibu..." autocomplete="off">
-                </div>
-                <div>
-                    <label>Link Ảnh Đại Diện (Tuỳ chọn)</label>
-                    <input type="text" id="ob-input-avatar" placeholder="https://..." autocomplete="off">
-                </div>
+                <input type="text" id="ob-input-name" placeholder="Nhập tên của bạn (Bắt buộc)..." autocomplete="off">
+                <div class="ob-divider">Hoặc dùng link ảnh</div>
+                <input type="text" id="ob-input-avatar" placeholder="Dán link ảnh vào đây..." autocomplete="off" oninput="updateAvatarPreview(this.value)">
             </div>
 
             <div class="ob-grid" id="ob-genres-grid"></div>
             <button class="btn-primary" id="btn-save-prefs" disabled onclick="savePreferences()">
-                Kích Hoạt Trải Nghiệm <i class="ph-bold ph-rocket-launch"></i>
+                Hoàn Tất <i class="ph-bold ph-check"></i>
             </button>
         </div>
     </div>
@@ -541,6 +566,7 @@
             <div id="scan-init-view">
                 <p class="ob-desc" style="font-size: 0.95rem; margin-bottom: 32px;">Hệ thống sẽ quét toàn bộ danh sách phim từ trang 1 đến trang cuối để lấy thông tin. Vui lòng chọn định dạng lưu:</p>
                 <div class="ob-grid" style="gap: 16px; margin-bottom: 0;">
+                    <!-- KHẮC PHỤC LỖI TÀNG HÌNH NÚT TẢI JSON -->
                     <button class="btn-primary" style="min-width: unset; width: 100%; padding: 14px;" onclick="startScan('json')"><i class="ph-bold ph-file-code"></i> Tải JSON</button>
                     <button class="btn-pill" style="width: 100%; background: var(--bg-glass); border: 1px solid var(--border-glass-strong); font-size: 1.1rem; padding: 14px;" onclick="startScan('csv')"><i class="ph-bold ph-file-csv"></i> Tải CSV</button>
                     <button class="btn-pill" style="width: 100%; background: transparent; border-color: transparent; font-size: 1rem;" onclick="closeScanModal()">Hủy</button>
@@ -955,21 +981,22 @@
                 const themes = [
                     { id: 'default', color1: '#1E50FF', color2: '#00D1F5', name: 'Deep Space' },
                     { id: 'emerald', color1: '#10B981', color2: '#14B8A6', name: 'Emerald' },
-                    { id: 'blue', color1: '#3B82F6', color2: '#6366F1', name: 'Ocean' },
+                    { id: 'blue', color1: '#3B82F6', color2: '#6366F1', name: 'Oceanic' },
                     { id: 'rose', color1: '#F43F5E', color2: '#F97316', name: 'Sunset' },
-                    { id: 'purple', color1: '#9333EA', color2: '#D946EF', name: 'Neon Purple' }
+                    { id: 'purple', color1: '#9333EA', color2: '#D946EF', name: 'Cyber Glow' }
                 ];
                 const currentTheme = localStorage.getItem('tanime_color') || 'default';
+                
+                // Render dưới dạng Card giống hình mẫu
                 ui.spContent.innerHTML = `
                     <div class="theme-grid">
                         ${themes.map(t => `
-                            <div title="${t.name}" class="theme-swatch ${currentTheme === t.id ? 'active' : ''}" 
-                                 style="background: linear-gradient(135deg, ${t.color1}, ${t.color2});"
-                                 onclick="changeColorTheme('${t.id}')">
+                            <div class="theme-card ${currentTheme === t.id ? 'active' : ''}" onclick="changeColorTheme('${t.id}')">
+                                <div class="theme-swatch-box" style="background: linear-gradient(135deg, ${t.color1} 0%, ${t.color2} 100%);"></div>
+                                <div class="theme-name">${t.name}</div>
                             </div>
                         `).join('')}
                     </div>
-                    <p style="margin-top:24px; color:var(--text-muted); font-size:0.9rem;">Chọn dải màu thể hiện đúng cá tính của bạn.</p>
                 `;
                 return;
             }
@@ -1005,6 +1032,7 @@
         window.removeFromDownloads = (idx) => { downloadList.splice(idx, 1); localStorage.setItem('tanime_downloads', JSON.stringify(downloadList)); renderSidePanel(); };
 
         function toggleFavorite(movieObj) {
+            // FIX LỖI THẢ TIM KHÔNG LƯU: Cập nhật DOM trực tiếp qua getElementById thay vì ref ảo
             const index = favorites.findIndex(f => f.slug === movieObj.slug);
             if (index > -1) favorites.splice(index, 1); 
             else favorites.unshift({ slug: movieObj.slug, name: movieObj.name, thumb_url: movieObj.thumb_url });
@@ -1169,6 +1197,18 @@
             }
         }
 
+        window.selectPresetAvatar = (src) => {
+            document.getElementById('ob-preview-img').src = src;
+            document.getElementById('ob-input-avatar').value = src;
+            validateOnboardingForm();
+        };
+
+        window.updateAvatarPreview = (val) => {
+            const previewImg = document.getElementById('ob-preview-img');
+            if(val) previewImg.src = val;
+            else previewImg.src = 'https://api.dicebear.com/7.x/adventurer/svg?seed=Felix';
+        };
+
         window.togglePref = (el) => {
             const slug = el.getAttribute('data-slug');
             if (selectedPrefs.has(slug)) { selectedPrefs.delete(slug); el.classList.remove('active'); } 
@@ -1190,7 +1230,7 @@
             
             const userProfile = {
                 name: nameInput || 'Guest User',
-                avatar: avatarInput
+                avatar: avatarInput || 'https://api.dicebear.com/7.x/adventurer/svg?seed=Felix'
             };
             localStorage.setItem('tanime_profile', JSON.stringify(userProfile));
 
@@ -1223,14 +1263,12 @@
 
         async function initApp() {
             try {
-                // Tự động tìm và chọn Overlord làm phim mặc định
                 const searchRes = await fetch('https://ophim1.com/v1/api/tim-kiem?keyword=overlord');
                 const searchData = await searchRes.json();
                 
                 if (searchData.status === 'success' && searchData.data.items.length > 0) {
                     await loadMovieDetail(searchData.data.items[0].slug);
                 } else {
-                    // Fallback nếu không tìm thấy Overlord
                     const res = await fetch('https://ophim1.com/v1/api/danh-sach/hoat-hinh?page=1');
                     const data = await res.json();
                     if (data.status === 'success' && data.data.items.length > 0) {
@@ -1241,7 +1279,6 @@
                 renderGenreTabs();
                 switchTab(userPrefsSlugs.length > 0 ? userPrefsSlugs[0] : ALL_GENRES[0].slug);
                 
-                // Kích hoạt opacity transition bằng JS
                 ui.appWrapper.style.display = 'flex';
                 setTimeout(() => {
                     ui.appWrapper.style.opacity = '1';
@@ -1331,12 +1368,6 @@
                 btnSave.innerHTML = `<i class="${isLiked ? 'ph-fill' : 'ph-bold'} ph-heart"></i> <span class="action-text">${isLiked ? 'Đã Lưu' : 'Lưu'}</span>`;
             }
         }
-
-        window.toggleFavoriteFromMain = () => { 
-            if (currentMovieData) {
-                toggleFavorite({ slug: currentMovieData.slug, name: currentMovieData.name, thumb_url: currentMovieData.thumb_url }); 
-            }
-        };
 
         function renderEpisodes() {
             ui.epCount.textContent = `${currentEpisodesList.length} Tập`;
