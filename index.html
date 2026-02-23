@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>T-ANIME | Premium Streaming</title>
     <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -14,7 +14,7 @@
            1. CSS VARIABLES & THEME
            ========================================================================== */
         :root {
-            --bg-main: #05050A; /* Tối hơn, sâu hơn */
+            --bg-main: #05050A;
             --bg-sidebar: rgba(10, 10, 18, 0.6);
             --bg-card: rgba(20, 20, 30, 0.4);
             --bg-glass: rgba(255, 255, 255, 0.04);
@@ -71,7 +71,7 @@
            2. BASE & RESET
            ========================================================================== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: var(--font-main); background-color: var(--bg-main); color: var(--text-light); line-height: 1.6; overflow-x: hidden; scroll-behavior: smooth; transition: background-color 0.5s ease; }
+        body { font-family: var(--font-main); background-color: var(--bg-main); color: var(--text-light); line-height: 1.6; overflow-x: hidden; scroll-behavior: smooth; transition: background-color 0.5s ease; -webkit-tap-highlight-color: transparent;}
         body.modal-open { overflow: hidden; }
         ::selection { background-color: var(--accent-purple); color: #fff; }
         a { text-decoration: none; color: inherit; }
@@ -147,7 +147,7 @@
         /* MAIN COLUMN */
         .main-column { margin-left: var(--sidebar-width); flex: 1; display: flex; flex-direction: column; min-height: 100vh; position: relative;}
         
-        /* TOP HEADER (Search) */
+        /* TOP HEADER (Search & Actions) */
         .top-header { 
             position: sticky; top: 0; left: 0; width: 100%; height: 88px; 
             display: flex; align-items: center; justify-content: space-between; padding: 0 40px;
@@ -155,10 +155,12 @@
             z-index: 90;
         }
         
+        .mobile-logo { display: none; }
+        
         .search-container { position: relative; width: 100%; max-width: 400px; }
         .search-box { display: flex; align-items: center; gap: 12px; background: var(--bg-glass); border: 1px solid var(--border-glass-strong); border-radius: 999px; padding: 12px 24px; transition: var(--transition); backdrop-filter: blur(10px);}
         .search-box:focus-within { background: var(--bg-card); border-color: var(--accent-cyan); box-shadow: var(--shadow-glow-cyan); }
-        .search-box input { background: transparent; border: none; color: var(--text-white); font-size: 0.95rem; width: 100%; font-family: inherit;}
+        .search-box input { background: transparent; border: none; color: var(--text-white); font-size: 0.95rem; width: 100%; font-family: inherit; outline: none;}
         .search-box input::placeholder { color: var(--text-muted); font-weight: 500;}
         
         .search-dropdown { position: absolute; top: calc(100% + 12px); left: 0; width: 150%; background: var(--bg-card); border: 1px solid var(--border-glass-strong); border-radius: 20px; box-shadow: var(--shadow-panel); max-height: 60vh; overflow-y: auto; display: none; z-index: 101; backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); padding: 12px; }
@@ -172,14 +174,13 @@
         .search-origin { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;}
         .search-msg { padding: 32px; text-align: center; font-size: 0.95rem; color: var(--text-muted); font-weight: 500;}
 
-        /* Header Actions */
         .header-actions { display: flex; align-items: center; gap: 16px; }
         .header-btn { width: 44px; height: 44px; border-radius: 50%; background: var(--bg-glass); border: 1px solid var(--border-glass); display: flex; align-items: center; justify-content: center; color: var(--text-white); font-size: 1.3rem; transition: var(--transition); position: relative;}
         .header-btn:hover { background: var(--bg-glass-hover); color: var(--accent-cyan); transform: translateY(-2px);}
         .header-btn .badge { position: absolute; top: 10px; right: 10px; width: 8px; height: 8px; background: var(--accent-red); border-radius: 50%; box-shadow: 0 0 8px var(--accent-red);}
 
         /* ==========================================================================
-           4. RIGHT SIDE-PANEL (Trình Quản Lý Cá Nhân Thay Thế Dropdown)
+           4. RIGHT SIDE-PANEL (Trình Quản Lý Cá Nhân)
            ========================================================================== */
         .side-panel-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 2000; backdrop-filter: blur(4px); display: none; opacity: 0; transition: opacity 0.3s; }
         .side-panel { 
@@ -200,7 +201,6 @@
 
         .sp-content { flex: 1; overflow-y: auto; padding: 24px 32px; }
 
-        /* List Items in Panel */
         .sp-list-item { display: flex; gap: 16px; padding: 16px; border-radius: 16px; background: var(--bg-glass); border: 1px solid var(--border-glass); margin-bottom: 12px; transition: var(--transition); cursor: pointer; position: relative; overflow: hidden;}
         .sp-list-item:hover { background: var(--bg-glass-hover); border-color: var(--border-glass-strong); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.2);}
         .sp-thumb { width: 64px; height: 90px; border-radius: 10px; overflow: hidden; flex-shrink: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.3);}
@@ -215,17 +215,15 @@
         .sp-btn-remove:hover { background: var(--accent-red); transform: scale(1.1);}
         .sp-empty { text-align: center; color: var(--text-muted); padding: 60px 20px; font-size: 1rem; font-weight: 500;}
 
-        /* Theme Swatches in Panel */
         .theme-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 16px;}
         .theme-swatch { aspect-ratio: 1; border-radius: 16px; cursor: pointer; transition: var(--transition); border: 2px solid transparent;}
         .theme-swatch.active { border-color: var(--text-white); transform: scale(1.05);}
 
         /* ==========================================================================
-           5. MAIN GRID (PLAYER & EPISODES)
+           5. MAIN CONTENT (PLAYER & INFO)
            ========================================================================== */
         .content-wrapper { padding: 0 40px 60px; max-width: 1600px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px;}
         
-        /* Layout Hero Player */
         .hero-section { display: grid; grid-template-columns: 1fr; gap: 32px; align-items: start; }
         @media (min-width: 1280px) { .hero-section { grid-template-columns: 1fr 380px; gap: 40px;} }
 
@@ -307,13 +305,11 @@
         .ac-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
         .anime-card:hover .ac-thumb img { transform: scale(1.1); }
         
-        /* Hiệu ứng overlay khi hover */
         .ac-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(5,5,10,0.95) 0%, rgba(5,5,10,0.2) 50%, transparent 100%); opacity: 0.9; transition: opacity 0.4s;}
         .anime-card:hover .ac-overlay { opacity: 1; background: linear-gradient(to top, rgba(5,5,10,1) 0%, rgba(5,5,10,0.5) 60%, transparent 100%);}
         
         .ac-ep { position: absolute; top: 16px; right: 16px; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); color: white; font-size: 0.85rem; font-weight: 800; padding: 6px 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 4px 12px rgba(0,0,0,0.3);}
         
-        /* Nút Play ẩn hiện lên khi hover */
         .ac-play-btn { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%) scale(0.8); width: 64px; height: 64px; border-radius: 50%; background: var(--accent-cyan); color: #000; display: flex; align-items: center; justify-content: center; font-size: 2rem; opacity: 0; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: var(--shadow-glow-cyan);}
         .anime-card:hover .ac-play-btn { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 
@@ -349,7 +345,9 @@
            8. MOBILE OPTIMIZATION
            ========================================================================== */
         .mobile-bottom-nav { display: none; }
+        .mobile-search-wrapper { display: none; }
         
+        /* Tablet & Mobile Layout Shifts */
         @media (max-width: 1024px) {
             .sidebar { transform: translateX(-100%); transition: transform 0.3s; }
             .main-column { margin-left: 0; padding-bottom: 80px;}
@@ -359,45 +357,69 @@
                 display: flex; position: fixed; bottom: 0; left: 0; width: 100%;
                 background: rgba(10,10,18,0.95); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
                 border-top: 1px solid var(--border-glass-strong); z-index: 1000;
-                padding: 16px 32px calc(16px + env(safe-area-inset-bottom)); justify-content: space-between;
+                padding: 12px 24px calc(12px + env(safe-area-inset-bottom)); justify-content: space-between;
             }
             [data-theme="light"] .mobile-bottom-nav { background: rgba(255,255,255,0.95); }
             
-            .mobile-nav-item { display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--text-muted); font-size: 0.8rem; font-weight: 700; transition: var(--transition); }
+            .mobile-nav-item { display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--text-muted); font-size: 0.75rem; font-weight: 700; transition: var(--transition); padding: 4px 12px;}
             .mobile-nav-item.active { color: var(--text-white); transform: translateY(-4px);}
             .mobile-nav-item.active i { color: var(--accent-cyan); filter: drop-shadow(0 0 15px rgba(0, 209, 245, 0.6)); }
-            .mobile-nav-item i { font-size: 1.8rem; transition: var(--transition); }
+            .mobile-nav-item i { font-size: 1.6rem; transition: var(--transition); }
             
             .top-header { padding: 0 24px; height: 80px;}
             .content-wrapper { padding: 0 24px 40px; }
             .side-panel { width: 100%; max-width: 400px; }
-            
-            .movie-title { font-size: 2.2rem; }
-            .btn-pill { flex: 1; padding: 14px; font-size: 0.9rem;}
         }
 
-        @media (max-width: 640px) {
-            .top-header { display: none; } /* Hide Top header completely on very small screens, merge search into explore */
-            .content-wrapper { padding: 24px 16px 40px; }
-            .episodes-panel { padding: 20px 16px; min-height: 400px;}
+        /* Pure Mobile Optimizations */
+        @media (max-width: 768px) {
+            .top-header { 
+                height: 70px; padding: 0 20px; 
+                background: rgba(5,5,10,0.85); backdrop-filter: blur(20px); 
+                border-bottom: 1px solid var(--border-glass);
+            }
+            [data-theme="light"] .top-header { background: rgba(244,244,249,0.9); }
+            
+            .mobile-logo { display: block !important; font-size: 1.6rem; font-weight: 900; font-style: italic; cursor: pointer; }
+            #desktop-search { display: none; } /* Hide Desktop Search Input */
+            .mobile-search-wrapper { display: block; padding: 0 20px; margin-top: -10px; margin-bottom: 24px;}
+            .mobile-search-wrapper .search-container { max-width: 100%; }
+            .mobile-search-wrapper .search-box { border-radius: 16px; padding: 12px 20px; background: var(--bg-card); border: 1px solid var(--border-glass-strong);}
+            .mobile-search-wrapper .search-dropdown { width: 100%; left: 0; top: calc(100% + 8px); }
+            
+            .content-wrapper { padding: 20px 0 60px; gap: 24px;}
+            .hero-section { gap: 20px; padding: 0 20px;}
+            
+            .player-container { border-radius: 16px; }
+            .movie-info-panel { margin-top: 16px; gap: 16px; }
+            .movie-title { font-size: 1.8rem; letter-spacing: -0.5px; }
+            .movie-desc { font-size: 0.95rem; line-height: 1.6; }
+            
+            /* Action Bar Grid for Mobile */
+            .action-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: 100%;}
+            .btn-pill { padding: 12px 8px; font-size: 0.85rem; width: 100%; border-radius: 12px;}
+            .btn-pill.primary { grid-column: span 3; font-size: 1rem; padding: 14px;} /* Play button spans full width */
+            
+            /* Episodes constrained box */
+            .episodes-panel { padding: 20px; min-height: auto; border-radius: 20px;}
             .ep-title { font-size: 1.2rem; }
+            .episodes-grid { max-height: 350px; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 8px; }
+            .btn-episode { padding: 10px 4px; font-size: 0.85rem; border-radius: 10px;}
+            
+            .explore-section { padding: 0 20px; }
+            .section-heading { font-size: 1.6rem; margin-bottom: 20px;}
             .anime-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
-            .section-heading { font-size: 1.8rem; }
+            .ac-title { font-size: 0.95rem; }
+            .ac-info { padding: 12px 4px 0; }
             
-            /* Mobile Search Integration */
-            .mobile-search-wrapper { display: block; margin-bottom: 24px;}
-            .search-container { max-width: 100%; }
-            .search-box { background: var(--bg-card); padding: 14px 20px; border-radius: 16px;}
-            .search-dropdown { width: 100%; left: 0; top: calc(100% + 8px);}
-            
-            .modal-content.onboarding { padding: 40px 24px; border-radius: 28px; }
+            /* Onboarding Scale down */
+            .modal-content.onboarding { padding: 40px 24px; border-radius: 28px; width: 95%;}
             .ob-title { font-size: 2rem; }
-            .ob-pill { padding: 12px 20px; font-size: 0.9rem; border-radius: 16px;}
+            .ob-desc { font-size: 1rem; margin-bottom: 32px;}
+            .ob-grid { gap: 10px; margin-bottom: 32px;}
+            .ob-pill { padding: 12px 20px; font-size: 0.9rem; border-radius: 14px;}
+            .btn-primary { padding: 16px 20px; font-size: 1rem; min-width: 100%;}
         }
-        
-        /* For desktop, hide the mobile search wrapper */
-        .mobile-search-wrapper { display: none; }
-        @media (max-width: 640px) { .mobile-search-wrapper { display: block; } }
 
         /* ==========================================================================
            9. T-STORY (GIỮ NGUYÊN CSS)
@@ -413,19 +435,19 @@
         .story-video-wrapper { position: relative; width: 100%; height: 100%; max-width: 500px; margin: 0 auto; background: #000; }
         @media (max-width: 768px) { .story-video-wrapper { max-width: 100%; } }
         .story-video-wrapper iframe { width: 100%; height: 100%; border: none; object-fit: cover; } 
-        .story-overlay { position: absolute; inset: 0; z-index: 4005; pointer-events: none; display: flex; flex-direction: column; justify-content: flex-end; padding: 32px 24px; background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 40%, transparent 100%); }
+        .story-overlay { position: absolute; inset: 0; z-index: 4005; pointer-events: none; display: flex; flex-direction: column; justify-content: flex-end; padding: 32px 24px calc(32px + env(safe-area-inset-bottom)); background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 40%, transparent 100%); }
         .story-info { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; pointer-events: auto; padding-right: 70px;}
         .story-title { font-size: 1.75rem; font-weight: 900; color: white; margin-bottom: 12px; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .story-desc { font-size: 0.95rem; color: #D1D5DB; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 24px; line-height: 1.5; }
         .btn-watch-now { align-self: flex-start; background: #FFF; color: #000; padding: 12px 24px; border-radius: 16px; font-weight: 800; display: flex; align-items: center; gap: 8px; transition: var(--transition); font-size: 1rem;}
         .btn-watch-now:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(255,255,255,0.2); }
-        .story-actions { position: absolute; right: 16px; bottom: 100px; display: flex; flex-direction: column; gap: 28px; pointer-events: auto; align-items: center; }
+        .story-actions { position: absolute; right: 16px; bottom: calc(100px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 28px; pointer-events: auto; align-items: center; }
         .action-icon { display: flex; flex-direction: column; align-items: center; gap: 6px; color: white; background: none; border: none; cursor: pointer; transition: var(--transition); }
         .action-icon i { font-size: 2.2rem; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5)); transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
         .action-icon:hover i { transform: scale(1.15); }
         .action-icon span { font-size: 0.8rem; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.8);}
         .action-icon.liked i { color: var(--accent-red); animation: heartPop 0.4s ease; }
-        .story-hint { position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; color: rgba(255,255,255,0.4); font-size: 0.8rem; font-weight: 600; pointer-events: none; animation: bounce 2s infinite; }
+        .story-hint { position: absolute; bottom: calc(24px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; color: rgba(255,255,255,0.4); font-size: 0.8rem; font-weight: 600; pointer-events: none; animation: bounce 2s infinite; }
 
     </style>
 </head>
@@ -512,6 +534,9 @@
             
             <!-- TOP HEADER -->
             <header class="top-header">
+                <!-- Mobile Logo -->
+                <div class="mobile-logo gradient-text" onclick="window.scrollTo(0,0)">T-ANIME</div>
+                
                 <div class="search-container" id="desktop-search">
                     <div class="search-box">
                         <i class="ph-bold ph-magnifying-glass" style="color: var(--text-muted); font-size: 1.2rem;"></i>
@@ -522,23 +547,20 @@
 
                 <div class="header-actions">
                     <button class="header-btn"><i class="ph-bold ph-bell"></i><span class="badge"></span></button>
-                    <!-- Avatar Mobile Topbar (Hiding on Desktop since Sidebar has it) -->
-                    <button class="header-btn" style="background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); color: white; border: none; display: none;" id="mobile-avatar-btn" onclick="openSidePanel('fav')">
-                        <i class="ph-fill ph-user"></i>
-                    </button>
                 </div>
             </header>
 
             <!-- CONTENT WRAPPER -->
             <div class="content-wrapper">
                 
-                <!-- Mobile Search (Hiển thị khi màn hình nhỏ) -->
+                <!-- Mobile Search (Hiển thị khi màn hình nhỏ, giấu trên PC) -->
                 <div class="mobile-search-wrapper">
                     <div class="search-container">
                         <div class="search-box">
                             <i class="ph-bold ph-magnifying-glass" style="color: var(--text-muted); font-size: 1.2rem;"></i>
                             <input type="text" id="m-search-input" placeholder="Tìm kiếm Anime..." autocomplete="off">
                         </div>
+                        <div class="search-dropdown" id="m-search-dropdown"></div>
                     </div>
                 </div>
 
@@ -555,6 +577,7 @@
                             <div class="meta-tags" id="movie-meta"></div>
                             <h1 class="movie-title" id="movie-title">Loading...</h1>
                             
+                            <!-- Bảng nút Action tự gập thành Grid trên Mobile -->
                             <div class="action-bar">
                                 <button class="btn-pill primary" id="btn-play-now" onclick="document.querySelector('.btn-episode').click()">
                                     <i class="ph-fill ph-play-circle" style="font-size: 1.4rem;"></i> Xem Ngay
@@ -574,7 +597,7 @@
                         </div>
                     </div>
 
-                    <!-- Right: Episodes Panel -->
+                    <!-- Right: Episodes Panel (Giới hạn chiều cao trên Mobile) -->
                     <div class="glass-panel episodes-panel">
                         <div class="ep-header">
                             <div class="ep-title"><i class="ph-fill ph-monitor-play"></i> Chọn Tập</div>
@@ -669,20 +692,6 @@
                     if(mNavExplore) mNavExplore.classList.remove('active');
                     if(mNavHome) mNavHome.classList.add('active');
                 }
-            }
-        });
-
-        // Hỗ trợ thanh search trên mobile
-        document.addEventListener("DOMContentLoaded", () => {
-            if(window.innerWidth <= 640) {
-                document.getElementById('mobile-avatar-btn').style.display = 'flex';
-                // Liên kết 2 ô input search desktop và mobile
-                const mainInput = document.getElementById('search-input');
-                const mobInput = document.getElementById('m-search-input');
-                mobInput.addEventListener('input', (e) => {
-                    mainInput.value = e.target.value;
-                    mainInput.dispatchEvent(new Event('input'));
-                });
             }
         });
 
@@ -989,7 +998,7 @@
             if(!currentMovieData) return;
             const isLiked = favorites.some(f => f.slug === currentMovieData.slug);
             ui.btnSave.className = `btn-pill ${isLiked ? 'saved' : ''}`;
-            ui.btnSave.innerHTML = `<i class="${isLiked ? 'ph-fill' : 'ph-bold'} ph-heart"></i> ${isLiked ? 'Đã Lưu' : 'Lưu Vào Thư Viện'}`;
+            ui.btnSave.innerHTML = `<i class="${isLiked ? 'ph-fill' : 'ph-bold'} ph-heart"></i> ${isLiked ? 'Đã Lưu' : 'Lưu'}`;
         }
         window.toggleFavoriteFromMain = () => { if (currentMovieData) toggleFavorite({ slug: currentMovieData.slug, name: currentMovieData.name, thumb_url: currentMovieData.thumb_url }); };
 
@@ -1094,7 +1103,47 @@
         };
 
         // ==========================================
-        // 4. LOGIC EXPLORE
+        // 4. BINDING SEARCH LOGIC
+        // ==========================================
+        function initSearchLogic(inputId, dropdownId) {
+            let searchTimeout;
+            const input = document.getElementById(inputId);
+            const dropdown = document.getElementById(dropdownId);
+            if(!input || !dropdown) return;
+
+            input.addEventListener('input', (e) => {
+                const query = e.target.value.trim(); clearTimeout(searchTimeout);
+                if (!query) { dropdown.style.display = 'none'; return; }
+                dropdown.style.display = 'block';
+                dropdown.innerHTML = `<div class="search-msg"><i class="ph-bold ph-spinner-gap" style="animation:spin 1s linear infinite;"></i> Đang dò tìm...</div>`;
+                
+                searchTimeout = setTimeout(async () => {
+                    try {
+                        const res = await fetch(`https://ophim1.com/v1/api/tim-kiem?keyword=${encodeURIComponent(query)}`);
+                        const data = await res.json();
+                        if (data.status === 'success' && data.data.items.length > 0) {
+                            dropdown.innerHTML = data.data.items.map(item => `
+                                <div class="search-item" onclick="loadMovieDetailAndScroll('${item.slug}'); document.getElementById('${dropdownId}').style.display='none';">
+                                    <div class="search-thumb"><img src="https://img.ophim.live/uploads/movies/${item.thumb_url}"></div>
+                                    <div class="search-info">
+                                        <div class="search-title">${item.name}</div>
+                                        <div class="search-origin">${item.origin_name}</div>
+                                    </div>
+                                </div>
+                            `).join('');
+                        } else dropdown.innerHTML = `<div class="search-msg">Không tìm thấy Anime.</div>`;
+                    } catch (error) {}
+                }, 500);
+            });
+
+            document.addEventListener('click', (e) => { if (!input.contains(e.target) && !dropdown.contains(e.target)) dropdown.style.display = 'none'; });
+        }
+
+        initSearchLogic('search-input', 'search-dropdown'); // Desktop
+        initSearchLogic('m-search-input', 'm-search-dropdown'); // Mobile
+
+        // ==========================================
+        // 5. LOGIC EXPLORE
         // ==========================================
         function renderGenreTabs() {
             const sortedGenres = [...ALL_GENRES].sort((a, b) => userPrefsSlugs.includes(b.slug) - userPrefsSlugs.includes(a.slug));
@@ -1147,45 +1196,10 @@
             exploreState.renderCount += items.length;
         }
 
-        window.loadMovieDetailAndScroll = (slug) => { loadMovieDetail(slug); window.scrollTo({ top: 0, behavior: 'smooth' }); };
         const observer = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting) { exploreState.renderCount >= exploreState.localData.length ? fetchMoreGenreData() : append10ItemsToGrid(); }
         }, { rootMargin: '0px 0px 400px 0px' });
         observer.observe(ui.scrollAnchor);
-
-        // ==========================================
-        // 5. SEARCH LOGIC
-        // ==========================================
-        let searchTimeout;
-        const mainInput = document.getElementById('search-input');
-        const searchDropdown = document.getElementById('search-dropdown');
-        
-        mainInput.addEventListener('input', (e) => {
-            const query = e.target.value.trim(); clearTimeout(searchTimeout);
-            if (!query) { searchDropdown.style.display = 'none'; return; }
-            searchDropdown.style.display = 'block';
-            searchDropdown.innerHTML = `<div class="search-msg"><i class="ph-bold ph-spinner-gap" style="animation:spin 1s linear infinite;"></i> Đang dò tìm tín hiệu...</div>`;
-            searchTimeout = setTimeout(() => executeSearch(query), 500);
-        });
-
-        async function executeSearch(query) {
-            try {
-                const res = await fetch(`https://ophim1.com/v1/api/tim-kiem?keyword=${encodeURIComponent(query)}`);
-                const data = await res.json();
-                if (data.status === 'success' && data.data.items.length > 0) {
-                    searchDropdown.innerHTML = data.data.items.map(item => `
-                        <div class="search-item" onclick="loadMovieDetailAndScroll('${item.slug}'); document.getElementById('search-dropdown').style.display='none';">
-                            <div class="search-thumb"><img src="https://img.ophim.live/uploads/movies/${item.thumb_url}"></div>
-                            <div class="search-info">
-                                <div class="search-title">${item.name}</div>
-                                <div class="search-origin">${item.origin_name}</div>
-                            </div>
-                        </div>
-                    `).join('');
-                } else searchDropdown.innerHTML = `<div class="search-msg">Không tìm thấy Anime.</div>`;
-            } catch (error) {}
-        }
-        document.addEventListener('click', (e) => { if (!mainInput.contains(e.target) && !searchDropdown.contains(e.target)) searchDropdown.style.display = 'none'; });
 
         // ==========================================
         // 6. T-STORY LOGIC
