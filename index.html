@@ -2,7 +2,8 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Khóa tỷ lệ Zoom trên thiết bị di động -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>T-ANIME | Premium Streaming</title>
     <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -72,7 +73,7 @@
            ========================================================================== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        /* Tự động thu nhỏ toàn bộ giao diện (rem units) trên thiết bị nhỏ */
+        /* Tự động thu nhỏ tỷ lệ rem trên các thiết bị để tránh dồn ép layout */
         html { font-size: 16px; }
         @media (max-width: 1024px) { html { font-size: 15px; } }
         @media (max-width: 768px) { html { font-size: 14px; } }
@@ -107,13 +108,17 @@
         #loader { position: fixed; inset: 0; background: var(--bg-main); z-index: 9999; flex-direction: column; }
         .spinner { width: 56px; height: 56px; border: 3px solid rgba(0,209,245,0.2); border-top-color: var(--accent-cyan); border-radius: 50%; animation: spin 1s linear infinite; }
         .loader-text { margin-top: 24px; font-size: 0.875rem; font-weight: 700; letter-spacing: 0.2em; color: var(--text-muted); animation: pulse 2s infinite; }
+        
+        /* App Wrapper Animation */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .app-wrapper { display: flex; min-height: 100vh; animation: fadeIn 0.6s ease-out forwards; }
+
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
 
         /* ==========================================================================
            3. APP LAYOUT (SIDEBAR + MAIN)
            ========================================================================== */
-        .app-wrapper { display: flex; min-height: 100vh; }
         
         /* SIDEBAR (Desktop) */
         .sidebar { 
@@ -159,17 +164,19 @@
             position: sticky; top: 0; left: 0; width: 100%; height: 88px; 
             display: flex; align-items: center; justify-content: space-between; padding: 0 40px;
             background: linear-gradient(to bottom, var(--bg-main) 0%, transparent 100%);
-            z-index: 90;
+            z-index: 90; transition: background 0.3s ease;
         }
+        .top-header.scrolled { background: rgba(5,5,10,0.9); border-bottom: 1px solid var(--border-glass); backdrop-filter: blur(20px);}
+        [data-theme="light"] .top-header.scrolled { background: rgba(244,244,249,0.95); }
         
         .mobile-logo { display: none; }
         
         .search-container { position: relative; width: 100%; max-width: 400px; }
         .search-box { display: flex; align-items: center; gap: 12px; background: var(--bg-glass); border: 1px solid var(--border-glass-strong); border-radius: 999px; padding: 12px 24px; transition: var(--transition); backdrop-filter: blur(10px);}
         .search-box:focus-within { background: var(--bg-card); border-color: var(--accent-cyan); box-shadow: var(--shadow-glow-cyan); }
-        .search-box input { background: transparent; border: none; color: var(--text-white); width: 100%; font-family: inherit; outline: none;}
-        /* Khoá zoom trên mobile */
-        .search-box input[type="text"] { font-size: 16px !important; }
+        
+        /* Fix iOS Zoom Issue - Bắt buộc font-size 16px */
+        .search-box input, .search-box input[type="text"] { background: transparent; border: none; color: var(--text-white); width: 100%; font-family: inherit; outline: none; font-size: 16px !important; }
         .search-box input::placeholder { color: var(--text-muted); font-weight: 500;}
         
         .search-dropdown { position: absolute; top: calc(100% + 12px); left: 0; width: 150%; background: var(--bg-card); border: 1px solid var(--border-glass-strong); border-radius: 20px; box-shadow: var(--shadow-panel); max-height: 60vh; overflow-y: auto; display: none; z-index: 101; backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); padding: 12px; }
@@ -184,7 +191,7 @@
         .search-msg { padding: 32px; text-align: center; font-size: 0.95rem; color: var(--text-muted); font-weight: 500;}
 
         .header-actions { display: flex; align-items: center; gap: 16px; }
-        .header-btn { width: 44px; height: 44px; border-radius: 50%; background: var(--bg-glass); border: 1px solid var(--border-glass); display: flex; align-items: center; justify-content: center; color: var(--text-white); font-size: 1.3rem; transition: var(--transition); position: relative;}
+        .header-btn { width: 44px; height: 44px; border-radius: 50%; background: var(--bg-glass); border: 1px solid var(--border-glass); display: flex; align-items: center; justify-content: center; color: var(--text-white); font-size: 1.3rem; transition: var(--transition); position: relative; cursor: pointer;}
         .header-btn:hover { background: var(--bg-glass-hover); color: var(--accent-cyan); transform: translateY(-2px);}
         .header-btn .badge { position: absolute; top: 10px; right: 10px; width: 8px; height: 8px; background: var(--accent-red); border-radius: 50%; box-shadow: 0 0 8px var(--accent-red);}
 
@@ -263,7 +270,13 @@
         .movie-desc { font-size: 1.05rem; color: var(--text-muted); line-height: 1.8;}
 
         /* Right Col (Episodes) */
-        .episodes-panel { display: flex; flex-direction: column; height: 100%; max-height: 650px; padding: 24px;}
+        .episodes-panel { display: flex; flex-direction: column; height: 100%; padding: 24px;}
+        
+        /* Sticky ghim danh sách tập cho Desktop */
+        @media (min-width: 1025px) {
+            .episodes-panel { position: sticky; top: 110px; max-height: calc(100vh - 140px); }
+        }
+
         .ep-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
         .ep-title { font-size: 1.4rem; font-weight: 900; color: var(--text-white); display: flex; align-items: center; gap: 12px; }
         .ep-title i { color: var(--accent-purple); font-size: 1.8rem;}
@@ -353,7 +366,7 @@
         .btn-primary:disabled { background: var(--bg-glass-hover); color: var(--text-muted); cursor: not-allowed; box-shadow: none; transform: none;}
 
         /* ==========================================================================
-           8. MOBILE OPTIMIZATION
+           8. MOBILE OPTIMIZATION (Responsive CSS)
            ========================================================================== */
         .mobile-bottom-nav { display: none; }
         .mobile-search-wrapper { display: none; }
@@ -380,13 +393,9 @@
             .top-header { padding: 0 24px; height: 80px;}
             .content-wrapper { padding: 0 24px 40px; }
             .side-panel { width: 100%; max-width: 400px; }
-            
-            /* Bỏ max-height của panel chọn tập để trên Tablet hiển thị tự do dưới player */
-            .episodes-panel { max-height: none; min-height: 350px; padding: 24px; }
-            .episodes-grid { max-height: 400px; }
         }
 
-        /* Pure Mobile Optimizations */
+        /* Pure Mobile Optimizations - 100% Native App Feel */
         @media (max-width: 768px) {
             .top-header { 
                 height: 70px; padding: 0 20px; 
@@ -397,29 +406,34 @@
             
             .mobile-logo { display: block !important; font-size: 1.6rem; font-weight: 900; font-style: italic; cursor: pointer; }
             #desktop-search { display: none; } /* Hide Desktop Search Input */
+            
+            /* Thanh tìm kiếm dời xuống cho dễ bấm 1 tay */
             .mobile-search-wrapper { display: block; padding: 0 20px; margin-top: -10px; margin-bottom: 24px;}
             .mobile-search-wrapper .search-container { max-width: 100%; }
             .mobile-search-wrapper .search-box { border-radius: 16px; padding: 12px 20px; background: var(--bg-card); border: 1px solid var(--border-glass-strong);}
             .mobile-search-wrapper .search-dropdown { width: 100%; left: 0; top: calc(100% + 8px); }
             
-            .content-wrapper { padding: 20px 0 60px; gap: 24px;}
-            .hero-section { gap: 20px; padding: 0 20px;}
+            .content-wrapper { padding: 0 0 60px; gap: 24px;}
+            .hero-section { gap: 16px; padding: 0;}
             
-            .player-container { border-radius: 16px; }
-            .movie-info-panel { margin-top: 16px; gap: 16px; }
+            /* Player tràn viền edge-to-edge trên điện thoại */
+            .player-container { border-radius: 0; border: none; box-shadow: none; }
+            .player-glow { display: none; }
+            
+            .movie-info-panel { margin-top: 8px; gap: 16px; padding: 0 20px;}
             .movie-title { font-size: 2rem; letter-spacing: -0.5px; }
-            .movie-desc { font-size: 1.05rem; line-height: 1.6; }
+            .movie-desc { font-size: 1rem; line-height: 1.6; }
             
-            /* Action Bar Grid for Mobile */
+            /* Action Bar Grid cho Mobile - Nút play to đùng ở trên */
             .action-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%;}
-            .btn-pill { padding: 12px 4px; font-size: 0.9rem; width: 100%; border-radius: 12px; gap: 6px;}
-            .btn-pill.primary { grid-column: span 3; font-size: 1.1rem; padding: 14px;} /* Play button spans full width */
+            .btn-pill { padding: 12px 4px; font-size: 0.85rem; width: 100%; border-radius: 12px; gap: 6px;}
+            .btn-pill.primary { grid-column: span 3; font-size: 1.1rem; padding: 14px;}
             
-            /* Episodes constrained box */
-            .episodes-panel { padding: 20px; min-height: auto; border-radius: 20px;}
+            /* Episodes constrained box - có max height để cuộn nội bộ mượt mà */
+            .episodes-panel { padding: 20px; margin: 0 20px; min-height: auto; border-radius: 20px;}
             .ep-title { font-size: 1.2rem; }
             .episodes-grid { max-height: 350px; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 8px; }
-            .btn-episode { padding: 10px 4px; font-size: 0.95rem; border-radius: 10px;}
+            .btn-episode { padding: 10px 4px; font-size: 0.85rem; border-radius: 10px;}
             
             .explore-section { padding: 0 20px; }
             .section-heading { font-size: 1.8rem; margin-bottom: 20px;}
@@ -430,23 +444,24 @@
             /* Onboarding Scale down */
             .modal-content.onboarding { padding: 40px 24px; border-radius: 28px; width: 95%;}
             .ob-title { font-size: 2.2rem; }
-            .ob-desc { font-size: 1.1rem; margin-bottom: 32px;}
+            .ob-desc { font-size: 1rem; margin-bottom: 32px;}
             .ob-grid { gap: 10px; margin-bottom: 32px;}
             .ob-pill { padding: 12px 20px; font-size: 0.95rem; border-radius: 14px;}
             .btn-primary { padding: 16px 20px; font-size: 1.1rem; min-width: 100%;}
         }
 
         /* ==========================================================================
-           9. T-STORY (GIỮ NGUYÊN CSS)
+           9. T-STORY (TIKTOK STYLE)
            ========================================================================== */
-        .story-modal { position: fixed; inset: 0; background: #000; z-index: 4000; display: none; flex-direction: column; }
+        /* Sử dụng 100dvh để sửa lỗi thanh URL của Safari che mất nút dưới đáy */
+        .story-modal { position: fixed; inset: 0; background: #000; z-index: 4000; display: none; flex-direction: column; height: 100dvh;}
         .story-header { position: absolute; top: 0; left: 0; width: 100%; padding: 24px; display: flex; justify-content: space-between; align-items: center; z-index: 4010; background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent); }
         .story-logo { font-size: 1.5rem; font-weight: 900; font-style: italic; color: white; text-transform: uppercase;}
         .btn-close-story { color: white; background: rgba(255,255,255,0.1); border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); transition: var(--transition); }
         .btn-close-story:hover { background: rgba(255,255,255,0.2); transform: scale(1.1); }
         .story-container { flex: 1; width: 100%; height: 100%; overflow-y: scroll; scroll-snap-type: y mandatory; scrollbar-width: none; }
         .story-container::-webkit-scrollbar { display: none; }
-        .story-item { position: relative; width: 100%; height: 100vh; scroll-snap-align: start; background: #05050A; display: flex; align-items: center; justify-content: center; }
+        .story-item { position: relative; width: 100%; height: 100dvh; scroll-snap-align: start; background: #05050A; display: flex; align-items: center; justify-content: center; }
         .story-video-wrapper { position: relative; width: 100%; height: 100%; max-width: 500px; margin: 0 auto; background: #000; }
         @media (max-width: 768px) { .story-video-wrapper { max-width: 100%; } }
         .story-video-wrapper iframe { width: 100%; height: 100%; border: none; object-fit: cover; } 
@@ -490,7 +505,7 @@
         </div>
     </div>
 
-    <!-- APP WRAPPER -->
+    <!-- APP WRAPPER (Gói toàn bộ giao diện kể cả bottom nav) -->
     <div class="app-wrapper" id="app-wrapper" style="display: none;">
         
         <!-- SIDEBAR (Desktop) -->
@@ -533,7 +548,6 @@
                 </button>
             </div>
 
-            <!-- Nút User / Mở Panel -->
             <div class="sidebar-footer" onclick="openSidePanel('fav')">
                 <div class="sf-avatar"><i class="ph-fill ph-user"></i></div>
                 <div class="sf-info">
@@ -568,7 +582,7 @@
             <!-- CONTENT WRAPPER -->
             <div class="content-wrapper">
                 
-                <!-- Mobile Search (Hiển thị khi màn hình nhỏ, giấu trên PC) -->
+                <!-- Mobile Search (Giấu trên PC, hiện dưới Top Header ở Mobile) -->
                 <div class="mobile-search-wrapper">
                     <div class="search-container">
                         <div class="search-box">
@@ -598,10 +612,10 @@
                                     <i class="ph-fill ph-play-circle" style="font-size: 1.4rem;"></i> Xem Ngay
                                 </button>
                                 <button class="btn-pill" id="btn-save" onclick="toggleFavoriteFromMain()">
-                                    <i class="ph-bold ph-heart"></i> Lưu
+                                    <i class="ph-bold ph-heart"></i> <span class="action-text">Lưu</span>
                                 </button>
                                 <button class="btn-pill" id="btn-download" onclick="downloadCurrentEpisode()">
-                                    <i class="ph-bold ph-download-simple"></i> Tải Về
+                                    <i class="ph-bold ph-download-simple"></i> <span class="action-text">Tải Về</span>
                                 </button>
                                 <button class="btn-pill" onclick="shareStory()">
                                     <i class="ph-bold ph-share-network"></i>
@@ -612,7 +626,7 @@
                         </div>
                     </div>
 
-                    <!-- Right: Episodes Panel -->
+                    <!-- Right: Episodes Panel (Ghim cứng khi lướt trên PC) -->
                     <div class="glass-panel episodes-panel">
                         <div class="ep-header">
                             <div class="ep-title"><i class="ph-fill ph-monitor-play"></i> Chọn Tập</div>
@@ -636,6 +650,27 @@
                 
             </div> <!-- End Content Wrapper -->
         </main>
+
+        <!-- MOBILE BOTTOM NAV -->
+        <nav class="mobile-bottom-nav">
+            <a href="#" class="mobile-nav-item active" id="m-nav-home">
+                <i class="ph-fill ph-house"></i>
+                <span>Trang Chủ</span>
+            </a>
+            <a href="#explore-section" class="mobile-nav-item" id="m-nav-explore">
+                <i class="ph-fill ph-compass"></i>
+                <span>Khám Phá</span>
+            </a>
+            <div class="mobile-nav-item story" onclick="openStoryMode()">
+                <i class="ph-fill ph-play-circle"></i>
+                <span>T-Story</span>
+            </div>
+            <div class="mobile-nav-item" onclick="openSidePanel('fav')">
+                <i class="ph-fill ph-user"></i>
+                <span>Cá Nhân</span>
+            </div>
+        </nav>
+
     </div>
 
     <!-- RIGHT SIDE-PANEL (Library / Profile) -->
@@ -649,26 +684,6 @@
             <!-- Dynamic Content Injected via JS -->
         </div>
     </aside>
-
-    <!-- MOBILE BOTTOM NAV -->
-    <nav class="mobile-bottom-nav">
-        <a href="#" class="mobile-nav-item active" id="m-nav-home">
-            <i class="ph-fill ph-house"></i>
-            <span>Trang Chủ</span>
-        </a>
-        <a href="#explore-section" class="mobile-nav-item" id="m-nav-explore">
-            <i class="ph-fill ph-compass"></i>
-            <span>Khám Phá</span>
-        </a>
-        <div class="mobile-nav-item story" onclick="openStoryMode()">
-            <i class="ph-fill ph-play-circle"></i>
-            <span>T-Story</span>
-        </div>
-        <div class="mobile-nav-item" onclick="openSidePanel('fav')">
-            <i class="ph-fill ph-user"></i>
-            <span>Cá Nhân</span>
-        </div>
-    </nav>
 
     <!-- T-STORY MODAL -->
     <div class="story-modal" id="story-modal">
@@ -689,6 +704,10 @@
     <script>
         // --- XỬ LÝ SCROLL TRẠNG THÁI NAV ---
         window.addEventListener('scroll', () => {
+            const topHeader = document.querySelector('.top-header');
+            if (window.scrollY > 50) topHeader.classList.add('scrolled');
+            else topHeader.classList.remove('scrolled');
+
             const exploreSec = document.getElementById('explore-section');
             const dNavHome = document.getElementById('nav-home');
             const dNavExplore = document.getElementById('nav-explore');
@@ -710,16 +729,15 @@
             }
         });
 
-        // Hỗ trợ thanh search trên mobile
+        // Hỗ trợ thanh search trên mobile (Đồng bộ value không gọi API dư thừa)
         document.addEventListener("DOMContentLoaded", () => {
-            if(window.innerWidth <= 640) {
-                // Liên kết 2 ô input search desktop và mobile
+            if(window.innerWidth <= 768) {
                 const mainInput = document.getElementById('search-input');
                 const mobInput = document.getElementById('m-search-input');
-                mobInput.addEventListener('input', (e) => {
-                    mainInput.value = e.target.value;
-                    mainInput.dispatchEvent(new Event('input'));
-                });
+                if (mainInput && mobInput) {
+                    mobInput.addEventListener('input', (e) => { mainInput.value = e.target.value; });
+                    mainInput.addEventListener('input', (e) => { mobInput.value = e.target.value; });
+                }
             }
         });
 
@@ -1026,7 +1044,7 @@
             if(!currentMovieData) return;
             const isLiked = favorites.some(f => f.slug === currentMovieData.slug);
             ui.btnSave.className = `btn-pill ${isLiked ? 'saved' : ''}`;
-            ui.btnSave.innerHTML = `<i class="${isLiked ? 'ph-fill' : 'ph-bold'} ph-heart"></i> ${isLiked ? 'Đã Lưu' : 'Lưu'}`;
+            ui.btnSave.innerHTML = `<i class="${isLiked ? 'ph-fill' : 'ph-bold'} ph-heart"></i> <span class="action-text">${isLiked ? 'Đã Lưu' : 'Lưu'}</span>`;
         }
         window.toggleFavoriteFromMain = () => { if (currentMovieData) toggleFavorite({ slug: currentMovieData.slug, name: currentMovieData.name, thumb_url: currentMovieData.thumb_url }); };
 
@@ -1070,7 +1088,7 @@
             if (!m3u8Link) { alert("Lỗi tải video!"); return; }
 
             btn.classList.add('downloading');
-            btn.innerHTML = `<i class="ph-bold ph-spinner-gap" style="animation: spin 1s linear infinite;"></i> Đang phân tích...`;
+            btn.innerHTML = `<i class="ph-bold ph-spinner-gap" style="animation: spin 1s linear infinite;"></i> <span class="action-text">Đang phân tích...</span>`;
             try {
                 const fetchText = async (url) => { const res = await fetch(url); return await res.text(); };
                 let manifest = await fetchText(m3u8Link);
@@ -1103,10 +1121,10 @@
                     const results = await Promise.all(promises);
                     for (const r of results) chunks[r.index] = r.buffer;
                     dlCount += batch.length;
-                    btn.innerHTML = `<i class="ph-bold ph-spinner-gap" style="animation: spin 1s linear infinite;"></i> Đang tải ${Math.floor((dlCount / tsUrls.length) * 100)}%`;
+                    btn.innerHTML = `<i class="ph-bold ph-spinner-gap" style="animation: spin 1s linear infinite;"></i> <span class="action-text">${Math.floor((dlCount / tsUrls.length) * 100)}%</span>`;
                 }
 
-                btn.innerHTML = `<i class="ph-bold ph-spinner-gap" style="animation: spin 1s linear infinite;"></i> Đang ghép file...`;
+                btn.innerHTML = `<i class="ph-bold ph-spinner-gap" style="animation: spin 1s linear infinite;"></i> <span class="action-text">Đang ghép...</span>`;
                 const blob = new Blob(chunks, { type: 'video/mp2t' });
                 const url = window.URL.createObjectURL(blob);
                 
@@ -1120,13 +1138,13 @@
                     if (currentPanelTab === 'download') renderSidePanel();
                 }
                 
-                btn.classList.remove('downloading'); btn.innerHTML = `<i class="ph-bold ph-check"></i> Hoàn tất`;
-                setTimeout(() => { if(btn) btn.innerHTML = `<i class="ph-bold ph-download-simple"></i> Tải Về`; }, 3000);
+                btn.classList.remove('downloading'); btn.innerHTML = `<i class="ph-bold ph-check"></i> <span class="action-text">Hoàn tất</span>`;
+                setTimeout(() => { if(btn) btn.innerHTML = `<i class="ph-bold ph-download-simple"></i> <span class="action-text">Tải Về</span>`; }, 3000);
             } catch (error) {
-                if (confirm("Lỗi mạng/CORS. Mở link gốc để tải bằng IDM/Cốc Cốc?")) {
+                if (confirm("Lỗi mạng/CORS. Mở link gốc để tải bằng phần mềm thứ 3?")) {
                     const a = document.createElement('a'); a.href = m3u8Link; a.target = '_blank'; document.body.appendChild(a); a.click(); document.body.removeChild(a);
                 }
-                btn.classList.remove('downloading'); btn.innerHTML = `<i class="ph-bold ph-download-simple"></i> Tải Về`;
+                btn.classList.remove('downloading'); btn.innerHTML = `<i class="ph-bold ph-download-simple"></i> <span class="action-text">Tải Về</span>`;
             }
         };
 
@@ -1143,7 +1161,7 @@
                 const query = e.target.value.trim(); clearTimeout(searchTimeout);
                 if (!query) { dropdown.style.display = 'none'; return; }
                 dropdown.style.display = 'block';
-                dropdown.innerHTML = `<div class="search-msg"><i class="ph-bold ph-spinner-gap" style="animation:spin 1s linear infinite;"></i> Đang dò tìm...</div>`;
+                dropdown.innerHTML = `<div class="search-msg"><i class="ph-bold ph-spinner-gap" style="animation:spin 1s linear infinite;"></i> Đang dò tìm tín hiệu...</div>`;
                 
                 searchTimeout = setTimeout(async () => {
                     try {
