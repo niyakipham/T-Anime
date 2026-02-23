@@ -25,16 +25,17 @@
             --text-muted: #8A8A9D;
             --text-white: #FFFFFF;
             
-            --accent-purple: #B026FF;
-            --accent-cyan: #00D1F5;
+            /* Đổi màu chủ đạo sang Đỏ Crimson & Tím (Chuẩn vibe Overlord/Image) */
+            --accent-purple: #E11D48;
+            --accent-cyan: #7C3AED;
             --accent-yellow: #FFB800;
             --accent-red: #FF3B30;
 
             --border-glass: rgba(255, 255, 255, 0.05);
             --border-glass-strong: rgba(255, 255, 255, 0.1);
 
-            --shadow-glow-purple: 0 0 24px rgba(176, 38, 255, 0.3);
-            --shadow-glow-cyan: 0 0 24px rgba(0, 209, 245, 0.3);
+            --shadow-glow-purple: 0 0 24px rgba(225, 29, 72, 0.4);
+            --shadow-glow-cyan: 0 0 24px rgba(124, 58, 237, 0.4);
             --shadow-panel: 0 24px 48px rgba(0, 0, 0, 0.8);
             
             --font-main: 'Inter', sans-serif;
@@ -266,8 +267,22 @@
         .action-bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center;}
         .btn-pill { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; background: var(--bg-glass); border: 1px solid var(--border-glass-strong); border-radius: 999px; font-size: 0.9rem; font-weight: 700; transition: var(--transition); color: var(--text-white); backdrop-filter: blur(10px);}
         .btn-pill:hover { background: var(--bg-glass-hover); transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.2);}
-        .btn-pill.primary { background: var(--text-white); color: var(--bg-main); border: none; box-shadow: 0 6px 15px rgba(255,255,255,0.2);}
-        .btn-pill.primary:hover { background: var(--accent-cyan); color: #fff; box-shadow: var(--shadow-glow-cyan);}
+        
+        /* Hiệu ứng gradient sweep siêu đẹp cho nút Xem Ngay */
+        .btn-pill.primary { 
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan), var(--accent-purple)); 
+            background-size: 200% auto;
+            color: #fff; 
+            border: none; 
+            box-shadow: 0 8px 20px rgba(225, 29, 72, 0.3);
+            transition: 0.5s;
+        }
+        .btn-pill.primary:hover { 
+            background-position: right center;
+            color: #fff; 
+            box-shadow: 0 12px 25px rgba(225, 29, 72, 0.5);
+            transform: translateY(-3px) scale(1.02);
+        }
         
         .btn-pill.saved { border-color: var(--accent-red); color: var(--accent-red); background: rgba(255,59,48,0.1);}
         
@@ -1212,11 +1227,21 @@
 
         async function initApp() {
             try {
-                const res = await fetch('https://ophim1.com/v1/api/danh-sach/hoat-hinh?page=1');
-                const data = await res.json();
-                if (data.status === 'success' && data.data.items.length > 0) {
-                    await loadMovieDetail(data.data.items[0].slug);
+                // Tự động tìm và chọn Overlord làm phim mặc định
+                const searchRes = await fetch('https://ophim1.com/v1/api/tim-kiem?keyword=overlord');
+                const searchData = await searchRes.json();
+                
+                if (searchData.status === 'success' && searchData.data.items.length > 0) {
+                    await loadMovieDetail(searchData.data.items[0].slug);
+                } else {
+                    // Fallback nếu không tìm thấy Overlord
+                    const res = await fetch('https://ophim1.com/v1/api/danh-sach/hoat-hinh?page=1');
+                    const data = await res.json();
+                    if (data.status === 'success' && data.data.items.length > 0) {
+                        await loadMovieDetail(data.data.items[0].slug);
+                    }
                 }
+
                 renderGenreTabs();
                 switchTab(userPrefsSlugs.length > 0 ? userPrefsSlugs[0] : ALL_GENRES[0].slug);
                 
